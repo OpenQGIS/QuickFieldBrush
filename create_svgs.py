@@ -24,6 +24,11 @@ svgs = {
   <path d="M11,21 C9.5,21 8,22 8,24 C8,25 9,25.5 10,25.5 C11.5,25.5 12,24 13,23 Z" fill="#FFE0B2"/>
   <line x1="19" y1="8" x2="24" y2="13" stroke="#BF360C" stroke-width="1.2"/>
 </svg>""",
+    "history.svg": """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect x="1" y="1" width="30" height="30" rx="6" fill="#6A1B9A"/>
+  <path d="M16,7 A9,9 0 1,1 9.6,9.8 L7,7 M7,12 L7,7 L12,7" stroke="#FFFFFF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="16,11 16,16 20,18" stroke="#FFFFFF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>""",
     "panel.svg": """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
   <rect x="1" y="1" width="30" height="30" rx="6" fill="#2E7D32"/>
   <rect x="8" y="6" width="16" height="20" rx="2" fill="#FFFFFF"/>
@@ -92,9 +97,11 @@ for name, content in svgs.items():
     with open(os.path.join(icons_dir, name), "w", encoding="utf-8") as fp:
         fp.write(content)
 
-# 兼容保留 icon/icon.svg 与根目录 icon.svg
-with open(os.path.join(icon_dir, "icon.svg"), "w", encoding="utf-8") as fp:
-    fp.write(svgs["icon.svg"])
+# 兼容保留 icon/ 与根目录 icon.svg
+for k in ["icon.svg", "rank.svg", "painter.svg", "history.svg"]:
+    if k in svgs:
+        with open(os.path.join(icon_dir, k), "w", encoding="utf-8") as fp:
+            fp.write(svgs[k])
 with open(os.path.join(plugin_dir, "icon.svg"), "w", encoding="utf-8") as fp:
     fp.write(svgs["icon.svg"])
 

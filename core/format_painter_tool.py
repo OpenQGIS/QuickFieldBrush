@@ -19,6 +19,7 @@ from qgis.core import (
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QColor
 from .attribute_engine import AttributeEngine
+from .history_manager import HistoryManager
 from ..i18n_helper import tr
 
 
@@ -104,6 +105,7 @@ class FormatPainterTool(QgsMapTool):
                     tr("Layer [{0}] cannot start editing!").format(layer.name()))
                 return
 
+        old_val = hit_feature.attribute(field_idx)
         layer.beginEditCommand(
             tr("QuickFieldBrush format painter: set {1}={2} on feature {0}")
             .format(fid, self.target_field, self.target_value))
@@ -114,6 +116,15 @@ class FormatPainterTool(QgsMapTool):
             layer.endEditCommand()
             layer.triggerRepaint()
             AttributeEngine.invalidate_cache(layer)
+
+            # 写入历史记录
+            HistoryManager.instance().add_step(
+                tool_type="painter",
+                layer=layer,
+                field_name=self.target_field,
+                target_value=val_to_write,
+                changes=[{"fid": fid, "old_val": old_val, "new_val": val_to_write}]
+            )
         except Exception as e:
             layer.destroyEditCommand()
             self.iface.messageBar().pushWarning(

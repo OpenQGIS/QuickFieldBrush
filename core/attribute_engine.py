@@ -219,6 +219,26 @@ class AttributeEngine:
             else:
                 return 0, tr("Layer is not in edit mode")
 
+        # 提前提取原值用于历史记录与精准回滚
+        old_values = {}
+        try:
+            req = (QgsFeatureRequest()
+                   .setFilterFids(list(selected_fids))
+                   .setFlags(QgsFeatureRequest.NoGeometry)
+                   .setSubsetOfAttributes([field_name], layer.fields()))
+            for feat in layer.getFeatures(req):
+                old_values[feat.id()] = feat.attribute(field_name)
+        except Exception:
+            # 降级兼容：全字段提取
+            try:
+                req = (QgsFeatureRequest()
+                       .setFilterFids(list(selected_fids))
+                       .setFlags(QgsFeatureRequest.NoGeometry))
+                for feat in layer.getFeatures(req):
+                    old_values[feat.id()] = feat.attribute(field_name)
+            except Exception:
+                pass
+
         # 开启 QGIS 命令栈，保证 Ctrl+Z 能够一键整体撤销
         layer.beginEditCommand(tr("QuickFieldBrush: set {0}={1}").format(field_name, value))
         try:
@@ -231,6 +251,24 @@ class AttributeEngine:
             layer.endEditCommand()
             layer.triggerRepaint()
             AttributeEngine.invalidate_cache(layer)
+
+            # 写入历史记录管理器
+            try:
+                from .history_manager import HistoryManager
+                changes = [
+                    {"fid": fid, "old_val": old_values.get(fid), "new_val": val_to_write}
+                    for fid in selected_fids
+                ]
+                HistoryManager.instance().add_step(
+                    tool_type="batch_rank",
+                    layer=layer,
+                    field_name=field_name,
+                    target_value=val_to_write,
+                    changes=changes
+                )
+            except Exception:
+                pass
+
             return len(selected_fids), tr("Successfully set {1}={2} on {0} features").format(
                 len(selected_fids), field_name, value)
         except Exception as e:

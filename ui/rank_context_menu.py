@@ -269,36 +269,3 @@ class RankContextMenu(QMenu):
         )
         if ok and new_val.strip():
             self._on_apply_value(field_name, new_val.strip(), auto_edit)
-
-    def _on_switch_target_field(self, valid_names):
-        """用户点击切换目标字段"""
-        new_field = self._prompt_choose_field(valid_names, is_initial=False)
-        if new_field:
-            self.iface.messageBar().pushSuccess(
-                "QuickFieldBrush",
-                tr("Target rank field for layer [{0}] changed to: [{1}]").format(self.layer.name(), new_field)
-            )
-            # 立即在光标位置无缝重新打开分级菜单
-            if self.layer and self.layer.selectedFeatureCount() > 0:
-                QTimer.singleShot(60, self._reopen_menu)
-
-    def _reopen_menu(self):
-        new_menu = RankContextMenu(self.parent(), self.layer, ConfigManager.get_config(), self.iface)
-        new_menu.exec_(QCursor.pos())
-
-    def _on_apply_value(self, field_name, value, auto_edit):
-        """执行批量写入"""
-        count, msg = AttributeEngine.batch_update_single_field(
-            self.layer, field_name, value, auto_start_editing=auto_edit
-        )
-        self.iface.messageBar().pushInfo("QuickFieldBrush", msg)
-
-    def _on_custom_input(self, field_name, auto_edit):
-        """现场打字输入值"""
-        new_val, ok = QInputDialog.getText(
-            self.parent(), tr("Enter a new rank/value"),
-            tr("Assign a new value to field [{0}] in batch:").format(field_name),
-            QLineEdit.Normal, ""
-        )
-        if ok and new_val.strip():
-            self._on_apply_value(field_name, new_val.strip(), auto_edit)

@@ -18,6 +18,7 @@ from .core.map_tool import QuickFieldBrushMapTool
 from .core.format_painter_tool import FormatPainterTool
 from .ui.rank_context_menu import RankContextMenu
 from .ui.format_painter_dialog import FormatPainterDialog
+from .ui.history_dialog import HistoryDialog
 from .i18n_helper import tr, load_translator, unload_translator
 
 
@@ -30,8 +31,10 @@ class QuickFieldBrushPlugin:
         self.map_tool = None
         self.painter_tool = None
         self.painter_dialog = None
+        self.history_dialog = None
         self.action_toggle = None
         self.action_painter = None
+        self.action_history = None
         self.toolbar = None
         self._connected_layer = None
         self.translator = None
@@ -53,6 +56,7 @@ class QuickFieldBrushPlugin:
         icon_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon")
         icon_active = self._load_icon(os.path.join(icon_dir, "rank.svg"))
         icon_painter = self._load_icon(os.path.join(icon_dir, "painter.svg"))
+        icon_history = self._load_icon(os.path.join(icon_dir, "history.svg"))
 
         # 3. 功能 1: 激活/停用快捷赋级工具 (框选+右键)
         self.action_toggle = QAction(
@@ -75,6 +79,16 @@ class QuickFieldBrushPlugin:
         self.action_painter.triggered.connect(self._toggle_painter_tool)
         self.toolbar.addAction(self.action_painter)
         self.iface.addPluginToVectorMenu(tr("QuickFieldBrush - Format Painter"), self.action_painter)
+
+        # 功能 3: 历史记录面板 (独立浮动面板，类似 Illustrator 历史记录)
+        self.action_history = QAction(
+            icon_history,
+            tr("History panel (browse, flash-zoom, single-step revert, export CSV)"),
+            self.iface.mainWindow()
+        )
+        self.action_history.triggered.connect(self._toggle_history_dialog)
+        self.toolbar.addAction(self.action_history)
+        self.iface.addPluginToVectorMenu(tr("QuickFieldBrush - History"), self.action_history)
 
         # 4. 初始化地图工具
         self.map_tool = QuickFieldBrushMapTool(self.canvas, self.iface, self)
@@ -102,11 +116,18 @@ class QuickFieldBrushPlugin:
             self.painter_dialog.deleteLater()
             self.painter_dialog = None
 
+        if self.history_dialog:
+            self.history_dialog.close()
+            self.history_dialog.deleteLater()
+            self.history_dialog = None
+
         # 移除工具条与菜单项
         if self.action_toggle:
             self.iface.removePluginVectorMenu(tr("QuickFieldBrush - Ranking"), self.action_toggle)
         if self.action_painter:
             self.iface.removePluginVectorMenu(tr("QuickFieldBrush - Format Painter"), self.action_painter)
+        if self.action_history:
+            self.iface.removePluginVectorMenu(tr("QuickFieldBrush - History"), self.action_history)
 
         if self.toolbar:
             self.toolbar.clear()
@@ -197,6 +218,18 @@ class QuickFieldBrushPlugin:
                 self.painter_dialog.close()
             if self.canvas.mapTool() == self.painter_tool:
                 self.canvas.unsetMapTool(self.painter_tool)
+
+    def _toggle_history_dialog(self):
+        """切换历史记录面板的显示/隐藏 (Illustrator 风格浮动面板)"""
+        if self.history_dialog is None:
+            self.history_dialog = HistoryDialog(self.iface, self.iface.mainWindow())
+
+        if self.history_dialog.isVisible():
+            self.history_dialog.hide()
+        else:
+            self.history_dialog.show()
+            self.history_dialog.raise_()
+            self.history_dialog.activateWindow()
 
     def _show_rank_menu(self, global_pos, layer):
         """响应右键快速分级菜单呼出请求"""

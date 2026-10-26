@@ -23,6 +23,10 @@
       <translation>从当前选中的要素直接吸取属性</translation>
     </message>
     <message>
+      <source>Action Type</source>
+      <translation>操作类型</translation>
+    </message>
+    <message>
       <source>Activate QuickFieldBrush interactive ranking tool (box select + right click)</source>
       <translation>激活 QuickFieldBrush 交互赋级工具 (框选+右键)</translation>
     </message>
@@ -59,8 +63,24 @@
       <translation>更新属性失败: {0}</translation>
     </message>
     <message>
+      <source>Batch Ranking</source>
+      <translation>批量赋级</translation>
+    </message>
+    <message>
       <source>Cancel selection</source>
       <translation>取消选择</translation>
+    </message>
+    <message>
+      <source>Clear</source>
+      <translation>清空</translation>
+    </message>
+    <message>
+      <source>Clear all history entries</source>
+      <translation>清空当前所有操作记录</translation>
+    </message>
+    <message>
+      <source>Copy Feature ID(s) to Clipboard</source>
+      <translation>复制要素 FID 到剪贴板</translation>
     </message>
     <message>
       <source>Enter a new rank/value</source>
@@ -75,12 +95,48 @@
       <translation>退出格式刷 (Esc)</translation>
     </message>
     <message>
+      <source>Export CSV</source>
+      <translation>导出 CSV</translation>
+    </message>
+    <message>
+      <source>Export History to CSV</source>
+      <translation>导出操作历史到 CSV 文件</translation>
+    </message>
+    <message>
+      <source>Export failed: {0}</source>
+      <translation>导出失败: {0}</translation>
+    </message>
+    <message>
+      <source>Export history log to CSV file</source>
+      <translation>将修改历史导出为 CSV 表格台账</translation>
+    </message>
+    <message>
+      <source>Failed to start editing layer [{0}]!</source>
+      <translation>开启图层 [{0}] 编辑状态失败！</translation>
+    </message>
+    <message>
       <source>Failed to start layer editing</source>
       <translation>图层开启编辑模式失败</translation>
     </message>
     <message>
+      <source>Feature ID (FID)</source>
+      <translation>要素编号(FID)</translation>
+    </message>
+    <message>
+      <source>Field</source>
+      <translation>字段</translation>
+    </message>
+    <message>
+      <source>Field [{0}] not found in layer [{1}]!</source>
+      <translation>图层 [{1}] 中未找到字段 [{0}]！</translation>
+    </message>
+    <message>
       <source>Field not found in layer: {0}</source>
       <translation>图层中未找到字段: {0}</translation>
+    </message>
+    <message>
+      <source>Format Painter</source>
+      <translation>格式刷</translation>
     </message>
     <message>
       <source>Format painter assignment failed: {0}</source>
@@ -107,12 +163,36 @@
       <translation>多↓</translation>
     </message>
     <message>
+      <source>History is empty, nothing to export!</source>
+      <translation>历史记录为空，无内容可导出！</translation>
+    </message>
+    <message>
+      <source>History log cleared!</source>
+      <translation>历史记录已清空！</translation>
+    </message>
+    <message>
+      <source>History panel (browse, flash-zoom, single-step revert, export CSV)</source>
+      <translation>历史记录面板 (浏览、高亮定位、单步撤销、导出台账)</translation>
+    </message>
+    <message>
+      <source>History record #{0} does not exist!</source>
+      <translation>历史记录 #{0} 不存在！</translation>
+    </message>
+    <message>
+      <source>History successfully exported to: {0}</source>
+      <translation>历史记录已成功导出至: {0}</translation>
+    </message>
+    <message>
       <source>Interactive ranking tool activated: box-select features, then right-click to rank!</source>
       <translation>已激活交互赋级工具：框选要素后点击右键即可快速分级！</translation>
     </message>
     <message>
       <source>Invalid layer</source>
       <translation>无效图层</translation>
+    </message>
+    <message>
+      <source>Layer</source>
+      <translation>图层</translation>
     </message>
     <message>
       <source>Layer [{0}] cannot start editing!</source>
@@ -123,6 +203,10 @@
       <translation>当前图层 [{0}] 不存在字段 [{1}]，请重新在格式刷控制台选择字段！</translation>
     </message>
     <message>
+      <source>Layer [{0}] not found in current project!</source>
+      <translation>当前工程中未找到图层 [{0}]！</translation>
+    </message>
+    <message>
       <source>Layer is not in edit mode</source>
       <translation>图层未处于编辑状态</translation>
     </message>
@@ -131,8 +215,20 @@
       <translation>图层: {0} (无可编辑字段)</translation>
     </message>
     <message>
+      <source>Modification History</source>
+      <translation>要素修改历史</translation>
+    </message>
+    <message>
       <source>Multi-field update failed: {0}</source>
       <translation>更新多字段失败: {0}</translation>
+    </message>
+    <message>
+      <source>New Value</source>
+      <translation>修改后新值</translation>
+    </message>
+    <message>
+      <source>No</source>
+      <translation>否</translation>
     </message>
     <message>
       <source>No editable fields in this layer</source>
@@ -149,6 +245,10 @@
     <message>
       <source>No matching editable fields</source>
       <translation>没有匹配到有效的可更新字段</translation>
+    </message>
+    <message>
+      <source>No pending modifications to undo!</source>
+      <translation>没有可撤销的修改步骤！</translation>
     </message>
     <message>
       <source>No selected features. Please select a feature on the map first, then absorb its value.</source>
@@ -169,6 +269,10 @@
     <message>
       <source>Numeric Descending (9 -&gt; 1)</source>
       <translation>按数值大小降序 (9 -&gt; 1)</translation>
+    </message>
+    <message>
+      <source>Old Value</source>
+      <translation>修改前原值</translation>
     </message>
     <message>
       <source>Painting: [{0} = {1}]</source>
@@ -195,12 +299,20 @@
       <translation>QuickFieldBrush - 格式刷</translation>
     </message>
     <message>
+      <source>QuickFieldBrush - History</source>
+      <translation>QuickFieldBrush - 历史面板</translation>
+    </message>
+    <message>
       <source>QuickFieldBrush - Ranking</source>
       <translation>QuickFieldBrush - 交互分级</translation>
     </message>
     <message>
       <source>QuickFieldBrush Format Painter</source>
       <translation>QuickFieldBrush 格式刷</translation>
+    </message>
+    <message>
+      <source>QuickFieldBrush History</source>
+      <translation>QuickFieldBrush 历史记录</translation>
     </message>
     <message>
       <source>QuickFieldBrush Toolbar</source>
@@ -215,12 +327,44 @@
       <translation>QuickFieldBrush: 批量调整多字段属性</translation>
     </message>
     <message>
+      <source>QuickFieldBrush: revert history #{0} ({1})</source>
+      <translation>QuickFieldBrush: 回滚历史 #{0} ({1})</translation>
+    </message>
+    <message>
       <source>QuickFieldBrush: set {0}={1}</source>
       <translation>QuickFieldBrush: 设为 {0}={1}</translation>
     </message>
     <message>
+      <source>Revert failed: {0}</source>
+      <translation>回滚失败: {0}</translation>
+    </message>
+    <message>
+      <source>Revert the most recent modification step</source>
+      <translation>撤销最近一次未回滚的要素修改</translation>
+    </message>
+    <message>
+      <source>Revert this operation</source>
+      <translation>还原此项操作</translation>
+    </message>
+    <message>
+      <source>Reverted</source>
+      <translation>已还原</translation>
+    </message>
+    <message>
+      <source>Search field, layer, or FID...</source>
+      <translation>按字段、图层或 FID 搜索...</translation>
+    </message>
+    <message>
+      <source>Select feature(s) in layer</source>
+      <translation>在图层中选中要素</translation>
+    </message>
+    <message>
       <source>Select or type the value to paint</source>
       <translation>选择或直接输入要刷入的值</translation>
+    </message>
+    <message>
+      <source>Selected {0} features on layer [{1}]</source>
+      <translation>已在图层 [{1}] 中选中 {0} 个要素</translation>
     </message>
     <message>
       <source>Sort:</source>
@@ -233,6 +377,18 @@
     <message>
       <source>Status: pick a field and value first</source>
       <translation>状态: 请先选择字段与值</translation>
+    </message>
+    <message>
+      <source>Step #{0} has already been reverted!</source>
+      <translation>步骤 #{0} 已经回滚过了！</translation>
+    </message>
+    <message>
+      <source>Step ID</source>
+      <translation>步骤编号</translation>
+    </message>
+    <message>
+      <source>Successfully reverted {0} features to their previous values!</source>
+      <translation>成功将 {0} 个要素恢复到修改前的值！</translation>
     </message>
     <message>
       <source>Successfully set {1}={2} on {0} features</source>
@@ -251,6 +407,10 @@
       <translation>切换图层 [{0}] 的快速赋级目标字段:</translation>
     </message>
     <message>
+      <source>Target Value</source>
+      <translation>赋级目标值</translation>
+    </message>
+    <message>
       <source>Target field:</source>
       <translation>目标字段:</translation>
     </message>
@@ -263,12 +423,48 @@
       <translation>选中要素的 [{0}] 属性值为空，无法吸取。</translation>
     </message>
     <message>
+      <source>Timestamp</source>
+      <translation>操作时间</translation>
+    </message>
+    <message>
+      <source>Total: 0 records</source>
+      <translation>共 0 条记录</translation>
+    </message>
+    <message>
+      <source>Total: {0} records</source>
+      <translation>共 {0} 条记录</translation>
+    </message>
+    <message>
+      <source>Undo Latest</source>
+      <translation>撤销最近一步</translation>
+    </message>
+    <message>
+      <source>Unknown Layer</source>
+      <translation>未知图层</translation>
+    </message>
+    <message>
       <source>Value to paint:</source>
       <translation>要刷属性值:</translation>
     </message>
     <message>
+      <source>Yes</source>
+      <translation>是</translation>
+    </message>
+    <message>
+      <source>Zoom and highlight feature(s)</source>
+      <translation>缩放并高亮要素</translation>
+    </message>
+    <message>
+      <source>features</source>
+      <translation>要素</translation>
+    </message>
+    <message>
       <source>switch value anytime, instant effect on map</source>
       <translation>随时切换值，地图即刻生效</translation>
+    </message>
+    <message>
+      <source>was</source>
+      <translation>原为</translation>
     </message>
   </context>
 </TS>
