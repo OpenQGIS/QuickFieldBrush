@@ -24,12 +24,16 @@ from . import theme
 
 
 class RankContextMenu(QMenu):
-    def __init__(self, parent, layer, config, iface):
+    def __init__(self, parent, layer, config, iface, spawn_pos=None):
         super().__init__(parent)
         self.layer = layer
         self.config = config
         self.iface = iface
+        self.spawn_pos = spawn_pos
         self.target_field = None
+        self._sort_buttons = {}
+        self._value_actions = []
+        self._bottom_sep = None
         self.setStyleSheet(theme.MENU_SS)
         self._build_menu()
 
@@ -150,6 +154,7 @@ class RankContextMenu(QMenu):
         }
         """
 
+        self._sort_buttons = {}
         for m_key, text, tip in modes:
             btn = QToolButton()
             btn.setText(text)
@@ -160,16 +165,52 @@ class RankContextMenu(QMenu):
                 btn.setChecked(True)
             btn.clicked.connect(lambda checked, k=m_key: self._on_change_sort_mode(k))
             bar_layout.addWidget(btn)
+            self._sort_buttons[m_key] = btn
 
         w_act.setDefaultWidget(bar)
         return w_act
 
     def _on_change_sort_mode(self, mode):
-        """切换排序模式并重新渲染菜单"""
+        """切换排序模式并在原地无缝刷新菜单项（菜单不关闭、不闪烁、不改变屏幕位置）"""
         self.config["single_rank_sort_mode"] = mode
         ConfigManager.save_config(self.config)
-        self.close()
-        QTimer.singleShot(40, self._reopen_menu)
+
+        # 更新 6 个排序按钮的高亮状态
+        for m_key, btn in self._sort_buttons.items():
+            btn.blockSignals(True)
+            btn.setChecked(m_key == mode)
+            btn.blockSignals(False)
+
+        # 原地刷新分类值列表
+        behavior = self.config.get("behavior", {})
+        auto_edit = behavior.get("auto_start_editing", True)
+        self._render_value_items(mode, auto_edit)
+        self.adjustSize()
+
+    def _render_value_items(self, sort_mode, auto_edit):
+        """原地渲染/刷新候选分类值操作项"""
+        # 清除旧的值操作项
+        for act in self._value_actions:
+            self.removeAction(act)
+        self._value_actions.clear()
+
+        val_counts = AttributeEngine.extract_unique_values_with_counts(self.layer, self.target_field)
+        sorted_val_counts = self._sort_val_counts(val_counts, sort_mode)
+
+        if sorted_val_counts:
+            for val, cnt in sorted_val_counts:
+                label_text = f"{val}  ({cnt:,})" if cnt > 0 else str(val)
+                act = QAction(label_text, self)
+                act.triggered.connect(
+                    lambda checked, fn=self.target_field, v=val: self._on_apply_value(fn, v, auto_edit)
+                )
+                self.insertAction(self._bottom_sep, act)
+                self._value_actions.append(act)
+        else:
+            empty_item = QAction(tr("(this field currently contains only empty values in the layer)"), self)
+            empty_item.setEnabled(False)
+            self.insertAction(self._bottom_sep, empty_item)
+            self._value_actions.append(empty_item)
 
     def _build_menu(self):
         behavior = self.config.get("behavior", {})
@@ -209,21 +250,8 @@ class RankContextMenu(QMenu):
         self.addSeparator()
 
         # 4. 【核心】：提取唯一值及频次，按用户偏好排序
-        val_counts = AttributeEngine.extract_unique_values_with_counts(self.layer, self.target_field)
-        sorted_val_counts = self._sort_val_counts(val_counts, current_sort_mode)
-
-        if sorted_val_counts:
-            for val, cnt in sorted_val_counts:
-                label_text = f"{val}  ({cnt:,})" if cnt > 0 else str(val)
-                act = self.addAction(label_text)
-                act.triggered.connect(
-                    lambda checked, fn=self.target_field, v=val: self._on_apply_value(fn, v, auto_edit)
-                )
-        else:
-            empty_item = self.addAction(tr("(this field currently contains only empty values in the layer)"))
-            empty_item.setEnabled(False)
-
-        self.addSeparator()
+        self._bottom_sep = self.addSeparator()
+        self._render_value_items(current_sort_mode, auto_edit)
 
         # 5. 允许用户临时打字赋一个新分类值
         icon_add = QIcon(os.path.join(icons_dir, "add.svg"))
@@ -240,19 +268,21 @@ class RankContextMenu(QMenu):
 
     def _on_switch_target_field(self, valid_names):
         """用户点击切换目标字段"""
+        saved_pos = self.pos() if self.isVisible() else self.spawn_pos
         new_field = self._prompt_choose_field(valid_names, is_initial=False)
         if new_field:
             self.iface.messageBar().pushSuccess(
                 "QuickFieldBrush",
                 tr("Target rank field for layer [{0}] changed to: [{1}]").format(self.layer.name(), new_field)
             )
-            # 立即在光标位置无缝重新打开分级菜单
+            # 在原位置无缝重新打开分级菜单
             if self.layer and self.layer.selectedFeatureCount() > 0:
-                QTimer.singleShot(60, self._reopen_menu)
+                QTimer.singleShot(60, lambda: self._reopen_menu_at(saved_pos))
 
-    def _reopen_menu(self):
-        new_menu = RankContextMenu(self.parent(), self.layer, ConfigManager.get_config(), self.iface)
-        safe_exec(new_menu, QCursor.pos())
+    def _reopen_menu_at(self, pos):
+        new_menu = RankContextMenu(self.parent(), self.layer, ConfigManager.get_config(), self.iface, spawn_pos=pos)
+        target_pos = pos if pos is not None else QCursor.pos()
+        safe_exec(new_menu, target_pos)
 
     def _on_apply_value(self, field_name, value, auto_edit):
         """执行批量写入"""

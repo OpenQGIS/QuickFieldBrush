@@ -236,7 +236,7 @@ class QuickFieldBrushPlugin:
     def _show_rank_menu(self, global_pos, layer):
         """响应右键快速分级菜单呼出请求"""
         self.config = ConfigManager.get_config()
-        menu = RankContextMenu(self.iface.mainWindow(), layer, self.config, self.iface)
+        menu = RankContextMenu(self.iface.mainWindow(), layer, self.config, self.iface, spawn_pos=global_pos)
         safe_exec(menu, global_pos)
 
     def _on_selection_changed(self, layer, count):
