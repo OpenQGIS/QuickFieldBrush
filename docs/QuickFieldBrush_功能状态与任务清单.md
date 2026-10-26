@@ -1,6 +1,6 @@
 # QuickFieldBrush 功能状态与任务清单
 
-> 维护者：Antigravity Agent ｜ 当前版本：v0.2.0 ｜ 更新时间：2026-10-26
+> 维护者：Antigravity Agent ｜ 当前版本：v0.2.1 ｜ 更新时间：2026-10-26
 
 ---
 
@@ -41,4 +41,4 @@
 - [x] **detect-secrets**：0 处敏感秘钥或明文凭证泄漏
 - [x] **Flake8 代码规范**：0 处语法与命名错误，0 处裸 except
 - [x] **Metadata 规范**：无裸 `%`，Python `configparser` 解析 100% 通过
-- [x] **ZIP 结构规范**：统一命名 `QuickFieldBrush_V-0.2.0.zip`，顶级目录为 `QuickFieldBrush/`，全 POSIX `/` 路径，包内 14 个源码文件无冗余临时文件
+- [x] **ZIP 结构规范**：统一命名 `QuickFieldBrush_V-0.2.1.zip`，顶级目录为 `QuickFieldBrush/`，全 POSIX `/` 路径，包内 14 个源码文件无冗余临时文件

@@ -4,7 +4,7 @@ qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
 icon=icon/icon.svg
 description=Rapid interactive feature attribute ranking via right-click, one-click format painter, and Illustrator-style modification history palette for QGIS.
-version=0.2.0
+version=0.2.1
 author=OpenQGIS
 email=OpenQGIS@outlook.com
 about=
@@ -25,6 +25,8 @@ homepage=https://github.com/OpenQGIS/QuickFieldBrush
 tracker=https://github.com/OpenQGIS/QuickFieldBrush/issues
 repository=https://github.com/OpenQGIS/QuickFieldBrush
 changelog=
+  Version 0.2.1:
+  - 安全扫描 / Security scan
   Version 0.2.0:
   - 🎨 格式刷控制台全面重构为原生 4 行紧凑布局，对齐 QGIS 原生控件与矢量字段类型图标。 / Rebuilt format painter into a native 4-row layout aligned with QGIS native controls and field icons.
   - 🔄 右键分级菜单与格式刷同步搭载双维度两态翻转排序按钮 (A-Z 与 频次升降)。 / Synchronized 2-button dynamic flipping sort (alphabetical and frequency) across context menu and format painter.

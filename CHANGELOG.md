@@ -4,6 +4,12 @@
 
 ---
 
+## [v0.2.1] - 2026-10-26
+
+- 安全扫描 / Security scan
+
+---
+
 ## [v0.2.0] - 2026-10-26
 
 ### 🎨 QGIS 原生 UI 视觉还原与布局结构优化 (Native QGIS UI & Layout Polish)
