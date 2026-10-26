@@ -39,7 +39,9 @@
    - 严禁命令注入（禁止在 `subprocess` 或系统调用中使用 `shell=True`）；
    - 严禁动态代码执行（禁止使用 `eval()`、`exec()`、`compile()` 解析外部输入）；
    - 严禁不安全反序列化（禁止 `pickle` 处理非受信数据）；
-   - 严禁 SQL 字符串拼接注入。
+   - 严禁 SQL 字符串拼接注入；
+   - **严禁盲捕获通用异常与静默吞噬 (`B110: try_except_pass`)**：严禁写 `except Exception: pass`。对于合法的容错场景，必须精准捕获特定的异常类型元组（如 `except (QgsCsException, RuntimeError, ValueError): pass`）或接入 `QgsMessageLog` 进行留痕。
+   - **本地发布前强制门禁命令**：封包前必须运行 `bandit -r plugin_dir -x dev,tests,scratch`，确认 0 Issues。
 2. **detect-secrets (凭证泄漏检测)** —— 🔴 CRITICAL (拦截级)：
    - 严禁硬编码明文 API Key、Token、私钥证书或数据库连接密码；
    - 杜绝长随机高熵字符串混淆。
