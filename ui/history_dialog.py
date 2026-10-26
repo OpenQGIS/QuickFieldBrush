@@ -276,6 +276,10 @@ class HistoryDialog(QDialog):
 
         # 导出 CSV
         self.btn_export = QPushButton(tr("Export CSV"))
+        export_icon = QIcon(os.path.join(icons_dir, "export.svg"))
+        if not export_icon.isNull():
+            self.btn_export.setIcon(export_icon)
+            self.btn_export.setIconSize(QSize(16, 16))
         self.btn_export.setStyleSheet(theme.BUTTON_SECONDARY_SS)
         self.btn_export.setToolTip(tr("Export history log to CSV file"))
         self.btn_export.clicked.connect(self._export_csv)
