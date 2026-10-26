@@ -1,0 +1,85 @@
+# -*- coding: utf-8 -*-
+"""
+QuickFieldBrush 简体中文翻译字典（Fallback + 翻译文件生成的事实源）。
+"""
+
+_zh_translations = {
+    # ---- plugin.py ----
+    "QuickFieldBrush Toolbar": "QuickFieldBrush 工具栏",
+    "Activate QuickFieldBrush interactive ranking tool (box select + right click)": "激活 QuickFieldBrush 交互赋级工具 (框选+右键)",
+    "QuickFieldBrush - Ranking": "QuickFieldBrush - 交互分级",
+    "Attribute format painter (pick field/value, then click features to assign)": "属性格式刷 (点选/吸取属性后连续点击要素快速赋值)",
+    "QuickFieldBrush - Format Painter": "QuickFieldBrush - 格式刷",
+    "Interactive ranking tool activated: box-select features, then right-click to rank!": "已激活交互赋级工具：框选要素后点击右键即可快速分级！",
+    " | Target: [{0}]": " | 当前目标: [{0}]",
+    " | (Target field not set; you will be prompted on right-click)": " | (尚未设置目标字段，右键时将提示选择)",
+
+    # ---- core/map_tool.py ----
+    "Please select a vector layer in the Layers panel first!": "请先在图层面板选中一个矢量图层！",
+
+    # ---- core/format_painter_tool.py ----
+    "QuickFieldBrush Format Painter": "QuickFieldBrush 格式刷",
+    "Please select a valid vector layer in the Layers panel first!": "请先在图层面板选中一个有效的矢量图层！",
+    "Layer [{0}] has no field [{1}]; please reconfigure the format painter from the toolbar button.": "当前图层 [{0}] 不存在字段 [{1}]，请重新在格式刷控制台选择字段！",
+    "Layer [{0}] cannot start editing!": "图层 [{0}] 无法开启编辑模式！",
+    "Format painter assignment failed: {0}": "格式刷赋属性失败: {0}",
+    "QuickFieldBrush format painter: set {1}={2} on feature {0}": "QuickFieldBrush 格式刷: 要素 {0} 设为 {1}={2}",
+
+    # ---- core/attribute_engine.py ----
+    "Invalid layer": "无效图层",
+    "No features are currently selected": "当前没有选中任何要素",
+    "Field not found in layer: {0}": "图层中未找到字段: {0}",
+    "Layer is not in edit mode": "图层未处于编辑状态",
+    "Failed to start layer editing": "图层开启编辑模式失败",
+    "Successfully set {1}={2} on {0} features": "成功为 {0} 个要素修改 {1} 为 {2}",
+    "Attribute update failed: {0}": "更新属性失败: {0}",
+    "No field values provided": "未提供需修改的字段值",
+    "No matching editable fields": "没有匹配到有效的可更新字段",
+    "Successfully updated {1} fields on {0} features": "成功为 {0} 个要素更新了 {1} 个字段",
+    "Multi-field update failed: {0}": "更新多字段失败: {0}",
+    "QuickFieldBrush: set {0}={1}": "QuickFieldBrush: 设为 {0}={1}",
+    "QuickFieldBrush: batch multi-field update": "QuickFieldBrush: 批量调整多字段属性",
+
+    # ---- ui/rank_context_menu.py ----
+    "No editable fields in this layer": "当前图层没有可编辑字段",
+    "Assign rank: [{0}] (selected: {1})": "赋级字段: [{0}] (已选: {1} 个)",
+    "(this field currently contains only empty values in the layer)": "(该字段当前在图层中全为空值)",
+    "Enter a new value to assign...": "输入新值赋级...",
+    "Cancel selection": "取消选择",
+    "Enter a new rank/value": "输入新等级/属性值",
+    "Assign a new value to field [{0}] in batch:": "为字段 [{0}] 批量赋新值:",
+    "Please select the target field for rapid ranking in layer [{0}]:": "请为图层 [{0}] 选择用于快速赋级的目标字段:",
+    "Switch target ranking field for layer [{0}]:": "切换图层 [{0}] 的快速赋级目标字段:",
+    "Specify Ranking Field": "指定赋级目标字段",
+    "Switch target field... (current: [{0}])": "切换赋级字段... (当前: [{0}])",
+    "No target field selected (click to specify)": "未选择赋级字段 (点击指定)",
+    "Target rank field for layer [{0}] changed to: [{1}]": "图层 [{0}] 的赋级字段已更改为: [{1}]",
+    "Sort:": "排序:",
+    "Freq↓": "多↓",
+    "Freq↑": "少↑",
+    "Alphabetical Ascending (A -> Z)": "按首字母升序 (A -> Z)",
+    "Alphabetical Descending (Z -> A)": "按首字母降序 (Z -> A)",
+    "Frequency Descending (Most frequent first)": "按出现频次降序 (高频优先)",
+    "Frequency Ascending (Least frequent first)": "按出现频次升序 (低频优先)",
+    "Numeric Ascending (1 -> 9)": "按数值大小升序 (1 -> 9)",
+    "Numeric Descending (9 -> 1)": "按数值大小降序 (9 -> 1)",
+
+    # ---- ui/format_painter_dialog.py ----
+    "Attribute Format Painter (console)": "属性格式刷 (常驻控制台)",
+    "Format painter console": "格式刷控制台",
+    "switch value anytime, instant effect on map": "随时切换值，地图即刻生效",
+    "Always on top": "置顶",
+    "Not on top": "未置顶",
+    "Exit format painter (Esc)": "退出格式刷 (Esc)",
+    "Status: pick a field and value first": "状态: 请先选择字段与值",
+    "Painting: [{0} = {1}]": "当前刷入: [{0} = {1}]",
+    "(no valid vector layer selected)": "(未选择有效矢量图层)",
+    "Target field:": "目标字段:",
+    "Value to paint:": "要刷属性值:",
+    "Select or type the value to paint": "选择或直接输入要刷入的值",
+    "Absorb value from currently selected features": "从当前选中的要素直接吸取属性",
+    "Please select a target field first!": "请先选择目标字段！",
+    "No selected features. Please select a feature on the map first, then absorb its value.": "当前图层没有选中要素。请先在地图上选中一个要素，再点此按钮吸取它的属性值。",
+    "The [{0}] value of the selected feature is empty and cannot be absorbed.": "选中要素的 [{0}] 属性值为空，无法吸取。",
+    "Layer: {0} (no editable fields)": "图层: {0} (无可编辑字段)"
+}
