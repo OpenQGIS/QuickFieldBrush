@@ -13,7 +13,7 @@ from qgis.PyQt.QtWidgets import (
     QComboBox, QPushButton, QLabel, QToolButton, QFrame
 )
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtCore import Qt, pyqtSignal, QSize
 from qgis.core import QgsVectorLayer
 from ..core.attribute_engine import AttributeEngine
 from ..core.config_manager import ConfigManager
@@ -71,9 +71,11 @@ class FormatPainterDialog(QDialog):
         self.btn_pin = QToolButton()
         self.btn_pin.setCheckable(True)
         self.btn_pin.setChecked(True)
-        pin_icon = QIcon(os.path.join(icons_dir, "pin.svg"))
-        if not pin_icon.isNull():
-            self.btn_pin.setIcon(pin_icon)
+        self._icon_pin_on = QIcon(os.path.join(icons_dir, "pin.fill.svg"))
+        self._icon_pin_off = QIcon(os.path.join(icons_dir, "pin.slash.fill.svg"))
+        if not self._icon_pin_on.isNull():
+            self.btn_pin.setIcon(self._icon_pin_on)
+            self.btn_pin.setIconSize(QSize(14, 14))
         self.btn_pin.setText(" " + tr("Always on top"))
         self.btn_pin.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
         self.btn_pin.setStyleSheet(theme.TOGGLE_ON_SS)
@@ -137,10 +139,14 @@ class FormatPainterDialog(QDialog):
         if checked:
             self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
             self.btn_pin.setText(" " + tr("Always on top"))
+            if hasattr(self, "_icon_pin_on") and not self._icon_pin_on.isNull():
+                self.btn_pin.setIcon(self._icon_pin_on)
             self.btn_pin.setStyleSheet(theme.TOGGLE_ON_SS)
         else:
             self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
             self.btn_pin.setText(" " + tr("Not on top"))
+            if hasattr(self, "_icon_pin_off") and not self._icon_pin_off.isNull():
+                self.btn_pin.setIcon(self._icon_pin_off)
             self.btn_pin.setStyleSheet(theme.TOGGLE_OFF_SS)
         self.show()  # 改变 windowFlags 后需要重新 show
 
