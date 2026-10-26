@@ -340,7 +340,7 @@
     </message>
     <message>
       <source>Revert the most recent modification step</source>
-      <translation>撤销最近一次未回滚的要素修改</translation>
+      <translation>撤回最近一次未回滚的要素修改</translation>
     </message>
     <message>
       <source>Revert this operation</source>
@@ -436,7 +436,7 @@
     </message>
     <message>
       <source>Undo Latest</source>
-      <translation>撤销最近一步</translation>
+      <translation>撤回上一步</translation>
     </message>
     <message>
       <source>Unknown Layer</source>

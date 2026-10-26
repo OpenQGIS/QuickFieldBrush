@@ -17,7 +17,7 @@ from qgis.PyQt.QtWidgets import (
     QLineEdit, QFileDialog, QMenu, QApplication
 )
 from qgis.PyQt.QtGui import QIcon, QColor, QFont
-from qgis.PyQt.QtCore import Qt, QTimer
+from qgis.PyQt.QtCore import Qt, QTimer, QSize
 from ..core.compat import safe_exec
 from qgis.core import (
     QgsProject, QgsVectorLayer, QgsWkbTypes,
@@ -122,19 +122,25 @@ class HistoryCardWidget(QWidget):
         if self.step.is_reverted:
             self.btn_revert.setText("✓")
             self.btn_revert.setEnabled(False)
-            self.btn_revert.setStyleSheet("color: %s; border: none; background: transparent;" % theme.SUCCESS)
+            self.btn_revert.setStyleSheet("color: %s; border: none; background: transparent; font-weight: bold;" % theme.SUCCESS)
         else:
-            self.btn_revert.setText("↺")
+            icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
+            undo_icon = QIcon(os.path.join(icons_dir, "undo_latest.svg"))
+            if not undo_icon.isNull():
+                self.btn_revert.setIcon(undo_icon)
+                self.btn_revert.setIconSize(QSize(13, 13))
+            else:
+                self.btn_revert.setText("↺")
             self.btn_revert.setToolTip(tr("Revert this operation"))
             self.btn_revert.setStyleSheet("""
                 QToolButton {
                     border: 1px solid %s; border-radius: 3px;
-                    background-color: %s; color: %s; font-weight: bold; font-size: 12px;
+                    background-color: %s;
                 }
                 QToolButton:hover {
-                    background-color: %s; border-color: %s; color: #FFFFFF;
+                    background-color: %s; border-color: %s;
                 }
-            """ % (theme.BORDER, theme.CARD, theme.PRIMARY, theme.PRIMARY, theme.PRIMARY))
+            """ % (theme.BORDER, theme.CARD, theme.HOVER_FILL, theme.PRIMARY))
             self.btn_revert.clicked.connect(lambda: self.on_revert_cb(self.step.id))
         layout.addWidget(self.btn_revert)
 
@@ -180,8 +186,13 @@ class HistoryDialog(QDialog):
 
         # 1. 顶部标题栏：图标 + 标题 + 置顶按钮
         top_bar = QHBoxLayout()
-        lbl_icon = QLabel("🕒")
-        lbl_icon.setStyleSheet("font-size: 14px;")
+        lbl_icon = QLabel()
+        history_icon_path = os.path.join(icons_dir, "history.svg")
+        if os.path.exists(history_icon_path):
+            lbl_icon.setPixmap(QIcon(history_icon_path).pixmap(18, 18))
+        else:
+            lbl_icon.setText("🕒")
+            lbl_icon.setStyleSheet("font-size: 14px;")
         top_bar.addWidget(lbl_icon)
 
         lbl_title = QLabel(tr("Modification History"))
@@ -243,6 +254,10 @@ class HistoryDialog(QDialog):
 
         # 撤销最近一步
         self.btn_undo_last = QPushButton(tr("Undo Latest"))
+        undo_icon = QIcon(os.path.join(icons_dir, "undo_latest.svg"))
+        if not undo_icon.isNull():
+            self.btn_undo_last.setIcon(undo_icon)
+            self.btn_undo_last.setIconSize(QSize(16, 16))
         self.btn_undo_last.setStyleSheet(theme.BUTTON_SECONDARY_SS)
         self.btn_undo_last.setToolTip(tr("Revert the most recent modification step"))
         self.btn_undo_last.clicked.connect(self._undo_latest)
