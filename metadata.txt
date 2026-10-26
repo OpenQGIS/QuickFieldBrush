@@ -10,13 +10,13 @@ email=OpenQGIS@outlook.com
 about=
   QuickFieldBrush 是一款专为 QGIS 打造的极速矢量要素属性赋级、格式刷与历史回溯工具。
   包含三大核心作业模式：
-  1. 交互赋级工具：框选要素后右键呼出极速分级菜单，每次激活主动弹窗确定目标字段并按图层独立记忆；内置 6 维微型排序控制条（高频优先/数值大小/字母顺序），直接透视要素真实出现频次。
+  1. 交互赋级工具：框选要素后右键呼出极速分级菜单，每次激活主动弹窗确定目标字段并按图层独立记忆；内置双维度智能翻转排序条（高频优先/字母升降序），直接透视要素真实出现频次。
   2. 属性格式刷工具：无模态常驻置顶控制台，单选或从要素一键吸取属性后，在地图上连续点击要素快速刷入。
-  3. 历史记录面板：Adobe Illustrator 风格无模态悬浮操作面板，记录单点刷入与批量修改；支持地图单击瞬时居中高亮、双击选中要素、单步一键精准还原与 CSV 台账导出。
+  3. 历史记录面板：悬浮操作面板，记录单点刷入与批量修改；支持地图单击瞬时居中高亮、双击选中要素、单步一键精准还原与 CSV 台账导出。
   /
   QuickFieldBrush provides rapid vector feature attribute ranking, continuous format painting, and an Illustrator-style history panel for QGIS.
   Features:
-  1. Interactive ranking: Box-select features, then right-click to rank instantly. Prompts for target field on activation with per-layer memory. Features a 6-mode compact sorting bar (frequency, numerical, alphabetical) with feature count statistics.
+  1. Interactive ranking: Box-select features, then right-click to rank instantly. Prompts for target field on activation with per-layer memory. Features a 2-button dynamic flipping sort bar (frequency and alphabetical) with feature count statistics.
   2. Format painter: Modeless always-on-top console for continuous single-click attribute painting with instant absorption from selected features.
   3. History panel: Floating palette recording all feature attribute changes. Supports instant canvas centering and flash highlight on click, feature selection on double click, single-step revert, undo latest, and CSV audit log export.
 category=Vector
