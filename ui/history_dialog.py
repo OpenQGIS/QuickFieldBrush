@@ -18,7 +18,7 @@ from qgis.PyQt.QtWidgets import (
 )
 from qgis.PyQt.QtGui import QIcon, QColor, QFont
 from qgis.PyQt.QtCore import Qt, QTimer, QSize
-from ..core.compat import safe_exec
+from ..core.compat import safe_exec, set_window_stay_on_top
 from qgis.core import (
     QgsProject, QgsVectorLayer, QgsWkbTypes,
     QgsCoordinateTransform, QgsRectangle, QgsFeatureRequest
@@ -208,17 +208,18 @@ class HistoryDialog(QDialog):
         lbl_title.setStyleSheet(theme.LABEL_TITLE_SS)
         top_bar.addWidget(lbl_title, 1)
 
+        # 置顶切换按钮（纯图标两态：激活显示绿图钉，未激活显示灰图钉，无文字不形变）
         self.btn_pin = QToolButton()
+        self.btn_pin.setFixedSize(24, 24)
         self.btn_pin.setCheckable(True)
         self.btn_pin.setChecked(True)
-        self._icon_pin_on = QIcon(os.path.join(icons_dir, "pin.fill.svg"))
-        self._icon_pin_off = QIcon(os.path.join(icons_dir, "pin.slash.fill.svg"))
+        self.btn_pin.setAutoRaise(True)
+        self._icon_pin_on = QIcon(os.path.join(icons_dir, "pin_green.svg"))
+        self._icon_pin_off = QIcon(os.path.join(icons_dir, "pin_grey.svg"))
         if not self._icon_pin_on.isNull():
             self.btn_pin.setIcon(self._icon_pin_on)
-            self.btn_pin.setIconSize(QSize(14, 14))
-        self.btn_pin.setText(" " + tr("Always on top"))
-        self.btn_pin.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.btn_pin.setStyleSheet(theme.TOGGLE_ON_SS)
+            self.btn_pin.setIconSize(QSize(15, 15))
+        self.btn_pin.setToolTip(tr("Always on top (click to disable)"))
         self.btn_pin.toggled.connect(self._toggle_stay_on_top)
         top_bar.addWidget(self.btn_pin)
 
@@ -228,6 +229,10 @@ class HistoryDialog(QDialog):
         search_box = QHBoxLayout()
         self.txt_filter = QLineEdit()
         self.txt_filter.setPlaceholderText(tr("Search field, layer, or FID..."))
+        search_icon = QIcon(os.path.join(icons_dir, "search.svg"))
+        if not search_icon.isNull():
+            self.txt_filter.addAction(search_icon, QLineEdit.LeadingPosition)
+        self.txt_filter.setClearButtonEnabled(True)
         self.txt_filter.textChanged.connect(self._filter_items)
         self.txt_filter.setStyleSheet(theme.LINEEDIT_SS)
         search_box.addWidget(self.txt_filter)
@@ -288,21 +293,17 @@ class HistoryDialog(QDialog):
         main_layout.addLayout(bottom_bar)
 
     def _toggle_stay_on_top(self, checked):
-        """置顶切换"""
+        """置顶切换（0 闪烁无感切换）"""
         self.is_pinned = checked
+        set_window_stay_on_top(self, checked)
         if checked:
-            self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
-            self.btn_pin.setText(" " + tr("Always on top"))
             if hasattr(self, "_icon_pin_on") and not self._icon_pin_on.isNull():
                 self.btn_pin.setIcon(self._icon_pin_on)
-            self.btn_pin.setStyleSheet(theme.TOGGLE_ON_SS)
+            self.btn_pin.setToolTip(tr("Always on top (click to disable)"))
         else:
-            self.setWindowFlags(self.windowFlags() & ~Qt.WindowStaysOnTopHint)
-            self.btn_pin.setText(" " + tr("Not on top"))
             if hasattr(self, "_icon_pin_off") and not self._icon_pin_off.isNull():
                 self.btn_pin.setIcon(self._icon_pin_off)
-            self.btn_pin.setStyleSheet(theme.TOGGLE_OFF_SS)
-        self.show()
+            self.btn_pin.setToolTip(tr("Not on top (click to enable)"))
 
     def _reload_history(self):
         """重新刷新加载历史记录列表（倒序显示：最新记录在最上方）"""

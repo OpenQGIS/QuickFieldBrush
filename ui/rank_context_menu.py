@@ -12,15 +12,89 @@
 import os
 from qgis.PyQt.QtWidgets import (
     QMenu, QInputDialog, QLineEdit, QWidgetAction,
-    QWidget, QHBoxLayout, QToolButton, QLabel
+    QWidget, QHBoxLayout, QVBoxLayout, QToolButton, QLabel,
+    QDialog, QComboBox, QDialogButtonBox, QStyleOption, QStyle
 )
-from qgis.PyQt.QtGui import QIcon, QCursor
-from qgis.PyQt.QtCore import QTimer
-from ..core.compat import safe_exec
+from qgis.PyQt.QtGui import QIcon, QCursor, QPainter
+from qgis.PyQt.QtCore import QTimer, QSize, Qt, pyqtSignal
+from ..core.compat import safe_exec, QAction
 from ..core.attribute_engine import AttributeEngine
 from ..core.config_manager import ConfigManager
 from ..i18n_helper import tr
 from . import theme
+
+
+class RankValueItemWidget(QWidget):
+    """右键分级菜单专属候选值项：值为主体黑色，频次统计为中灰色，有效避免用户以为输入内容包含数字"""
+    clicked = pyqtSignal()
+
+    def __init__(self, val, count, parent=None):
+        super().__init__(parent)
+        self.val = val
+        self.count = count
+        self.setAttribute(Qt.WA_StyledBackground, True)
+        self.setAttribute(Qt.WA_Hover, True)
+        self.setMouseTracking(True)
+        self.setCursor(Qt.PointingHandCursor)
+
+        lay = QHBoxLayout(self)
+        # 左边距 26px 与带 16x16 图标的操作项对齐
+        lay.setContentsMargins(26, 4, 14, 4)
+        lay.setSpacing(6)
+
+        self.lbl_val = QLabel(str(val))
+        lay.addWidget(self.lbl_val)
+
+        if count > 0:
+            self.lbl_cnt = QLabel(f"({count:,})")
+            lay.addWidget(self.lbl_cnt)
+
+        lay.addStretch(1)
+        self._is_hovered = False
+        self._update_style()
+
+    def paintEvent(self, e):
+        opt = QStyleOption()
+        opt.initFrom(self)
+        p = QPainter(self)
+        self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
+
+    def _update_style(self):
+        if self._is_hovered:
+            self.setStyleSheet("""
+                RankValueItemWidget {
+                    background-color: #0078D7;
+                }
+            """)
+            self.lbl_val.setStyleSheet("font-size: 12px; color: #FFFFFF; background: transparent; font-weight: 500;")
+            if hasattr(self, 'lbl_cnt'):
+                self.lbl_cnt.setStyleSheet("font-size: 11px; color: #BFDBFE; background: transparent;")
+        else:
+            self.setStyleSheet("""
+                RankValueItemWidget {
+                    background-color: transparent;
+                }
+            """)
+            self.lbl_val.setStyleSheet("font-size: 12px; color: #0F172A; background: transparent; font-weight: normal;")
+            if hasattr(self, 'lbl_cnt'):
+                self.lbl_cnt.setStyleSheet("font-size: 11px; color: #718096; background: transparent;")
+
+    def enterEvent(self, e):
+        self._is_hovered = True
+        self._update_style()
+        super().enterEvent(e)
+
+    def leaveEvent(self, e):
+        self._is_hovered = False
+        self._update_style()
+        super().leaveEvent(e)
+
+    def mouseReleaseEvent(self, e):
+        if e.button() == Qt.LeftButton:
+            self.clicked.emit()
+            e.accept()
+        else:
+            super().mouseReleaseEvent(e)
 
 
 class RankContextMenu(QMenu):
@@ -31,9 +105,15 @@ class RankContextMenu(QMenu):
         self.iface = iface
         self.spawn_pos = spawn_pos
         self.target_field = None
-        self._sort_buttons = {}
         self._value_actions = []
         self._bottom_sep = None
+
+        icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
+        self._icon_alpha_asc = QIcon(os.path.join(icons_dir, "sort-AZ.svg"))
+        self._icon_alpha_desc = QIcon(os.path.join(icons_dir, "sort-reverse-ZA.svg"))
+        self._icon_freq_desc = QIcon(os.path.join(icons_dir, "sort-dscend.svg"))
+        self._icon_freq_asc = QIcon(os.path.join(icons_dir, "sort-ascend.svg"))
+
         self.setStyleSheet(theme.MENU_SS)
         self._build_menu()
 
@@ -56,7 +136,7 @@ class RankContextMenu(QMenu):
         return target
 
     def _prompt_choose_field(self, valid_names, is_initial=False):
-        """弹出字段选择框，由用户显式确定赋级字段"""
+        """弹出字段选择框，由用户显式确定赋级字段（展示 QGIS 原生字段类型图标）"""
         prompt_text = (
             tr("Please select the target field for rapid ranking in layer [{0}]:").format(self.layer.name())
             if is_initial else
@@ -67,21 +147,38 @@ class RankContextMenu(QMenu):
         if current_field in valid_names:
             current_idx = valid_names.index(current_field)
 
-        item, ok = QInputDialog.getItem(
-            self.parent(),
-            tr("Specify Ranking Field"),
-            prompt_text,
-            valid_names,
-            current_idx,
-            False
-        )
-        if ok and item:
-            # 记忆该图层的选择
-            by_layer = self.config.setdefault("single_rank_by_layer", {})
-            by_layer[self.layer.id()] = item
-            self.config.setdefault("single_rank", {})["field_name"] = item
-            ConfigManager.save_config(self.config)
-            return item
+        dlg = QDialog(self.parent())
+        dlg.setWindowTitle(tr("Specify Ranking Field"))
+        lay = QVBoxLayout(dlg)
+        lay.setContentsMargins(11, 11, 11, 11)
+        lay.setSpacing(8)
+
+        lbl = QLabel(prompt_text)
+        lay.addWidget(lbl)
+
+        cb = QComboBox()
+        for name in valid_names:
+            ic = AttributeEngine.get_field_icon(self.layer, name)
+            cb.addItem(ic, name, name)
+
+        if 0 <= current_idx < cb.count():
+            cb.setCurrentIndex(current_idx)
+        lay.addWidget(cb)
+
+        btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+        btn_box.accepted.connect(dlg.accept)
+        btn_box.rejected.connect(dlg.reject)
+        lay.addWidget(btn_box)
+
+        dlg.resize(340, 110)
+        if safe_exec(dlg) == QDialog.Accepted:
+            item = cb.currentData()
+            if item:
+                by_layer = self.config.setdefault("single_rank_by_layer", {})
+                by_layer[self.layer.id()] = item
+                self.config.setdefault("single_rank", {})["field_name"] = item
+                ConfigManager.save_config(self.config)
+                return item
         return None
 
     def _sort_val_counts(self, val_counts, mode):
@@ -111,75 +208,109 @@ class RankContextMenu(QMenu):
         return val_counts
 
     def _create_sort_bar_action(self, current_mode):
-        """创建嵌入菜单顶部的 6 模式微型排序切换条"""
+        """创建嵌入菜单顶部的 2 按钮智能两态微型排序条（与格式刷完全一致）"""
         w_act = QWidgetAction(self)
         bar = QWidget()
         bar_layout = QHBoxLayout(bar)
-        bar_layout.setContentsMargins(6, 2, 6, 2)
-        bar_layout.setSpacing(3)
+        bar_layout.setContentsMargins(8, 2, 8, 2)
+        bar_layout.setSpacing(6)
 
         lbl = QLabel(tr("Sort:"))
         lbl.setStyleSheet("font-size: 11px; color: #64748B; font-weight: 600;")
         bar_layout.addWidget(lbl)
 
-        modes = [
-            ("alpha_asc", "A-Z", tr("Alphabetical Ascending (A -> Z)")),
-            ("alpha_desc", "Z-A", tr("Alphabetical Descending (Z -> A)")),
-            ("freq_desc", tr("Freq↓"), tr("Frequency Descending (Most frequent first)")),
-            ("freq_asc", tr("Freq↑"), tr("Frequency Ascending (Least frequent first)")),
-            ("num_asc", "1-9", tr("Numeric Ascending (1 -> 9)")),
-            ("num_desc", "9-1", tr("Numeric Descending (9 -> 1)")),
-        ]
+        # 字母排序按钮 (A->Z / Z->A 两态翻转)
+        self.btn_sort_alpha = QToolButton()
+        self.btn_sort_alpha.setFixedSize(24, 24)
+        self.btn_sort_alpha.setCheckable(True)
+        self.btn_sort_alpha.setAutoRaise(True)
+        is_alpha = current_mode in ("alpha_asc", "alpha_desc")
+        self.btn_sort_alpha.setChecked(is_alpha)
+        if current_mode == "alpha_desc":
+            self.btn_sort_alpha.setIcon(self._icon_alpha_desc)
+            self.btn_sort_alpha.setToolTip(tr("Alphabetical Descending (Z -> A)"))
+        else:
+            self.btn_sort_alpha.setIcon(self._icon_alpha_asc)
+            self.btn_sort_alpha.setToolTip(tr("Alphabetical Ascending (A -> Z)"))
+        self.btn_sort_alpha.setIconSize(QSize(16, 16))
+        self.btn_sort_alpha.clicked.connect(self._on_sort_alpha_clicked)
+        bar_layout.addWidget(self.btn_sort_alpha)
 
-        btn_ss = """
-        QToolButton {
-            border: 1px solid #CBD5E1;
-            border-radius: 3px;
-            padding: 1px 3px;
-            font-size: 11px;
-            font-weight: 600;
-            background: #F8FAFC;
-            color: #334155;
-            min-width: 24px;
-            min-height: 18px;
-        }
-        QToolButton:hover {
-            background: #E2E8F0;
-            color: #0F172A;
-        }
-        QToolButton:checked {
-            background: #2563EB;
-            color: #FFFFFF;
-            border-color: #1D4ED8;
-        }
-        """
+        # 频次排序按钮 (多->少 / 少->多 两态翻转)
+        self.btn_sort_freq = QToolButton()
+        self.btn_sort_freq.setFixedSize(24, 24)
+        self.btn_sort_freq.setCheckable(True)
+        self.btn_sort_freq.setAutoRaise(True)
+        is_freq = not is_alpha
+        self.btn_sort_freq.setChecked(is_freq)
+        if current_mode == "freq_asc":
+            self.btn_sort_freq.setIcon(self._icon_freq_asc)
+            self.btn_sort_freq.setToolTip(tr("Frequency Ascending (Least frequent first)"))
+        else:
+            self.btn_sort_freq.setIcon(self._icon_freq_desc)
+            self.btn_sort_freq.setToolTip(tr("Frequency Descending (Most frequent first)"))
+        self.btn_sort_freq.setIconSize(QSize(16, 16))
+        self.btn_sort_freq.clicked.connect(self._on_sort_freq_clicked)
+        bar_layout.addWidget(self.btn_sort_freq)
 
-        self._sort_buttons = {}
-        for m_key, text, tip in modes:
-            btn = QToolButton()
-            btn.setText(text)
-            btn.setToolTip(tip)
-            btn.setStyleSheet(btn_ss)
-            btn.setCheckable(True)
-            if m_key == current_mode:
-                btn.setChecked(True)
-            btn.clicked.connect(lambda checked, k=m_key: self._on_change_sort_mode(k))
-            bar_layout.addWidget(btn)
-            self._sort_buttons[m_key] = btn
-
+        bar_layout.addStretch()
         w_act.setDefaultWidget(bar)
         return w_act
+
+    def _on_sort_alpha_clicked(self):
+        current_mode = self.config.get("single_rank_sort_mode", "freq_desc")
+        if current_mode == "alpha_asc":
+            new_mode = "alpha_desc"
+        elif current_mode == "alpha_desc":
+            new_mode = "alpha_asc"
+        else:
+            new_mode = "alpha_asc"
+
+        self._update_sort_buttons_ui(new_mode)
+        self._on_change_sort_mode(new_mode)
+
+    def _on_sort_freq_clicked(self):
+        current_mode = self.config.get("single_rank_sort_mode", "freq_desc")
+        if current_mode == "freq_desc":
+            new_mode = "freq_asc"
+        elif current_mode == "freq_asc":
+            new_mode = "freq_desc"
+        else:
+            new_mode = "freq_desc"
+
+        self._update_sort_buttons_ui(new_mode)
+        self._on_change_sort_mode(new_mode)
+
+    def _update_sort_buttons_ui(self, mode):
+        self.btn_sort_alpha.blockSignals(True)
+        self.btn_sort_freq.blockSignals(True)
+
+        if mode in ("alpha_asc", "alpha_desc"):
+            self.btn_sort_alpha.setChecked(True)
+            self.btn_sort_freq.setChecked(False)
+            if mode == "alpha_asc":
+                self.btn_sort_alpha.setIcon(self._icon_alpha_asc)
+                self.btn_sort_alpha.setToolTip(tr("Alphabetical Ascending (A -> Z)"))
+            else:
+                self.btn_sort_alpha.setIcon(self._icon_alpha_desc)
+                self.btn_sort_alpha.setToolTip(tr("Alphabetical Descending (Z -> A)"))
+        else:
+            self.btn_sort_freq.setChecked(True)
+            self.btn_sort_alpha.setChecked(False)
+            if mode == "freq_asc":
+                self.btn_sort_freq.setIcon(self._icon_freq_asc)
+                self.btn_sort_freq.setToolTip(tr("Frequency Ascending (Least frequent first)"))
+            else:
+                self.btn_sort_freq.setIcon(self._icon_freq_desc)
+                self.btn_sort_freq.setToolTip(tr("Frequency Descending (Most frequent first)"))
+
+        self.btn_sort_alpha.blockSignals(False)
+        self.btn_sort_freq.blockSignals(False)
 
     def _on_change_sort_mode(self, mode):
         """切换排序模式并在原地无缝刷新菜单项（菜单不关闭、不闪烁、不改变屏幕位置）"""
         self.config["single_rank_sort_mode"] = mode
         ConfigManager.save_config(self.config)
-
-        # 更新 6 个排序按钮的高亮状态
-        for m_key, btn in self._sort_buttons.items():
-            btn.blockSignals(True)
-            btn.setChecked(m_key == mode)
-            btn.blockSignals(False)
 
         # 原地刷新分类值列表
         behavior = self.config.get("behavior", {})
@@ -188,7 +319,7 @@ class RankContextMenu(QMenu):
         self.adjustSize()
 
     def _render_value_items(self, sort_mode, auto_edit):
-        """原地渲染/刷新候选分类值操作项"""
+        """原地渲染/刷新候选分类值操作项（值为主体黑色，频次为中灰色微弱字号）"""
         # 清除旧的值操作项
         for act in self._value_actions:
             self.removeAction(act)
@@ -199,13 +330,14 @@ class RankContextMenu(QMenu):
 
         if sorted_val_counts:
             for val, cnt in sorted_val_counts:
-                label_text = f"{val}  ({cnt:,})" if cnt > 0 else str(val)
-                act = QAction(label_text, self)
-                act.triggered.connect(
-                    lambda checked, fn=self.target_field, v=val: self._on_apply_value(fn, v, auto_edit)
+                w_act = QWidgetAction(self)
+                w = RankValueItemWidget(val, cnt, self)
+                w.clicked.connect(
+                    lambda v=val: (self._on_apply_value(self.target_field, v, auto_edit), self.close())
                 )
-                self.insertAction(self._bottom_sep, act)
-                self._value_actions.append(act)
+                w_act.setDefaultWidget(w)
+                self.insertAction(self._bottom_sep, w_act)
+                self._value_actions.append(w_act)
         else:
             empty_item = QAction(tr("(this field currently contains only empty values in the layer)"), self)
             empty_item.setEnabled(False)
@@ -233,29 +365,27 @@ class RankContextMenu(QMenu):
 
         selected_count = self.layer.selectedFeatureCount()
 
-        # 1. 菜单顶部标题（清晰告知当前是在给哪个字段分级，选中了几个要素）
-        title_action = self.addAction(
-            tr("Assign rank: [{0}] (selected: {1})").format(self.target_field, selected_count))
-        title_action.setEnabled(False)
-
-        # 2. 快捷切换赋级字段
+        # 1. 快捷切换赋级字段（合并显示当前字段与已选要素数，移除了旧版的独立标题行）
         icon_settings = QIcon(os.path.join(icons_dir, "settings.svg"))
-        switch_act = self.addAction(icon_settings, tr("Switch target field... (current: [{0}])").format(self.target_field))
+        switch_act = self.addAction(
+            icon_settings,
+            tr("Switch field ( {0} )-[{1}]").format(self.target_field, selected_count)
+        )
         switch_act.triggered.connect(lambda: self._on_switch_target_field(valid_names))
 
-        # 3. 顶部 6 模式微型排序切换控制条
+        # 2. 顶部微型 2 键智能翻转排序条
         current_sort_mode = self.config.get("single_rank_sort_mode", "freq_desc")
         self.addAction(self._create_sort_bar_action(current_sort_mode))
 
         self.addSeparator()
 
-        # 4. 【核心】：提取唯一值及频次，按用户偏好排序
+        # 3. 【核心】：提取唯一值及频次，按用户偏好排序
         self._bottom_sep = self.addSeparator()
         self._render_value_items(current_sort_mode, auto_edit)
 
-        # 5. 允许用户临时打字赋一个新分类值
+        # 4. 允许用户临时打字赋一个新分类值
         icon_add = QIcon(os.path.join(icons_dir, "add.svg"))
-        custom_act = self.addAction(icon_add, tr("Enter a new value to assign..."))
+        custom_act = self.addAction(icon_add, tr("Enter a new value..."))
         custom_act.triggered.connect(
             lambda checked, fn=self.target_field: self._on_custom_input(fn, auto_edit)
         )

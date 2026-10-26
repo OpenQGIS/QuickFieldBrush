@@ -15,12 +15,32 @@
       <translation>(未选择有效矢量图层)</translation>
     </message>
     <message>
+      <source>(no values yet in this layer)</source>
+      <translation>(当前图层无属性值)</translation>
+    </message>
+    <message>
       <source>(this field currently contains only empty values in the layer)</source>
       <translation>(该字段当前在图层中全为空值)</translation>
     </message>
     <message>
+      <source>Absorb attribute (click map feature / right-click)</source>
+      <translation>吸取属性 (点击地图要素 / 右键吸取)</translation>
+    </message>
+    <message>
+      <source>Absorb attribute from feature</source>
+      <translation>从要素吸取属性</translation>
+    </message>
+    <message>
+      <source>Absorb mode: click any feature on map to pick [{0}]</source>
+      <translation>吸取模式: 请在地图上单击要素吸取 [{0}] 属性</translation>
+    </message>
+    <message>
       <source>Absorb value from currently selected features</source>
       <translation>从当前选中的要素直接吸取属性</translation>
+    </message>
+    <message>
+      <source>Absorbed FID {0}: [{1} = {2}] (ready to paint)</source>
+      <translation>已吸取要素 {0}: [{1} = {2}] (可左键刷入)</translation>
     </message>
     <message>
       <source>Action Type</source>
@@ -29,6 +49,10 @@
     <message>
       <source>Activate QuickFieldBrush interactive ranking tool (box select + right click)</source>
       <translation>激活 QuickFieldBrush 交互赋级工具 (框选+右键)</translation>
+    </message>
+    <message>
+      <source>Add New Attribute Value</source>
+      <translation>添加新属性值</translation>
     </message>
     <message>
       <source>Alphabetical Ascending (A -&gt; Z)</source>
@@ -43,12 +67,20 @@
       <translation>置顶</translation>
     </message>
     <message>
+      <source>Always on top (click to disable)</source>
+      <translation>置顶中（点击取消置顶）</translation>
+    </message>
+    <message>
       <source>Assign a new value to field [{0}] in batch:</source>
       <translation>为字段 [{0}] 批量赋新值:</translation>
     </message>
     <message>
       <source>Assign rank: [{0}] (selected: {1})</source>
       <translation>赋级字段: [{0}] (已选: {1} 个)</translation>
+    </message>
+    <message>
+      <source>Attribute Format Painter</source>
+      <translation>属性格式刷</translation>
     </message>
     <message>
       <source>Attribute Format Painter (console)</source>
@@ -61,6 +93,10 @@
     <message>
       <source>Attribute update failed: {0}</source>
       <translation>更新属性失败: {0}</translation>
+    </message>
+    <message>
+      <source>Attribute value</source>
+      <translation>属性值</translation>
     </message>
     <message>
       <source>Batch Ranking</source>
@@ -79,6 +115,10 @@
       <translation>清空当前所有操作记录</translation>
     </message>
     <message>
+      <source>Click to enter eyedropper mode, or right-click any feature on map to absorb its value</source>
+      <translation>点击进入吸管模式在地图上点选吸取，或在地图上直接右键吸取要素属性</translation>
+    </message>
+    <message>
       <source>Copy Feature ID(s) to Clipboard</source>
       <translation>复制要素 FID 到剪贴板</translation>
     </message>
@@ -88,7 +128,15 @@
     </message>
     <message>
       <source>Enter a new value to assign...</source>
-      <translation>输入新值赋级...</translation>
+      <translation>输入新值…</translation>
+    </message>
+    <message>
+      <source>Enter a new value...</source>
+      <translation>输入新值…</translation>
+    </message>
+    <message>
+      <source>Enter new value for [{0}]:</source>
+      <translation>请输入 [{0}] 字段的新值:</translation>
     </message>
     <message>
       <source>Exit format painter (Esc)</source>
@@ -263,6 +311,10 @@
       <translation>未置顶</translation>
     </message>
     <message>
+      <source>Not on top (click to enable)</source>
+      <translation>未置顶（点击开启置顶）</translation>
+    </message>
+    <message>
       <source>Numeric Ascending (1 -&gt; 9)</source>
       <translation>按数值大小升序 (1 -&gt; 9)</translation>
     </message>
@@ -289,6 +341,14 @@
     <message>
       <source>Please select a vector layer in the Layers panel first!</source>
       <translation>请先在图层面板选中一个矢量图层！</translation>
+    </message>
+    <message>
+      <source>Please select target field and value to paint for [{0}]:</source>
+      <translation>请为图层 [{0}] 选择格式刷目标字段与属性值:</translation>
+    </message>
+    <message>
+      <source>Please select target field and value to paint:</source>
+      <translation>请选择格式刷目标字段与属性值:</translation>
     </message>
     <message>
       <source>Please select the target field for rapid ranking in layer [{0}]:</source>
@@ -399,8 +459,12 @@
       <translation>成功为 {0} 个要素更新了 {1} 个字段</translation>
     </message>
     <message>
+      <source>Switch field ( {0} )-[{1}]</source>
+      <translation>切换字段 ( {0} )-[{1}]</translation>
+    </message>
+    <message>
       <source>Switch target field... (current: [{0}])</source>
-      <translation>切换赋级字段... (当前: [{0}])</translation>
+      <translation>切换字段 ( {0} )</translation>
     </message>
     <message>
       <source>Switch target ranking field for layer [{0}]:</source>
@@ -409,6 +473,10 @@
     <message>
       <source>Target Value</source>
       <translation>赋级目标值</translation>
+    </message>
+    <message>
+      <source>Target field</source>
+      <translation>目标字段</translation>
     </message>
     <message>
       <source>Target field:</source>
@@ -465,6 +533,10 @@
     <message>
       <source>was</source>
       <translation>原为</translation>
+    </message>
+    <message>
+      <source>🔍 Click any feature on map to absorb value...</source>
+      <translation>🔍 请在地图上单击要素吸取属性...</translation>
     </message>
   </context>
 </TS>

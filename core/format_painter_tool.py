@@ -32,12 +32,20 @@ class FormatPainterTool(QgsMapTool):
 
         self.target_field = None
         self.target_value = None
+        self.is_picking_mode = False
+        self.on_feature_picked = None  # 回调通知面板: fn(field_name, val_str, feat_id)
 
         # 瞬时高亮橡皮筋（点击要素后闪烁一下绿色表示刷入成功）
         self.flash_band = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         self.flash_band.setColor(QColor(76, 175, 80, 120))
         self.flash_band.setStrokeColor(QColor(56, 142, 60, 255))
         self.flash_band.setWidth(2)
+
+        # 瞬时吸取高亮橡皮筋（吸取要素后闪烁一下优雅蓝色）
+        self.absorb_band = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.absorb_band.setColor(QColor(37, 99, 235, 120))
+        self.absorb_band.setStrokeColor(QColor(29, 78, 216, 255))
+        self.absorb_band.setWidth(2)
 
         self.setCursor(Qt.PointingHandCursor)
 
@@ -46,8 +54,16 @@ class FormatPainterTool(QgsMapTool):
         self.target_field = field_name
         self.target_value = value
 
+    def set_picking_mode(self, enabled):
+        """切换是否处于吸管吸取模式"""
+        self.is_picking_mode = enabled
+        if enabled:
+            self.setCursor(Qt.CrossCursor)
+        else:
+            self.setCursor(Qt.PointingHandCursor)
+
     def canvasReleaseEvent(self, event):
-        if event.button() != Qt.LeftButton:
+        if event.button() not in (Qt.LeftButton, Qt.RightButton):
             return
 
         if not self.target_field:
@@ -59,6 +75,16 @@ class FormatPainterTool(QgsMapTool):
                 tr("QuickFieldBrush Format Painter"),
                 tr("Please select a valid vector layer in the Layers panel first!"))
             return
+
+        # 判断是否为吸取操作：
+        # 1. 处于吸管吸取模式；
+        # 2. 或按下了鼠标右键（右键极速吸取）；
+        # 3. 或按住了 Alt / Ctrl 键单击
+        is_absorb = (
+            self.is_picking_mode or
+            event.button() == Qt.RightButton or
+            bool(event.modifiers() & (Qt.AltModifier | Qt.ControlModifier))
+        )
 
         # 1. 构造微小屏幕容差矩形（8 像素）
         click_pt = self.toMapCoordinates(event.pos())
@@ -88,7 +114,6 @@ class FormatPainterTool(QgsMapTool):
         if hit_feature is None:
             return
 
-        # 4. 执行写入该要素
         fid = hit_feature.id()
         field_idx = layer.fields().indexOf(self.target_field)
         if field_idx == -1:
@@ -98,6 +123,28 @@ class FormatPainterTool(QgsMapTool):
                 .format(layer.name(), self.target_field))
             return
 
+        # ---- 分支 A：吸取属性模式 (只读要素值写入面板，绝不修改要素) ----
+        if is_absorb:
+            raw_val = hit_feature.attribute(field_idx)
+            val_str = "" if raw_val is None else str(raw_val).strip()
+
+            # 蓝色瞬时高亮反馈
+            try:
+                self.absorb_band.setToGeometry(hit_feature.geometry(), layer)
+                self.absorb_band.show()
+                QTimer.singleShot(250, lambda: self.absorb_band.reset())
+            except Exception:
+                pass
+
+            # 退出单次吸取模式，恢复光标
+            self.set_picking_mode(False)
+
+            # 回调控制台面板同步更新【要刷属性值】
+            if callable(self.on_feature_picked):
+                self.on_feature_picked(self.target_field, val_str, fid)
+            return
+
+        # ---- 分支 B：常规赋值刷入模式 ----
         if not layer.isEditable():
             if not layer.startEditing():
                 self.iface.messageBar().pushWarning(
@@ -147,6 +194,9 @@ class FormatPainterTool(QgsMapTool):
     def deactivate(self):
         if self.flash_band:
             self.flash_band.reset()
+        if self.absorb_band:
+            self.absorb_band.reset()
+        self.is_picking_mode = False
         if self.plugin.action_painter and self.plugin.action_painter.isChecked():
             self.plugin.action_painter.setChecked(False)
         # 如果控制面板依然开着，同步关闭

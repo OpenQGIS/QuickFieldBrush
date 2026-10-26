@@ -14,6 +14,7 @@ from qgis.core import (
     QgsFeatureRequest
 )
 from qgis.PyQt.QtCore import QVariant
+from qgis.PyQt.QtGui import QIcon
 from ..i18n_helper import tr
 
 
@@ -38,18 +39,82 @@ class AttributeEngine:
             AttributeEngine._freq_cache.pop(key, None)
 
     @staticmethod
+    def get_field_icon(layer, field_name_or_idx):
+        """
+        获取字段的原生类型图标（123, abc, 1.2 等）。
+        优先调用 QgsFields.iconForField，若失败则智能从 IconField 目录匹配。
+        """
+        if not layer or not isinstance(layer, QgsVectorLayer) or not layer.isValid():
+            return QIcon()
+        
+        fields = layer.fields()
+        fidx = field_name_or_idx if isinstance(field_name_or_idx, int) else fields.indexOf(str(field_name_or_idx))
+        if fidx == -1:
+            return QIcon()
+
+        # 1. 优先使用 QGIS 原生 iconForField
+        if hasattr(fields, "iconForField"):
+            try:
+                ic = fields.iconForField(fidx)
+                if ic and not ic.isNull():
+                    return ic
+            except Exception:
+                pass
+
+        # 2. 从插件 IconField 目录根据类型名兜底
+        import os
+        icon_field_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "IconField")
+        field = fields.at(fidx)
+        t_name = field.typeName().lower()
+
+        _type_map = {
+            "integer": "mIconFieldInteger.svg",
+            "integer64": "mIconFieldInteger.svg",
+            "int": "mIconFieldInteger.svg",
+            "long": "mIconFieldInteger.svg",
+            "string": "mIconFieldText.svg",
+            "text": "mIconFieldText.svg",
+            "varchar": "mIconFieldText.svg",
+            "double": "mIconFieldFloat.svg",
+            "float": "mIconFieldFloat.svg",
+            "real": "mIconFieldFloat.svg",
+            "decimal": "mIconFieldFloat.svg",
+            "date": "mIconFieldDate.svg",
+            "datetime": "mIconFieldDateTime.svg",
+            "time": "mIconFieldTime.svg",
+            "bool": "mIconFieldBool.svg",
+            "boolean": "mIconFieldBool.svg",
+            "binary": "mIconFieldBinary.svg",
+            "json": "mIconFieldJson.svg",
+            "array": "mIconFieldArray.svg",
+        }
+        svg_name = _type_map.get(t_name)
+        if not svg_name:
+            for k, v in _type_map.items():
+                if k in t_name:
+                    svg_name = v
+                    break
+        if svg_name:
+            path = os.path.join(icon_field_dir, svg_name)
+            if os.path.exists(path):
+                return QIcon(path)
+
+        return QIcon()
+
+    @staticmethod
     def get_editable_fields(layer):
         """获取图层中所有可编辑的普通字段名称列表（严格限制矢量图层）"""
         if not layer or not isinstance(layer, QgsVectorLayer) or not layer.isValid():
             return []
         
         fields = []
-        for field in layer.fields():
+        for i, field in enumerate(layer.fields()):
             fields.append({
                 "name": field.name(),
                 "typeName": field.typeName(),
                 "type": field.type(),
-                "comment": field.comment()
+                "comment": field.comment(),
+                "icon": AttributeEngine.get_field_icon(layer, i)
             })
         return fields
 

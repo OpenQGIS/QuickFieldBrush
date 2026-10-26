@@ -26,10 +26,16 @@ tracker=https://github.com/OpenQGIS/QuickFieldBrush/issues
 repository=https://github.com/OpenQGIS/QuickFieldBrush
 changelog=
   Version 0.2.0:
+  - 🎨 格式刷控制台全面重构为原生 4 行紧凑布局，对齐 QGIS 原生控件与矢量字段类型图标。 / Rebuilt format painter into a native 4-row layout aligned with QGIS native controls and field icons.
+  - 🔄 右键分级菜单与格式刷同步搭载双维度两态翻转排序按钮 (A-Z 与 频次升降)。 / Synchronized 2-button dynamic flipping sort (alphabetical and frequency) across context menu and format painter.
+  - 👁️ 属性值与统计频次色彩层级分离（正文深黑，频次中灰），完善悬浮高亮对比度。 / Differentiated attribute values (dark) from feature counts (medium gray) with optimized hover highlight contrast.
+  - 🧪 格式刷地图直接吸取与右键瞬时吸管交互，配备专属蓝色高亮反馈。 / Real eyedropper for format painter with right-click instant absorption and blue canvas feedback.
   - 🕒 新增类似 Adobe Illustrator 的操作历史浮动面板。 / Added Adobe Illustrator-style floating history panel.
   - 📍 历史记录单项联动：单击画布居中并翠绿闪烁高亮要素，双击自动在图层中选中要素。 / Click history item to center and flash highlight on canvas; double click to select feature.
   - ↺ 支持单步一键精准还原 (Revert) 到修改前原值，支持撤销最近一步修改。 / Single-step revert to original values and undo latest modification.
-  - 📥 支持将要素修改历史完整导出为 CSV 审计台账。 / Export full modification log to CSV file.
+  - 📥 支持将要素修改历史完整导出为 CSV 审计台账。 / Export full modification log to CSV audit table.
+  - 🍎 全系图标升级为苹果 SF Symbols 矢量设计语言。 / Upgraded all icons to Apple SF Symbols vector language.
+  - ⚡ 采用底层 Win32 API 实现零闪烁置顶切换，消除工具栏闪白。 / Zero-flicker window pin via Win32 API and eliminated toolbar white flashing.
   Version 0.1.0:
   - ✨ 首次发布独立极速赋级与格式刷版本。 / Initial release focused on rapid right-click ranking and format painter.
   - 🚀 每次激活工具主动弹窗确定目标字段，按图层独立记忆，回车即可复用。 / Prompts for target field on tool activation with per-layer memory.

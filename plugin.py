@@ -7,12 +7,12 @@ QuickFieldBrush 插件主控制器：
 """
 
 import os
-from qgis.PyQt.QtWidgets import QAction, QToolBar, QInputDialog
+from qgis.PyQt.QtWidgets import QToolBar, QInputDialog
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsVectorLayer
 
-from .core.compat import safe_exec
+from .core.compat import safe_exec, QAction
 
 from .core.config_manager import ConfigManager
 from .core.attribute_engine import AttributeEngine
@@ -53,12 +53,32 @@ class QuickFieldBrushPlugin:
         # 创建工具条
         self.toolbar = self.iface.addToolBar(tr("QuickFieldBrush Toolbar"))
         self.toolbar.setObjectName("QuickFieldBrushToolBar")
+        self.toolbar.setStyleSheet("""
+            QToolBar#QuickFieldBrushToolBar {
+                spacing: 4px;
+            }
+            QToolBar#QuickFieldBrushToolBar QToolButton {
+                border: 1px solid transparent;
+                border-radius: 4px;
+                padding: 3px;
+                background-color: transparent;
+            }
+            QToolBar#QuickFieldBrushToolBar QToolButton:hover {
+                background-color: rgba(0, 0, 0, 0.08);
+                border: 1px solid rgba(0, 0, 0, 0.12);
+            }
+            QToolBar#QuickFieldBrushToolBar QToolButton:checked,
+            QToolBar#QuickFieldBrushToolBar QToolButton:pressed {
+                background-color: rgba(37, 99, 235, 0.15);
+                border: 1px solid #2563EB;
+            }
+        """)
 
-        # 2. 从 icon/ 文件夹加载矢量图标
-        icon_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icon")
-        icon_active = self._load_icon(os.path.join(icon_dir, "rank.svg"))
-        icon_painter = self._load_icon(os.path.join(icon_dir, "painter.svg"))
-        icon_history = self._load_icon(os.path.join(icon_dir, "history.svg"))
+        # 2. 从 icons/ 文件夹加载工具栏矢量图标
+        icons_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icons")
+        icon_active = self._load_icon(os.path.join(icons_dir, "rank.svg"))
+        icon_painter = self._load_icon(os.path.join(icons_dir, "painter.svg"))
+        icon_history = self._load_icon(os.path.join(icons_dir, "history.svg"))
 
         # 3. 功能 1: 激活/停用快捷赋级工具 (框选+右键)
         self.action_toggle = QAction(

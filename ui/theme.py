@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import os
+
+ICONS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
+CHEVRON_DOWN_PATH = os.path.join(ICONS_DIR, "chevron_down.svg").replace("\\", "/")
 """
 AttrSnap 统一 UI 主题（唯一事实源，改主题只改这里）
 
@@ -116,6 +120,31 @@ QToolButton {
 }
 """ % (BORDER, MUTED_FILL, FG_MUTED)
 
+# 纯图标两态图钉按钮（激活=微绿底、未激活=微灰底）
+PIN_ACTIVE_SS = """
+QToolButton {
+    border: 1px solid rgba(22, 163, 74, 0.40);
+    border-radius: 4px;
+    background-color: rgba(22, 163, 74, 0.12);
+}
+QToolButton:hover {
+    background-color: rgba(22, 163, 74, 0.22);
+    border-color: rgba(22, 163, 74, 0.60);
+}
+"""
+
+PIN_INACTIVE_SS = """
+QToolButton {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    background-color: transparent;
+}
+QToolButton:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.25);
+}
+"""
+
 # ---- 输入控件 ----
 LINEEDIT_SS = """
 QLineEdit {
@@ -129,17 +158,29 @@ QLineEdit:disabled { color: %s; background-color: %s; }
 
 COMBO_SS = """
 QComboBox {
-    min-height: 24px; padding: 3px 8px;
-    background-color: %s; border: 1px solid %s; border-radius: 4px; color: %s;
+    min-height: 26px; padding: 3px 26px 3px 8px;
+    background-color: %s; border: 1px solid %s; border-radius: 5px; color: %s;
+    font-size: 12px;
 }
 QComboBox:focus { border: 1px solid %s; }
 QComboBox:disabled { color: %s; background-color: %s; }
-QComboBox::drop-down { border: none; width: 18px; }
+QComboBox::drop-down {
+    subcontrol-origin: padding; subcontrol-position: top right;
+    width: 24px; border: none; background: transparent;
+}
+QComboBox::down-arrow {
+    image: url("%s");
+    width: 12px; height: 12px;
+}
 QComboBox QAbstractItemView {
     border: 1px solid %s; background-color: %s;
     selection-background-color: %s; selection-color: %s;
+    padding: 2px; outline: 0;
 }
-""" % (CARD, BORDER, FG, PRIMARY, DISABLED_FG, MUTED_FILL, BORDER, CARD, PRIMARY_TINT, FG)
+QComboBox QAbstractItemView::item {
+    min-height: 24px; padding: 3px 8px;
+}
+""" % (CARD, BORDER, FG, PRIMARY, DISABLED_FG, MUTED_FILL, CHEVRON_DOWN_PATH, BORDER, CARD, PRIMARY_TINT, FG)
 
 # ---- 容器 ----
 STATUS_FRAME_SS = """

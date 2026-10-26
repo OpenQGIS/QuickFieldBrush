@@ -20,3 +20,6 @@ __pycache__/
 # OS generated
 .DS_Store
 Thumbs.db
+
+QuickFieldBrush-4QGIS/
+QuickFieldBrush_History/
