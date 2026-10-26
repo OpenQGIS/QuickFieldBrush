@@ -48,15 +48,24 @@ class HistoryCardWidget(QWidget):
         lbl_badge = QLabel()
         lbl_badge.setFixedSize(24, 24)
         lbl_badge.setAlignment(Qt.AlignCenter)
+        icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
         if self.step.tool_type == "painter":
-            lbl_badge.setText("🖌️")
+            ic = QIcon(os.path.join(icons_dir, "painter.svg"))
+            if not ic.isNull():
+                lbl_badge.setPixmap(ic.pixmap(16, 16))
+            else:
+                lbl_badge.setText("🖌️")
             lbl_badge.setStyleSheet(
-                "background-color: %s; border-radius: 4px; font-size: 13px;" % theme.ACCENT_TINT
+                "background-color: %s; border-radius: 4px;" % theme.ACCENT_TINT
             )
         else:
-            lbl_badge.setText("⚡")
+            ic = QIcon(os.path.join(icons_dir, "rank.svg"))
+            if not ic.isNull():
+                lbl_badge.setPixmap(ic.pixmap(16, 16))
+            else:
+                lbl_badge.setText("⚡")
             lbl_badge.setStyleSheet(
-                "background-color: %s; border-radius: 4px; font-size: 13px;" % theme.PRIMARY_TINT
+                "background-color: %s; border-radius: 4px;" % theme.PRIMARY_TINT
             )
         layout.addWidget(lbl_badge)
 
