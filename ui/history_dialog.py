@@ -11,13 +11,14 @@ Adobe Illustrator 风格的悬浮操作历史面板：
 """
 
 import os
-from PyQt5.QtWidgets import (
+from qgis.PyQt.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QToolButton,
     QPushButton, QListWidget, QListWidgetItem, QWidget,
     QLineEdit, QFileDialog, QMenu, QApplication
 )
-from PyQt5.QtGui import QIcon, QColor, QFont
-from PyQt5.QtCore import Qt, QTimer
+from qgis.PyQt.QtGui import QIcon, QColor, QFont
+from qgis.PyQt.QtCore import Qt, QTimer
+from ..core.compat import safe_exec
 from qgis.core import (
     QgsProject, QgsVectorLayer, QgsWkbTypes,
     QgsCoordinateTransform, QgsRectangle, QgsFeatureRequest
@@ -459,7 +460,7 @@ class HistoryDialog(QDialog):
         act_copy_fids = menu.addAction(tr("Copy Feature ID(s) to Clipboard"))
         act_copy_fids.triggered.connect(lambda: QApplication.clipboard().setText(", ".join(map(str, step.fids))))
 
-        menu.exec_(self.list_widget.mapToGlobal(pos))
+        safe_exec(menu, self.list_widget.mapToGlobal(pos))
 
     def _revert_step_by_id(self, step_id: int):
         """执行单步还原"""

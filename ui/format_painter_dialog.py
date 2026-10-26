@@ -8,12 +8,12 @@
 5. 上次使用的字段/值在关闭面板时持久化（合并保存，不整体覆盖配置）
 """
 
-from PyQt5.QtWidgets import (
+from qgis.PyQt.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
     QComboBox, QPushButton, QLabel, QToolButton, QFrame
 )
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import Qt, pyqtSignal
 from qgis.core import QgsVectorLayer
 from ..core.attribute_engine import AttributeEngine
 from ..core.config_manager import ConfigManager

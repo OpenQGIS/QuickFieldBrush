@@ -13,7 +13,7 @@ from qgis.core import (
     Qgis,
     QgsFeatureRequest
 )
-from PyQt5.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 from ..i18n_helper import tr
 
 

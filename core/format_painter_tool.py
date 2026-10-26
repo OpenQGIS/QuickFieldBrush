@@ -16,8 +16,8 @@ from qgis.core import (
     QgsVectorLayer,
     QgsFeatureRequest
 )
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QColor
+from qgis.PyQt.QtCore import Qt, QTimer
+from qgis.PyQt.QtGui import QColor
 from .attribute_engine import AttributeEngine
 from .history_manager import HistoryManager
 from ..i18n_helper import tr

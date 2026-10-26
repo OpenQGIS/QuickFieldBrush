@@ -1,7 +1,7 @@
 [general]
 name=QuickFieldBrush
 qgisMinimumVersion=3.16
-qgisMaximumVersion=3.99
+qgisMaximumVersion=4.99
 icon=icon/icon.svg
 description=Rapid interactive feature attribute ranking via right-click, one-click format painter, and Illustrator-style modification history palette for QGIS.
 version=0.2.0

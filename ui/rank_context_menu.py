@@ -10,12 +10,13 @@
 """
 
 import os
-from PyQt5.QtWidgets import (
+from qgis.PyQt.QtWidgets import (
     QMenu, QInputDialog, QLineEdit, QWidgetAction,
     QWidget, QHBoxLayout, QToolButton, QLabel
 )
-from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtCore import QTimer
+from qgis.PyQt.QtGui import QIcon, QCursor
+from qgis.PyQt.QtCore import QTimer
+from ..core.compat import safe_exec
 from ..core.attribute_engine import AttributeEngine
 from ..core.config_manager import ConfigManager
 from ..i18n_helper import tr
@@ -251,7 +252,7 @@ class RankContextMenu(QMenu):
 
     def _reopen_menu(self):
         new_menu = RankContextMenu(self.parent(), self.layer, ConfigManager.get_config(), self.iface)
-        new_menu.exec_(QCursor.pos())
+        safe_exec(new_menu, QCursor.pos())
 
     def _on_apply_value(self, field_name, value, auto_edit):
         """执行批量写入"""

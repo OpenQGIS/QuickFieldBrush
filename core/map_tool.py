@@ -18,8 +18,8 @@ from qgis.core import (
     QgsVectorLayer,
     QgsFeatureRequest
 )
-from PyQt5.QtCore import Qt, QRect
-from PyQt5.QtGui import QColor, QCursor
+from qgis.PyQt.QtCore import Qt, QRect
+from qgis.PyQt.QtGui import QColor, QCursor
 from ..i18n_helper import tr
 
 

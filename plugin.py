@@ -7,10 +7,12 @@ QuickFieldBrush 插件主控制器：
 """
 
 import os
-from PyQt5.QtWidgets import QAction, QToolBar, QInputDialog
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt
+from qgis.PyQt.QtWidgets import QAction, QToolBar, QInputDialog
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsVectorLayer
+
+from .core.compat import safe_exec
 
 from .core.config_manager import ConfigManager
 from .core.attribute_engine import AttributeEngine
@@ -235,7 +237,7 @@ class QuickFieldBrushPlugin:
         """响应右键快速分级菜单呼出请求"""
         self.config = ConfigManager.get_config()
         menu = RankContextMenu(self.iface.mainWindow(), layer, self.config, self.iface)
-        menu.exec_(global_pos)
+        safe_exec(menu, global_pos)
 
     def _on_selection_changed(self, layer, count):
         """当要素选择发生改变时触发"""

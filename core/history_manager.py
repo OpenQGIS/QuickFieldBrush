@@ -9,7 +9,7 @@ QuickFieldBrush 历史操作管理器 (HistoryManager):
 
 import csv
 from datetime import datetime
-from PyQt5.QtCore import QObject, pyqtSignal
+from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.core import QgsProject, QgsVectorLayer
 from ..i18n_helper import tr
 from .attribute_engine import AttributeEngine

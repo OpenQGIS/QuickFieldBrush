@@ -8,7 +8,7 @@
 """
 
 import os
-from PyQt5.QtCore import QCoreApplication, QLocale, QTranslator
+from qgis.PyQt.QtCore import QCoreApplication, QLocale, QTranslator
 from qgis.core import QgsSettings
 
 from .i18n_strings import _zh_translations
