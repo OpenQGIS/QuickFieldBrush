@@ -255,13 +255,6 @@ class HistoryDialog(QDialog):
         self.btn_export.clicked.connect(self._export_csv)
         bottom_bar.addWidget(self.btn_export)
 
-        # 清空历史
-        self.btn_clear = QPushButton(tr("Clear"))
-        self.btn_clear.setStyleSheet(theme.BUTTON_SECONDARY_SS)
-        self.btn_clear.setToolTip(tr("Clear all history entries"))
-        self.btn_clear.clicked.connect(self._clear_history)
-        bottom_bar.addWidget(self.btn_clear)
-
         main_layout.addLayout(bottom_bar)
 
     def _toggle_stay_on_top(self, checked):
@@ -498,11 +491,6 @@ class HistoryDialog(QDialog):
                 self.iface.messageBar().pushSuccess("QuickFieldBrush", msg)
             else:
                 self.iface.messageBar().pushWarning("QuickFieldBrush", msg)
-
-    def _clear_history(self):
-        """清空历史"""
-        self.mgr.clear()
-        self.iface.messageBar().pushInfo("QuickFieldBrush", tr("History log cleared!"))
 
     def closeEvent(self, event):
         if self._flash_band:
