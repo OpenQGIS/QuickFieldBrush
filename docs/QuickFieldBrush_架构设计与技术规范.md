@@ -102,6 +102,6 @@ graph TD
 * **开发源码路径**：`C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush`
 * **Git 托管仓库**：`D:\GitHub\QuickFieldBrush`（远程：`https://github.com/OpenQGIS/QuickFieldBrush`）
 * **分发与发布根目录**：`E:\QGIS文章\OpenQGIS_Lab\OpenQGIS_QGISPlugins_LAB\QuickFieldBrush`
-  - `QuickFieldBrush-4QGIS/`：纯净功能包，顶级解压目录 `QuickFieldBrush/`，POSIX `/` 斜杠；
+  - `QuickFieldBrush-4QGIS/`：纯净功能包，顶级解压目录 `QuickFieldBrush/`，POSIX `/` 斜杠；各版本压缩包（如 `QuickFieldBrush_V-0.2.0.zip`、`QuickFieldBrush_V-0.2.1.zip`）持续保留不删除覆盖，便于后期复盘与对照；
   - `QuickFieldBrush_History/`：开发历史全量备份归档；
   - 归档与发布压缩包统一命名：**`QuickFieldBrush_V-X.Y.Z.zip`**。
