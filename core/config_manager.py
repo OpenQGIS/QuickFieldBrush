@@ -47,7 +47,7 @@ class ConfigManager:
         if raw_proj:
             try:
                 return json.loads(raw_proj)
-            except Exception:
+            except (json.JSONDecodeError, ValueError, TypeError):
                 pass
 
         # 回退全局设置
@@ -56,7 +56,7 @@ class ConfigManager:
         if raw_global:
             try:
                 return json.loads(raw_global)
-            except Exception:
+            except (json.JSONDecodeError, ValueError, TypeError):
                 pass
 
         return deepcopy(DEFAULT_CONFIG)

@@ -53,7 +53,7 @@ def set_window_stay_on_top(widget, on_top: bool):
                 target = HWND_TOPMOST if on_top else HWND_NOTOPMOST
                 if user32.SetWindowPos(hwnd, target, 0, 0, 0, 0, flags):
                     return True
-        except Exception:
+        except (AttributeError, OSError, ValueError, RuntimeError):
             pass
 
     from qgis.PyQt.QtCore import Qt

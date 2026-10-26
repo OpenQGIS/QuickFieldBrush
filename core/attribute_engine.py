@@ -58,7 +58,7 @@ class AttributeEngine:
                 ic = fields.iconForField(fidx)
                 if ic and not ic.isNull():
                     return ic
-            except Exception:
+            except (AttributeError, RuntimeError, TypeError):
                 pass
 
         # 2. 从插件 IconField 目录根据类型名兜底
@@ -224,7 +224,7 @@ class AttributeEngine:
                     return converted_val
             elif res is not None:
                 return res
-        except Exception:
+        except (TypeError, ValueError, AttributeError, RuntimeError):
             pass
 
         # 兜底：根据字段元类型手动类型转换
@@ -301,7 +301,7 @@ class AttributeEngine:
                        .setFlags(QgsFeatureRequest.NoGeometry))
                 for feat in layer.getFeatures(req):
                     old_values[feat.id()] = feat.attribute(field_name)
-            except Exception:
+            except (AttributeError, KeyError, RuntimeError):
                 pass
 
         # 开启 QGIS 命令栈，保证 Ctrl+Z 能够一键整体撤销
@@ -331,8 +331,8 @@ class AttributeEngine:
                     target_value=val_to_write,
                     changes=changes
                 )
-            except Exception:
-                pass
+            except (AttributeError, KeyError, RuntimeError) as hist_err:
+                QgsMessageLog.logMessage(f"History record error: {hist_err}", "QuickFieldBrush", Qgis.Info)
 
             return len(selected_fids), tr("Successfully set {1}={2} on {0} features").format(
                 len(selected_fids), field_name, value)

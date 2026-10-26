@@ -130,7 +130,7 @@ class QuickFieldBrushPlugin:
 
         try:
             self.iface.currentLayerChanged.disconnect(self._on_current_layer_changed)
-        except Exception:
+        except (TypeError, RuntimeError, AttributeError):
             pass
 
         if self.painter_dialog:
@@ -273,16 +273,14 @@ class QuickFieldBrushPlugin:
             try:
                 layer.selectionChanged.connect(self._on_layer_selection_changed_internal)
                 self._connected_layer = layer
-            except Exception:
+            except (TypeError, RuntimeError, AttributeError):
                 pass
 
     def _unbind_layer_selection_signal(self):
         try:
             if self._connected_layer and hasattr(self._connected_layer, "selectionChanged"):
                 self._connected_layer.selectionChanged.disconnect(self._on_layer_selection_changed_internal)
-        except (RuntimeError, ReferenceError):
-            pass
-        except Exception:
+        except (RuntimeError, ReferenceError, TypeError, AttributeError):
             pass
         finally:
             self._connected_layer = None

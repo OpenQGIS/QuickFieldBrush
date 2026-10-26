@@ -12,6 +12,7 @@ from qgis.core import (
     QgsWkbTypes,
     QgsRectangle,
     QgsCoordinateTransform,
+    QgsCsException,
     QgsProject,
     QgsVectorLayer,
     QgsFeatureRequest
@@ -101,7 +102,7 @@ class FormatPainterTool(QgsMapTool):
             try:
                 transform = QgsCoordinateTransform(canvas_crs, layer.crs(), QgsProject.instance())
                 search_rect = transform.transformBoundingBox(search_rect)
-            except Exception:
+            except (QgsCsException, RuntimeError, ValueError):
                 pass
 
         # 3. 寻找命中的要素（FilterRect 走 provider 空间索引，避免全表遍历）
@@ -133,7 +134,7 @@ class FormatPainterTool(QgsMapTool):
                 self.absorb_band.setToGeometry(hit_feature.geometry(), layer)
                 self.absorb_band.show()
                 QTimer.singleShot(250, lambda: self.absorb_band.reset())
-            except Exception:
+            except (RuntimeError, TypeError, AttributeError):
                 pass
 
             # 退出单次吸取模式，恢复光标
@@ -183,7 +184,7 @@ class FormatPainterTool(QgsMapTool):
             self.flash_band.setToGeometry(hit_feature.geometry(), layer)
             self.flash_band.show()
             QTimer.singleShot(180, lambda: self.flash_band.reset())
-        except Exception:
+        except (RuntimeError, TypeError, AttributeError):
             pass
 
     def keyPressEvent(self, event):

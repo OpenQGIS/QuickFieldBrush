@@ -14,6 +14,7 @@ from qgis.core import (
     QgsRectangle,
     QgsPointXY,
     QgsCoordinateTransform,
+    QgsCsException,
     QgsProject,
     QgsVectorLayer,
     QgsFeatureRequest
@@ -109,7 +110,7 @@ class QuickFieldBrushMapTool(QgsMapTool):
             try:
                 transform = QgsCoordinateTransform(canvas_crs, layer_crs, QgsProject.instance())
                 canvas_rect = transform.transformBoundingBox(canvas_rect)
-            except Exception:
+            except (QgsCsException, RuntimeError, ValueError):
                 pass
 
         # 2. 空间查询走 provider 空间索引（FilterRect 预筛 + 精确相交），

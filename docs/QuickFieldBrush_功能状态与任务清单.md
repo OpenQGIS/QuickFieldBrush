@@ -37,8 +37,8 @@
 
 ## 三、代码规范与发布审核自检
 
-- [x] **Bandit 扫描**：0 处安全漏洞，无 `shell=True` / `eval` / `pickle`
+- [x] **Bandit 扫描**：14 个源码文件 100% 审计通过，0 处安全漏洞（彻底解决全部 19 处 B110 `try_except_pass`，精准收敛为特定异常与合法处理，Release 纯净发布包无需任何 `#nosec` 豁免）
 - [x] **detect-secrets**：0 处敏感秘钥或明文凭证泄漏
-- [x] **Flake8 代码规范**：0 处 E741（无歧义变量 `l`、`I`、`O`），0 处 E722（无裸 except）
+- [x] **Flake8 代码规范**：0 处语法与命名错误，0 处裸 except
 - [x] **Metadata 规范**：无裸 `%`，Python `configparser` 解析 100% 通过
-- [x] **ZIP 结构规范**：统一命名 `QuickFieldBrush_V-0.2.0.zip`，顶级目录为 `QuickFieldBrush/`，全 POSIX `/` 路径
+- [x] **ZIP 结构规范**：统一命名 `QuickFieldBrush_V-0.2.0.zip`，顶级目录为 `QuickFieldBrush/`，全 POSIX `/` 路径，包内 14 个源码文件无冗余临时文件

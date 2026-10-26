@@ -431,7 +431,7 @@ class FormatPainterDialog(QDialog):
         """窗口关闭时：断开图层监听、持久化本次配置并退出格式刷模式"""
         try:
             self.iface.currentLayerChanged.disconnect(self._on_layer_changed)
-        except Exception:
+        except (TypeError, RuntimeError, AttributeError):
             pass
 
         if hasattr(self.painter_tool, "set_picking_mode"):

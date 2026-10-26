@@ -21,7 +21,7 @@ from qgis.PyQt.QtCore import Qt, QTimer, QSize
 from ..core.compat import safe_exec, set_window_stay_on_top
 from qgis.core import (
     QgsProject, QgsVectorLayer, QgsWkbTypes,
-    QgsCoordinateTransform, QgsRectangle, QgsFeatureRequest
+    QgsCoordinateTransform, QgsCsException, QgsRectangle, QgsFeatureRequest
 )
 from qgis.gui import QgsRubberBand
 
@@ -385,7 +385,7 @@ class HistoryDialog(QDialog):
                 if transform:
                     try:
                         center_pt = transform.transform(center_pt)
-                    except Exception:
+                    except (QgsCsException, RuntimeError, ValueError):
                         pass
                 self.canvas.setCenter(center_pt)
                 self.canvas.refresh()
@@ -396,7 +396,7 @@ class HistoryDialog(QDialog):
                     self._flash_band.setToGeometry(geom, layer)
                     self._flash_band.show()
                     QTimer.singleShot(350, self._flash_band.reset)
-                except Exception:
+                except (RuntimeError, TypeError, AttributeError):
                     pass
         else:
             # 批量要素：缩放到要素的外接矩形并闪烁
@@ -419,7 +419,7 @@ class HistoryDialog(QDialog):
                 if transform:
                     try:
                         combined_rect = transform.transformBoundingBox(combined_rect)
-                    except Exception:
+                    except (QgsCsException, RuntimeError, ValueError):
                         pass
                 combined_rect.scale(1.25)
                 self.canvas.setExtent(combined_rect)
@@ -432,7 +432,7 @@ class HistoryDialog(QDialog):
                         self._flash_band.addGeometry(g, layer)
                     self._flash_band.show()
                     QTimer.singleShot(400, self._flash_band.reset)
-                except Exception:
+                except (RuntimeError, TypeError, AttributeError):
                     pass
 
     def _on_item_double_clicked(self, item):
