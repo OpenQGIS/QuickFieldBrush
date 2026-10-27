@@ -85,6 +85,7 @@ _zh_translations = {
     "Not on top": "未置顶",
     "Always on top (click to disable)": "置顶中（点击取消置顶）",
     "Not on top (click to enable)": "未置顶（点击开启置顶）",
+    "Docked in main window (pin available when floating)": "已停靠在主窗口（浮动时可置顶）",
     "Exit format painter (Esc)": "退出格式刷 (Esc)",
     "Status: pick a field and value first": "状态: 请先选择字段与值",
     "Painting: [{0} = {1}]": "当前刷入: [{0} = {1}]",

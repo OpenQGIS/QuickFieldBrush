@@ -146,11 +146,19 @@ class QuickFieldBrushPlugin:
             pass
 
         if self.painter_dialog:
+            try:
+                self.iface.removeDockWidget(self.painter_dialog)
+            except (RuntimeError, AttributeError, TypeError):
+                pass
             self.painter_dialog.close()
             self.painter_dialog.deleteLater()
             self.painter_dialog = None
 
         if self.history_dialog:
+            try:
+                self.iface.removeDockWidget(self.history_dialog)
+            except (RuntimeError, AttributeError, TypeError):
+                pass
             self.history_dialog.close()
             self.history_dialog.deleteLater()
             self.history_dialog = None
@@ -237,9 +245,11 @@ class QuickFieldBrushPlugin:
             if self.action_toggle and self.action_toggle.isChecked():
                 self.action_toggle.setChecked(False)
 
-            # 打开无模态常驻/置顶控制面板
+            # 打开常驻/置顶控制面板 (支持浮动与侧边停靠)
             if self.painter_dialog is None:
                 self.painter_dialog = FormatPainterDialog(self.iface, self.painter_tool, self.iface.mainWindow())
+                self.iface.addDockWidget(Qt.RightDockWidgetArea, self.painter_dialog)
+                self.painter_dialog.visibilityChanged.connect(self._on_painter_visibility_changed)
 
             self.painter_dialog.show()
             self.painter_dialog.raise_()
@@ -253,10 +263,18 @@ class QuickFieldBrushPlugin:
             if self.canvas.mapTool() == self.painter_tool:
                 self.canvas.unsetMapTool(self.painter_tool)
 
+    def _on_painter_visibility_changed(self, visible):
+        """当格式刷控制台被隐藏或关闭时，自动复位工具栏按钮与地图工具"""
+        if not visible and self.action_painter and self.action_painter.isChecked():
+            self.action_painter.setChecked(False)
+            if self.canvas.mapTool() == self.painter_tool:
+                self.canvas.unsetMapTool(self.painter_tool)
+
     def _toggle_history_dialog(self):
-        """切换历史记录面板的显示/隐藏 (无模态浮动面板)"""
+        """切换历史记录面板的显示/隐藏 (支持侧边停靠与独立置顶悬浮)"""
         if self.history_dialog is None:
             self.history_dialog = HistoryDialog(self.iface, self.iface.mainWindow())
+            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.history_dialog)
 
         if self.history_dialog.isVisible():
             self.history_dialog.hide()

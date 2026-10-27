@@ -11,6 +11,7 @@ QuickFieldBrush 历史记录面板 (HistoryDialog):
 """
 
 import os
+from qgis.gui import QgsDockWidget
 from qgis.PyQt.QtWidgets import (
     QDialog, QVBoxLayout, QHBoxLayout, QLabel, QToolButton,
     QPushButton, QListWidget, QListWidgetItem, QWidget,
@@ -154,25 +155,24 @@ class HistoryCardWidget(QWidget):
         layout.addWidget(self.btn_revert)
 
 
-class HistoryDialog(QDialog):
+class HistoryDockWidget(QgsDockWidget):
     """
-    QuickFieldBrush 历史记录面板
+    QuickFieldBrush 历史记录面板 (支持侧边栏停靠与独立置顶悬浮)
     """
 
     def __init__(self, iface, parent=None):
-        super().__init__(parent)
+        super().__init__(tr("QuickFieldBrush History"), parent or iface.mainWindow())
+        self.setObjectName("QuickFieldBrushHistoryDock")
+        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea)
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.mgr = HistoryManager.instance()
         self.is_pinned = True
 
         self.setWindowTitle(tr("QuickFieldBrush History"))
+        self.setFloating(True)
         self.resize(320, 480)
         self.setMinimumSize(280, 320)
-        theme.apply_dialog_style(self)
-
-        # 默认无模态 + 置顶
-        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
 
         # 地图瞬时高亮橡皮筋
         self._flash_band = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
@@ -183,18 +183,24 @@ class HistoryDialog(QDialog):
         self._init_ui()
         self._reload_history()
 
-        # 监听历史变动信号
+        # 监听历史变动信号与停靠状态
         self.mgr.history_changed.connect(self._reload_history)
+        self.topLevelChanged.connect(self._on_top_level_changed)
 
     def _init_ui(self):
-        main_layout = QVBoxLayout(self)
+        container = QWidget(self)
+        main_layout = QVBoxLayout(container)
         main_layout.setContentsMargins(8, 8, 8, 8)
         main_layout.setSpacing(6)
 
         icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
 
-        # 1. 顶部标题栏：图标 + 标题 + 置顶按钮
-        top_bar = QHBoxLayout()
+        # 1. 顶部标题栏：图标 + 标题 + 置顶按钮（仅悬浮时显示，停靠时由 QGIS 原生标题栏承载）
+        self.top_bar_widget = QWidget()
+        top_bar = QHBoxLayout(self.top_bar_widget)
+        top_bar.setContentsMargins(0, 0, 0, 0)
+        top_bar.setSpacing(6)
+
         lbl_icon = QLabel()
         history_icon_path = os.path.join(icons_dir, "history.svg")
         if os.path.exists(history_icon_path):
@@ -223,7 +229,7 @@ class HistoryDialog(QDialog):
         self.btn_pin.toggled.connect(self._toggle_stay_on_top)
         top_bar.addWidget(self.btn_pin)
 
-        main_layout.addLayout(top_bar)
+        main_layout.addWidget(self.top_bar_widget)
 
         # 2. 搜索/过滤栏
         search_box = QHBoxLayout()
@@ -291,11 +297,25 @@ class HistoryDialog(QDialog):
         bottom_bar.addWidget(self.btn_export)
 
         main_layout.addLayout(bottom_bar)
+        self.setWidget(container)
+
+    def _on_top_level_changed(self, is_floating):
+        """浮动/停靠状态切换时联动置顶控制"""
+        self.top_bar_widget.setVisible(is_floating)
+        if is_floating:
+            self.btn_pin.setEnabled(True)
+            if self.is_pinned:
+                set_window_stay_on_top(self, True)
+            self.btn_pin.setToolTip(tr("Always on top (click to disable)") if self.is_pinned else tr("Not on top (click to enable)"))
+        else:
+            self.btn_pin.setEnabled(False)
+            self.btn_pin.setToolTip(tr("Docked in main window (pin available when floating)"))
 
     def _toggle_stay_on_top(self, checked):
         """置顶切换（0 闪烁无感切换）"""
         self.is_pinned = checked
-        set_window_stay_on_top(self, checked)
+        if self.isFloating():
+            set_window_stay_on_top(self, checked)
         if checked:
             if hasattr(self, "_icon_pin_on") and not self._icon_pin_on.isNull():
                 self.btn_pin.setIcon(self._icon_pin_on)
@@ -531,3 +551,8 @@ class HistoryDialog(QDialog):
         if self._flash_band:
             self._flash_band.reset()
         super().closeEvent(event)
+
+
+# 向后兼容别名
+HistoryDialog = HistoryDockWidget
+

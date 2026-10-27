@@ -129,6 +129,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>复制要素 FID 到剪贴板</translation>
     </message>
     <message>
+      <source>Docked in main window (pin available when floating)</source>
+      <translation>已停靠在主窗口（浮动时可置顶）</translation>
+    </message>
+    <message>
       <source>Edit History</source>
       <translation>历史修改记录</translation>
     </message>

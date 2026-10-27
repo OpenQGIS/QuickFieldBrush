@@ -9,10 +9,11 @@
 """
 
 from qgis.PyQt.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QFormLayout,
+    QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
     QComboBox, QPushButton, QLabel, QToolButton, QFrame,
     QInputDialog
 )
+from qgis.gui import QgsDockWidget
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import Qt, pyqtSignal, QSize
 from qgis.core import QgsVectorLayer
@@ -23,11 +24,13 @@ from ..i18n_helper import tr
 from . import theme
 
 
-class FormatPainterDialog(QDialog):
+class FormatPainterDockWidget(QgsDockWidget):
     targetChanged = pyqtSignal(str, str)  # 字段或属性值改变时通知画笔工具
 
     def __init__(self, iface, painter_tool, parent=None):
-        super().__init__(parent)
+        super().__init__(tr("Attribute Format Painter (console)"), parent or iface.mainWindow())
+        self.setObjectName("QuickFieldBrushPainterDock")
+        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea)
         self.iface = iface
         self.painter_tool = painter_tool
         self.layer = iface.activeLayer()
@@ -40,10 +43,8 @@ class FormatPainterDialog(QDialog):
         self._cached_val_counts = []
 
         self.setWindowTitle(tr("Attribute Format Painter (console)"))
+        self.setFloating(True)
         self.resize(310, 150)
-
-        # 默认设为无模态 + 置顶
-        self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
 
         self._init_ui()
         self._load_fields()
@@ -55,21 +56,26 @@ class FormatPainterDialog(QDialog):
         # 监听激活图层切换信号，动态同步当前可用字段，避免悬浮窗引用失效 C++ 对象
         self.iface.currentLayerChanged.connect(self._on_layer_changed)
 
+        # 监听浮动/停靠状态切换
+        self.topLevelChanged.connect(self._on_top_level_changed)
+
         # 恢复上次使用的刷入值
         last_val = self.config.get("format_painter", {}).get("value")
         if last_val:
             self.combo_val.setEditText(str(last_val))
 
     def _init_ui(self):
-        layout = QVBoxLayout(self)
+        container = QWidget(self)
+        layout = QVBoxLayout(container)
         layout.setContentsMargins(10, 8, 10, 10)
         layout.setSpacing(6)
 
         import os
         icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
 
-        # 1. 顶部微标题栏：图标 + 标题 + 置顶按钮（与历史面板协调）
-        top_bar = QHBoxLayout()
+        # 1. 顶部微标题栏：图标 + 标题 + 置顶按钮（仅悬浮时显示，停靠时由 QGIS 原生标题栏承载）
+        self.top_bar_widget = QWidget()
+        top_bar = QHBoxLayout(self.top_bar_widget)
         top_bar.setContentsMargins(0, 0, 0, 0)
         top_bar.setSpacing(6)
 
@@ -100,7 +106,7 @@ class FormatPainterDialog(QDialog):
         self.btn_pin.toggled.connect(self._toggle_stay_on_top)
         top_bar.addWidget(self.btn_pin)
 
-        layout.addLayout(top_bar)
+        layout.addWidget(self.top_bar_widget)
 
         # 2. 表单区域：目标字段（通栏） + 属性值（含排序按钮）
         form = QFormLayout()
@@ -180,11 +186,27 @@ class FormatPainterDialog(QDialog):
         bottom_box.addWidget(self.btn_close, 1)
 
         layout.addLayout(bottom_box)
+        layout.addStretch(1)
+
+        self.setWidget(container)
+
+    def _on_top_level_changed(self, is_floating):
+        """当面板在浮动窗口与侧边停靠之间切换时触发"""
+        self.top_bar_widget.setVisible(is_floating)
+        if is_floating:
+            self.btn_pin.setEnabled(True)
+            if self.is_pinned:
+                set_window_stay_on_top(self, True)
+            self.btn_pin.setToolTip(tr("Always on top (click to disable)") if self.is_pinned else tr("Not on top (click to enable)"))
+        else:
+            self.btn_pin.setEnabled(False)
+            self.btn_pin.setToolTip(tr("Docked in main window (pin available when floating)"))
 
     def _toggle_stay_on_top(self, checked):
         """动态切换窗口置顶状态（0 闪烁无感切换）"""
         self.is_pinned = checked
-        set_window_stay_on_top(self, checked)
+        if self.isFloating():
+            set_window_stay_on_top(self, checked)
         if checked:
             if hasattr(self, "_icon_pin_on") and not self._icon_pin_on.isNull():
                 self.btn_pin.setIcon(self._icon_pin_on)
@@ -193,6 +215,14 @@ class FormatPainterDialog(QDialog):
             if hasattr(self, "_icon_pin_off") and not self._icon_pin_off.isNull():
                 self.btn_pin.setIcon(self._icon_pin_off)
             self.btn_pin.setToolTip(tr("Not on top (click to enable)"))
+
+    def keyPressEvent(self, event):
+        """Esc 键退出格式刷"""
+        if event.key() == Qt.Key_Escape:
+            self.close()
+            event.accept()
+        else:
+            super().keyPressEvent(event)
 
     def _on_layer_changed(self, layer):
         """当主界面激活图层切换时，刷新控制台并避免引用已销毁图层"""
@@ -463,3 +493,8 @@ class FormatPainterDialog(QDialog):
         if self.iface.mapCanvas().mapTool() == self.painter_tool:
             self.iface.mapCanvas().unsetMapTool(self.painter_tool)
         super().closeEvent(event)
+
+
+# 向后兼容别名
+FormatPainterDialog = FormatPainterDockWidget
+

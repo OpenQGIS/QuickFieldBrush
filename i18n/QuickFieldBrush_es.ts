@@ -129,6 +129,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>Copy Feature ID(s) to Clipboard</translation>
     </message>
     <message>
+      <source>Docked in main window (pin available when floating)</source>
+      <translation>Docked in main window (pin available when floating)</translation>
+    </message>
+    <message>
       <source>Edit History</source>
       <translation>Edit History</translation>
     </message>
