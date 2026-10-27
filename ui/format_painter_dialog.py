@@ -40,7 +40,7 @@ class FormatPainterDialog(QDialog):
         self._cached_val_counts = []
 
         self.setWindowTitle(tr("Attribute Format Painter (console)"))
-        self.resize(360, 140)
+        self.resize(310, 150)
 
         # 默认设为无模态 + 置顶
         self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
@@ -62,28 +62,32 @@ class FormatPainterDialog(QDialog):
 
     def _init_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(11, 11, 11, 11)
-        layout.setSpacing(8)
+        layout.setContentsMargins(10, 8, 10, 10)
+        layout.setSpacing(6)
 
         import os
         icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
 
-        # 1. 表单区域：目标字段（含右上置顶图钉） + 属性值（含排序按钮）
-        form = QFormLayout()
-        form.setSpacing(8)
+        # 1. 顶部微标题栏：图标 + 标题 + 置顶按钮（与历史面板协调）
+        top_bar = QHBoxLayout()
+        top_bar.setContentsMargins(0, 0, 0, 0)
+        top_bar.setSpacing(6)
 
-        # 第一行：目标字段 + 右侧置顶图钉（位于界面右上角）
-        field_box = QHBoxLayout()
-        field_box.setSpacing(4)
-        field_box.setContentsMargins(0, 0, 0, 0)
+        lbl_icon = QLabel()
+        painter_icon_path = os.path.join(icons_dir, "painter.svg")
+        if os.path.exists(painter_icon_path):
+            lbl_icon.setPixmap(QIcon(painter_icon_path).pixmap(16, 16))
+        else:
+            lbl_icon.setText("🖌️")
+        top_bar.addWidget(lbl_icon)
 
-        self.combo_field = QComboBox()
-        self.combo_field.currentIndexChanged.connect(self._on_field_changed)
-        field_box.addWidget(self.combo_field, 1)
+        lbl_title = QLabel(tr("Attribute Format Painter (console)"))
+        lbl_title.setStyleSheet(theme.LABEL_TITLE_SS)
+        top_bar.addWidget(lbl_title, 1)
 
-        # 置顶切换按钮（纯图标两态：激活显示绿图钉，未激活显示灰图钉，位于右上角）
+        # 置顶切换按钮（移至右上角，与历史面板完全一致）
         self.btn_pin = QToolButton()
-        self.btn_pin.setFixedSize(24, 24)
+        self.btn_pin.setFixedSize(22, 22)
         self.btn_pin.setCheckable(True)
         self.btn_pin.setChecked(True)
         self.btn_pin.setAutoRaise(True)
@@ -91,12 +95,22 @@ class FormatPainterDialog(QDialog):
         self._icon_pin_off = QIcon(os.path.join(icons_dir, "pin_grey.svg"))
         if not self._icon_pin_on.isNull():
             self.btn_pin.setIcon(self._icon_pin_on)
-            self.btn_pin.setIconSize(QSize(15, 15))
+            self.btn_pin.setIconSize(QSize(14, 14))
         self.btn_pin.setToolTip(tr("Always on top (click to disable)"))
         self.btn_pin.toggled.connect(self._toggle_stay_on_top)
-        field_box.addWidget(self.btn_pin)
+        top_bar.addWidget(self.btn_pin)
 
-        form.addRow(tr("Target field"), field_box)
+        layout.addLayout(top_bar)
+
+        # 2. 表单区域：目标字段（通栏） + 属性值（含排序按钮）
+        form = QFormLayout()
+        form.setSpacing(6)
+        form.setContentsMargins(0, 0, 0, 0)
+
+        # 第一行：目标字段通栏下拉框
+        self.combo_field = QComboBox()
+        self.combo_field.currentIndexChanged.connect(self._on_field_changed)
+        form.addRow(tr("Target field"), self.combo_field)
 
         # 第二行：属性值 + 字母排序 + 频次排序
         val_box = QHBoxLayout()
@@ -114,12 +128,12 @@ class FormatPainterDialog(QDialog):
         self._icon_alpha_asc = QIcon(os.path.join(icons_dir, "sort-AZ.svg"))
         self._icon_alpha_desc = QIcon(os.path.join(icons_dir, "sort-reverse-ZA.svg"))
         self.btn_sort_alpha = QToolButton()
-        self.btn_sort_alpha.setFixedSize(24, 24)
+        self.btn_sort_alpha.setFixedSize(22, 22)
         self.btn_sort_alpha.setCheckable(True)
         self.btn_sort_alpha.setChecked(False)
         self.btn_sort_alpha.setAutoRaise(True)
         self.btn_sort_alpha.setIcon(self._icon_alpha_asc)
-        self.btn_sort_alpha.setIconSize(QSize(16, 16))
+        self.btn_sort_alpha.setIconSize(QSize(15, 15))
         self.btn_sort_alpha.setToolTip(tr("Alphabetical Ascending (A -> Z)"))
         self.btn_sort_alpha.clicked.connect(self._on_sort_alpha_clicked)
         val_box.addWidget(self.btn_sort_alpha)
@@ -128,12 +142,12 @@ class FormatPainterDialog(QDialog):
         self._icon_freq_desc = QIcon(os.path.join(icons_dir, "sort-dscend.svg"))
         self._icon_freq_asc = QIcon(os.path.join(icons_dir, "sort-ascend.svg"))
         self.btn_sort_freq = QToolButton()
-        self.btn_sort_freq.setFixedSize(24, 24)
+        self.btn_sort_freq.setFixedSize(22, 22)
         self.btn_sort_freq.setCheckable(True)
         self.btn_sort_freq.setChecked(True)
         self.btn_sort_freq.setAutoRaise(True)
         self.btn_sort_freq.setIcon(self._icon_freq_desc)
-        self.btn_sort_freq.setIconSize(QSize(16, 16))
+        self.btn_sort_freq.setIconSize(QSize(15, 15))
         self.btn_sort_freq.setToolTip(tr("Frequency Descending (Most frequent first)"))
         self.btn_sort_freq.clicked.connect(self._on_sort_freq_clicked)
         val_box.addWidget(self.btn_sort_freq)
@@ -142,15 +156,15 @@ class FormatPainterDialog(QDialog):
 
         layout.addLayout(form)
 
-        # 2. 第三行：当前刷入状态提示
+        # 3. 第三行：当前刷入状态提示
         self.lbl_status = QLabel(tr("Status: pick a field and value first"))
         layout.addWidget(self.lbl_status)
 
         layout.addSpacing(2)
 
-        # 3. 最下边的一行：左侧为吸取属性，右边为退出按钮
+        # 4. 最下边的一行：左侧为吸取属性，右边为退出按钮
         bottom_box = QHBoxLayout()
-        bottom_box.setSpacing(8)
+        bottom_box.setSpacing(6)
 
         self.btn_pick_from_selected = QPushButton(tr("Absorb attribute from feature"))
         absorb_icon = QIcon(os.path.join(icons_dir, "absorb.svg"))

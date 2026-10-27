@@ -167,8 +167,8 @@ class HistoryDialog(QDialog):
         self.is_pinned = True
 
         self.setWindowTitle(tr("QuickFieldBrush History"))
-        self.resize(380, 520)
-        self.setMinimumSize(320, 360)
+        self.resize(320, 480)
+        self.setMinimumSize(280, 320)
         theme.apply_dialog_style(self)
 
         # 默认无模态 + 置顶
