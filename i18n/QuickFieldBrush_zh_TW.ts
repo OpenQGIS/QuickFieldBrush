@@ -87,6 +87,12 @@
       <translation>属性格式刷 (常驻控制臺)</translation>
     </message>
     <message>
+      <source>Attribute Format Painter, activate format painter console
+Select or absorb attribute, then click features consecutively for rapid assignment</source>
+      <translation>属性格式刷，激活格式刷面板
+點選/吸取属性后连续點擊要素快速賦值</translation>
+    </message>
+    <message>
       <source>Attribute format painter (pick field/value, then click features to assign)</source>
       <translation>属性格式刷 (點選/吸取属性后连续點擊要素快速賦值)</translation>
     </message>
@@ -121,6 +127,16 @@
     <message>
       <source>Copy Feature ID(s) to Clipboard</source>
       <translation>復制要素 FID 到剪贴板</translation>
+    </message>
+    <message>
+      <source>Edit History</source>
+      <translation>歷史修改記錄</translation>
+    </message>
+    <message>
+      <source>Edit History, open plugin history panel
+Browse, flash-zoom, single-step revert, and export records</source>
+      <translation>歷史修改記錄，打開插件歷史記錄面板
+浏览、高亮定位、單步撤銷、導出臺賬</translation>
     </message>
     <message>
       <source>Enter a new rank/value</source>
@@ -229,6 +245,16 @@
     <message>
       <source>History successfully exported to: {0}</source>
       <translation>歷史記錄已成功導出至: {0}</translation>
+    </message>
+    <message>
+      <source>Interactive Assignment</source>
+      <translation>交互賦值</translation>
+    </message>
+    <message>
+      <source>Interactive Assignment, activate interactive assignment tool
+Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</source>
+      <translation>交互賦值，激活交互賦值工具
+激活功能后選擇要修改的字段，點選、框選要素后右鍵快速对選中字段进行属性值修改。</translation>
     </message>
     <message>
       <source>Interactive ranking tool activated: box-select features, then right-click to rank!</source>

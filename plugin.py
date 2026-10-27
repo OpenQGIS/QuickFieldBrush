@@ -83,10 +83,14 @@ class QuickFieldBrushPlugin:
         # 3. 功能 1: 激活/停用快捷赋值工具 (框选+右键)
         self.action_toggle = QAction(
             icon_active,
-            tr("Activate QuickFieldBrush interactive ranking tool (box select + right click)"),
+            tr("Interactive Assignment"),
             self.iface.mainWindow()
         )
         self.action_toggle.setCheckable(True)
+        self.action_toggle.setToolTip(tr(
+            "Interactive Assignment, activate interactive assignment tool\n"
+            "Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values."
+        ))
         self.action_toggle.triggered.connect(self._toggle_map_tool)
         self.toolbar.addAction(self.action_toggle)
         self.iface.addPluginToVectorMenu(tr("QuickFieldBrush - Ranking"), self.action_toggle)
@@ -94,10 +98,14 @@ class QuickFieldBrushPlugin:
         # 功能 2: 格式刷工具 (单选某属性，点击要素连续刷入)
         self.action_painter = QAction(
             icon_painter,
-            tr("Attribute format painter (pick field/value, then click features to assign)"),
+            tr("Attribute Format Painter"),
             self.iface.mainWindow()
         )
         self.action_painter.setCheckable(True)
+        self.action_painter.setToolTip(tr(
+            "Attribute Format Painter, activate format painter console\n"
+            "Select or absorb attribute, then click features consecutively for rapid assignment"
+        ))
         self.action_painter.triggered.connect(self._toggle_painter_tool)
         self.toolbar.addAction(self.action_painter)
         self.iface.addPluginToVectorMenu(tr("QuickFieldBrush - Format Painter"), self.action_painter)
@@ -105,9 +113,13 @@ class QuickFieldBrushPlugin:
         # 功能 3: 历史记录面板 (独立无模态浮动面板)
         self.action_history = QAction(
             icon_history,
-            tr("History panel (browse, flash-zoom, single-step revert, export CSV)"),
+            tr("Edit History"),
             self.iface.mainWindow()
         )
+        self.action_history.setToolTip(tr(
+            "Edit History, open plugin history panel\n"
+            "Browse, flash-zoom, single-step revert, and export records"
+        ))
         self.action_history.triggered.connect(self._toggle_history_dialog)
         self.toolbar.addAction(self.action_history)
         self.iface.addPluginToVectorMenu(tr("QuickFieldBrush - History"), self.action_history)

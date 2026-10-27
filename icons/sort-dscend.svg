@@ -1,42 +1,122 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   t="1793020339792"
-   class="icon"
-   viewBox="0 0 1024 1024"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
    version="1.1"
-   p-id="7073"
-   width="200"
-   height="200"
    id="svg1"
-   sodipodi:docname="sort-dscend.svg"
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="0_icons_Component.svg"
+   inkscape:export-batch-name=""
+   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs1" />
   <sodipodi:namedview
-     id="namedview1"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.380626"
-     inkscape:cx="39.112693"
-     inkscape:cy="127.84056"
-     inkscape:window-width="1920"
-     inkscape:window-height="1001"
-     inkscape:window-x="-9"
-     inkscape:window-y="41"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg1" />
-  <path
-     d="m 704,767.87024 v 32 a 32,32 0 0 1 -32,32 H 480 a 32,32 0 0 1 -32,-32 v -32 a 32,32 0 0 1 32,-32 h 192 a 32,32 0 0 1 32,32 z m -415.936,-640 h 32 a 32,32 0 0 1 31.936,32.096 l -0.672,688 c -0.032,41.024 -47.776,62.464 -78.4,37.12 l -3.2,-2.912 -186.752,-183.104 a 32,32 0 0 1 -0.448,-45.28 l 22.4,-22.848 a 32,32 0 0 1 45.248,-0.448 l 105.248,103.136 0.576,-573.824 a 32,32 0 0 1 32.064,-31.936 z m 575.936,368 v 32 a 32,32 0 0 1 -32,32 H 480 a 32,32 0 0 1 -32,-32 v -32 a 32,32 0 0 1 32,-32 h 352 a 32,32 0 0 1 32,32 z m 96,-272 v 32 a 32,32 0 0 1 -32,32 H 480 a 32,32 0 0 1 -32,-32 v -32 a 32,32 0 0 1 32,-32 h 448 a 32,32 0 0 1 32,32 z"
-     fill="#333333"
-     p-id="7074"
-     id="path1" />
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   inkscape:zoom="1.0606602"
+   inkscape:cx="243.71614"
+   inkscape:cy="-158.86332"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="41"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer1">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <inkscape:page
+   x="0"
+   y="0"
+   width="32"
+   height="32"
+   id="page18"
+   margin="0"
+   bleed="0"
+   inkscape:label="sort-dscend" />
+  </sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="layer1"
+   style="display:inline"
+   transform="translate(-714)">
+    <!-- Icon: icon (Page 1) -->
+    
+    <!-- Icon: rank (Page 2) -->
+    
+    <!-- Icon: painter (Page 3) -->
+    
+    <!-- Icon: absorb (Page 4) -->
+    
+    <!-- Icon: history (Page 5) -->
+    
+    <!-- Icon: clear (Page 6) -->
+    
+    <!-- Icon: undo_latest (Page 7) -->
+    
+    <!-- Icon: export (Page 8) -->
+    
+    <!-- Icon: pin_green (Page 9) -->
+    
+    <!-- Icon: pin_grey (Page 10) -->
+    
+    <!-- Icon: settings (Page 11) -->
+    
+    <!-- Icon: search (Page 12) -->
+    
+    <!-- Icon: add (Page 13) -->
+    
+    <!-- Icon: chevron_down (Page 14) -->
+    
+    <!-- Icon: sort-AZ (Page 15) -->
+    
+    <!-- Icon: sort-reverse-ZA (Page 16) -->
+    
+    <!-- Icon: sort-ascend (Page 17) -->
+    
+    <!-- Icon: sort-dscend (Page 18) -->
+    <path
+   d="m 728.80469,24.021484 a 1.1463318,1.1463318 0 0 0 -1.14649,1.144532 V 26.3125 a 1.1463318,1.1463318 0 0 0 1.14649,1.146484 h 6.8789 a 1.1463318,1.1463318 0 0 0 1.14649,-1.146484 v -1.146484 a 1.1463318,1.1463318 0 0 0 -1.14649,-1.144532 z"
+   style="fill:#333333;stroke-width:0.025391"
+   id="path81" /><path
+   d="m 728.80469,14.277344 a 1.1463318,1.1463318 0 0 0 -1.14649,1.146484 v 1.146484 a 1.1463318,1.1463318 0 0 0 1.14649,1.144532 h 12.60937 a 1.1463318,1.1463318 0 0 0 1.14649,-1.144532 v -1.146484 a 1.1463318,1.1463318 0 0 0 -1.14649,-1.146484 z"
+   style="fill:#333333;stroke-width:0.025391"
+   id="path80" /><path
+   d="m 728.80469,4.5332031 a 1.1463318,1.1463318 0 0 0 -1.14649,1.1464844 v 1.1464844 a 1.1463318,1.1463318 0 0 0 1.14649,1.1464843 h 16.04883 A 1.1463318,1.1463318 0 0 0 746,6.8261719 V 5.6796875 a 1.1463318,1.1463318 0 0 0 -1.14648,-1.1464844 z"
+   style="fill:#333333;stroke-width:0.025391"
+   id="path79" /><path
+   d="m 721.92969,2.2402344 a 1.1463318,1.1463318 0 0 0 -1.14844,1.1445312 l -0.0215,20.5546874 -3.76954,-3.693359 a 1.1463318,1.1463318 0 0 0 -1.62109,0.01563 l -0.80273,0.818359 a 1.1463318,1.1463318 0 0 0 0.0156,1.623047 l 6.68945,6.558594 0.11524,0.103515 c 1.09704,0.907894 2.80759,0.141472 2.80859,-1.328125 l 0.0234,-24.646484 a 1.1463318,1.1463318 0 0 0 -1.14258,-1.1503906 z"
+   style="fill:#333333;stroke-width:0.025391"
+   id="path78" />
+  </g>
 </svg>

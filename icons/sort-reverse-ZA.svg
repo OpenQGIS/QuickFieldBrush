@@ -1,1 +1,132 @@
-<svg height="16" viewBox="0 0 4.2333333 4.2333335" width="16" xmlns="http://www.w3.org/2000/svg"><g stroke-linecap="round" stroke-linejoin="round" stroke-width=".198438"><path d="m2.9088665.40079901-1.0794756 1.24023439h.7733851l.2887393 2.1218345.3139285-2.1218345h.7828981z" fill="#6d97c4" fill-rule="evenodd" stroke="#415a75"/><path d="m1.2400171 1.4925339h-.54129826l-.0854208.2668105h-.3479775l.49723917-1.46451483h.41271749l.4972392 1.46451483h-.3479775l-.084522-.2668105m-.45497826-.271715h.36775916l-.1834298-.58266702-.18432916.58266702" fill="#f79191" stroke="#a40000"/><path d="m.40469133 2.2147734h1.12845407v.2285545l-.72023241.9505123h.74091331v.285448h-1.16981581v-.2285546l.72023251-.9505123h-.69955167z" fill="#91bbf7" stroke="#0044a4"/></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="0_icons_Component.svg"
+   inkscape:export-batch-name=""
+   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   inkscape:zoom="1.0606602"
+   inkscape:cx="243.71614"
+   inkscape:cy="-158.86332"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="41"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer1">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <inkscape:page
+   x="0"
+   y="0"
+   width="32"
+   height="32"
+   id="page16"
+   margin="0"
+   bleed="0"
+   inkscape:label="sort-reverse-ZA" />
+    
+    
+  </sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="layer1"
+   style="display:inline"
+   transform="translate(-630)">
+    <!-- Icon: icon (Page 1) -->
+    
+    <!-- Icon: rank (Page 2) -->
+    
+    <!-- Icon: painter (Page 3) -->
+    
+    <!-- Icon: absorb (Page 4) -->
+    
+    <!-- Icon: history (Page 5) -->
+    
+    <!-- Icon: clear (Page 6) -->
+    
+    <!-- Icon: undo_latest (Page 7) -->
+    
+    <!-- Icon: export (Page 8) -->
+    
+    <!-- Icon: pin_green (Page 9) -->
+    
+    <!-- Icon: pin_grey (Page 10) -->
+    
+    <!-- Icon: settings (Page 11) -->
+    
+    <!-- Icon: search (Page 12) -->
+    
+    <!-- Icon: add (Page 13) -->
+    
+    <!-- Icon: chevron_down (Page 14) -->
+    
+    <!-- Icon: sort-AZ (Page 15) -->
+    
+    <!-- Icon: sort-reverse-ZA (Page 16) -->
+    <g
+   id="g_sort_reverse_ZA"
+   inkscape:label="sort-reverse-ZA"
+   transform="matrix(6.141732,0,0,6.141732,633,3)">
+        <g
+   stroke-linecap="round"
+   stroke-linejoin="round"
+   stroke-width="0.198438"
+   id="g37"><path
+     d="M 2.9088665,0.40079901 1.8293909,1.6410334 H 2.602776 L 2.8915153,3.7628679 3.2054438,1.6410334 h 0.7828981 z"
+     fill="#6d97c4"
+     fill-rule="evenodd"
+     stroke="#415a75"
+     id="path35" /><path
+     d="M 1.2400171,1.4925339 H 0.69871884 L 0.61329804,1.7593444 H 0.26532054 L 0.76255971,0.29482957 H 1.1752772 L 1.6725164,1.7593444 H 1.3245389 L 1.2400169,1.4925339 M 0.78503864,1.2208189 H 1.1527978 L 0.969368,0.63815188 0.78503884,1.2208189"
+     fill="#f79191"
+     stroke="#a40000"
+     id="path36" /><path
+     d="M 0.40469133,2.2147734 H 1.5331454 V 2.4433279 L 0.81291299,3.3938402 H 1.5538263 v 0.285448 H 0.38401049 V 3.4507336 L 1.104243,2.5002213 H 0.40469133 Z"
+     fill="#91bbf7"
+     stroke="#0044a4"
+     id="path37" /></g>
+    </g>
+    <!-- Icon: sort-ascend (Page 17) -->
+    
+    <!-- Icon: sort-dscend (Page 18) -->
+    
+  </g>
+</svg>

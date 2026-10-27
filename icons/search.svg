@@ -1,14 +1,114 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--Generator: Apple Native CoreSVG 360-->
-<!DOCTYPE svg
-PUBLIC "-//W3C//DTD SVG 1.1//EN"
-       "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 22.1515 26.0361">
- <g>
-  <rect height="26.0361" opacity="0" width="22.1515" x="0" y="0"/>
-  <path d="M19.2882 5.24958L19.2882 15.8199C18.8815 15.1906 18.342 14.6538 17.7093 14.2507L17.7093 5.2745C17.7093 4.29924 17.1543 3.75669 16.179 3.75669L5.97252 3.75669C4.95585 3.75669 4.434 4.30979 4.434 5.2745L4.434 20.0307C4.434 20.9975 4.95585 21.5485 5.97252 21.5485L10.4569 21.5485C10.8648 22.1801 11.4059 22.7172 12.0401 23.1192L5.88549 23.1192C3.87435 23.1192 2.8633 22.0916 2.8633 20.0556L2.8633 5.24958C2.8633 3.21352 3.87435 2.18599 5.88549 2.18599L16.2557 2.18599C18.2732 2.18599 19.2882 3.20317 19.2882 5.24958Z" fill="black" fill-opacity="0.85"/>
-  <path d="M15.3832 10.5324C15.3832 10.8744 15.1283 11.1418 14.7821 11.1418L7.3798 11.1418C7.02536 11.1418 6.76831 10.8744 6.76831 10.5324C6.76831 10.1987 7.02536 9.94373 7.3798 9.94373L14.7821 9.94373C15.1283 9.94373 15.3832 10.1987 15.3832 10.5324Z" fill="black" fill-opacity="0.85"/>
-  <path d="M15.3832 7.13038C15.3832 7.47236 15.1283 7.73977 14.7821 7.73977L7.3798 7.73977C7.02536 7.73977 6.76831 7.47236 6.76831 7.13038C6.76831 6.79665 7.02536 6.53959 7.3798 6.53959L14.7821 6.53959C15.1283 6.53959 15.3832 6.79665 15.3832 7.13038Z" fill="black" fill-opacity="0.85"/>
-  <path d="M14.867 22.63C17.0346 22.63 18.8098 20.8465 18.8098 18.6768C18.8098 16.5196 17.0346 14.7423 14.867 14.7423C12.7076 14.7423 10.9325 16.5196 10.9325 18.6768C10.9325 20.8465 12.7076 22.63 14.867 22.63ZM14.8691 21.3159C13.4393 21.3159 12.2486 20.1252 12.2486 18.6747C12.2486 17.2553 13.4393 16.0646 14.8691 16.0646C16.3093 16.0646 17.4979 17.2553 17.4979 18.6747C17.4979 20.1273 16.3093 21.3159 14.8691 21.3159ZM20.0262 24.7006C20.4865 24.7006 20.816 24.3565 20.816 23.8694C20.816 23.6599 20.7019 23.4548 20.5423 23.293L17.9887 20.7227L16.8071 21.8691L19.3524 24.3958C19.5453 24.5969 19.7546 24.7006 20.0262 24.7006Z" fill="black" fill-opacity="0.85"/>
- </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="0_icons_Component.svg"
+   inkscape:export-batch-name=""
+   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   inkscape:zoom="1.0606602"
+   inkscape:cx="243.71614"
+   inkscape:cy="-158.86332"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="41"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer1">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <inkscape:page
+   x="0"
+   y="0"
+   width="32"
+   height="32"
+   id="page12"
+   margin="0"
+   bleed="0"
+   inkscape:label="search" />
+    
+    
+    
+    
+    
+    
+  </sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="layer1"
+   style="display:inline"
+   transform="translate(-462)">
+    <!-- Icon: icon (Page 1) -->
+    
+    <!-- Icon: rank (Page 2) -->
+    
+    <!-- Icon: painter (Page 3) -->
+    
+    <!-- Icon: absorb (Page 4) -->
+    
+    <!-- Icon: history (Page 5) -->
+    
+    <!-- Icon: clear (Page 6) -->
+    
+    <!-- Icon: undo_latest (Page 7) -->
+    
+    <!-- Icon: export (Page 8) -->
+    
+    <!-- Icon: pin_green (Page 9) -->
+    
+    <!-- Icon: pin_grey (Page 10) -->
+    
+    <!-- Icon: settings (Page 11) -->
+    
+    <!-- Icon: search (Page 12) -->
+    
+    <!-- Icon: add (Page 13) -->
+    
+    <!-- Icon: chevron_down (Page 14) -->
+    
+    <!-- Icon: sort-AZ (Page 15) -->
+    
+    <!-- Icon: sort-reverse-ZA (Page 16) -->
+    
+    <!-- Icon: sort-ascend (Page 17) -->
+    
+    <!-- Icon: sort-dscend (Page 18) -->
+    
+  <path
+   d="m 483.42353,24.511224 a 13.106609,13.106609 0 1 1 3.08879,-3.08879 l 6.15137,6.153553 a 2.1844348,2.1844348 0 0 1 -3.08879,3.088791 l -6.15137,-6.151368 z m -7.59528,-1.944147 a 8.737739,8.737739 0 1 0 0,-17.4754761 8.737739,8.737739 0 0 0 0,17.4754761 z"
+   p-id="8007"
+   id="path1-7"
+   style="stroke-width:1" /></g>
 </svg>

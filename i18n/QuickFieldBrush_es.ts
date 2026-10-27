@@ -87,6 +87,12 @@
       <translation>Attribute Format Painter (console)</translation>
     </message>
     <message>
+      <source>Attribute Format Painter, activate format painter console
+Select or absorb attribute, then click features consecutively for rapid assignment</source>
+      <translation>Attribute Format Painter, activate format painter console
+Select or absorb attribute, then click features consecutively for rapid assignment</translation>
+    </message>
+    <message>
       <source>Attribute format painter (pick field/value, then click features to assign)</source>
       <translation>Pincel de formato de atributos (elegir campo/valor, clic en entidades para aplicar)</translation>
     </message>
@@ -121,6 +127,16 @@
     <message>
       <source>Copy Feature ID(s) to Clipboard</source>
       <translation>Copy Feature ID(s) to Clipboard</translation>
+    </message>
+    <message>
+      <source>Edit History</source>
+      <translation>Edit History</translation>
+    </message>
+    <message>
+      <source>Edit History, open plugin history panel
+Browse, flash-zoom, single-step revert, and export records</source>
+      <translation>Edit History, open plugin history panel
+Browse, flash-zoom, single-step revert, and export records</translation>
     </message>
     <message>
       <source>Enter a new rank/value</source>
@@ -229,6 +245,16 @@
     <message>
       <source>History successfully exported to: {0}</source>
       <translation>History successfully exported to: {0}</translation>
+    </message>
+    <message>
+      <source>Interactive Assignment</source>
+      <translation>Interactive Assignment</translation>
+    </message>
+    <message>
+      <source>Interactive Assignment, activate interactive assignment tool
+Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</source>
+      <translation>Interactive Assignment, activate interactive assignment tool
+Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</translation>
     </message>
     <message>
       <source>Interactive ranking tool activated: box-select features, then right-click to rank!</source>

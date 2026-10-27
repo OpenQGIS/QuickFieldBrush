@@ -1,11 +1,115 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--Generator: Apple Native CoreSVG 360-->
-<!DOCTYPE svg
-PUBLIC "-//W3C//DTD SVG 1.1//EN"
-       "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 19.9197 19.9218">
- <g>
-  <rect height="19.9218" opacity="0" width="19.9197" x="0" y="0"/>
-  <path d="M19.9197 9.95469C19.9197 15.4407 15.4511 19.9094 9.95469 19.9094C4.46866 19.9094 4.44089e-16 15.4407 4.44089e-16 9.95469C4.44089e-16 4.46866 4.46866 0 9.95469 0C15.4511 0 19.9197 4.46866 19.9197 9.95469ZM11.2289 6.60691L11.2289 7.63113L12.0285 7.63113C12.5257 7.63113 12.8874 7.75172 13.0976 7.98255C13.3305 8.20091 13.4635 8.55866 13.4635 9.05981L13.4635 12.4194C13.4635 12.9227 13.3284 13.2659 13.0976 13.4967C12.8853 13.7172 12.5235 13.8378 12.0285 13.8378L7.87873 13.8378C7.39828 13.8378 7.0323 13.7172 6.81182 13.4967C6.58923 13.2638 6.45829 12.9227 6.45829 12.4194L6.45829 9.05981C6.45829 8.55866 6.58923 8.21126 6.81182 7.9929C7.0323 7.75996 7.39828 7.63113 7.87873 7.63113L8.69291 7.63113L8.69291 6.60691L7.87873 6.60691C7.09349 6.60691 6.47045 6.8498 6.06959 7.24031C5.66873 7.64328 5.43619 8.26633 5.43619 9.05981L5.43619 12.4194C5.43619 13.2129 5.66873 13.836 6.06959 14.2493C6.48291 14.6398 7.09349 14.8723 7.87873 14.8723L12.0285 14.8723C12.8366 14.8723 13.441 14.6377 13.8398 14.2493C14.2635 13.836 14.4753 13.2129 14.4753 12.4194L14.4753 9.05981C14.4753 8.26633 14.2635 7.64328 13.8398 7.24031C13.4389 6.83945 12.8366 6.60691 12.0285 6.60691ZM9.59392 3.53539L7.91722 5.17069C7.80316 5.26405 7.77 5.37599 7.77 5.50864C7.77 5.76781 7.96285 5.9503 8.21991 5.9503C8.36291 5.9503 8.49978 5.89644 8.57243 5.80308L9.02494 5.33812L9.47557 4.86051L9.46127 5.33812L9.46127 10.4246C9.46127 10.6962 9.68095 10.9222 9.95469 10.9222C10.2388 10.9222 10.4606 10.6962 10.4606 10.4246L10.4606 5.33812L10.4447 4.87467L10.876 5.33812L11.3327 5.80519C11.4136 5.89644 11.5442 5.95242 11.6831 5.95242C11.959 5.95242 12.1497 5.76781 12.1497 5.50864C12.1497 5.37177 12.1102 5.26193 11.99 5.1728L10.3112 3.53539C10.1972 3.42134 10.077 3.37782 9.95258 3.37782C9.83852 3.37782 9.71833 3.42134 9.59392 3.53539Z" fill="black" fill-opacity="0.85"/>
- </g>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="0_icons_Component.svg"
+   inkscape:export-batch-name=""
+   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   inkscape:zoom="1.0606602"
+   inkscape:cx="243.71614"
+   inkscape:cy="-158.86332"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="41"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer1">
+    
+    
+    
+    
+    
+    
+    
+    <inkscape:page
+   x="0"
+   y="0"
+   width="32"
+   height="32"
+   id="page8"
+   margin="0"
+   bleed="0"
+   inkscape:label="export" />
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="layer1"
+   style="display:inline"
+   transform="translate(-294)">
+    <!-- Icon: icon (Page 1) -->
+    
+    <!-- Icon: rank (Page 2) -->
+    
+    <!-- Icon: painter (Page 3) -->
+    
+    <!-- Icon: absorb (Page 4) -->
+    
+    <!-- Icon: history (Page 5) -->
+    
+    <!-- Icon: clear (Page 6) -->
+    
+    <!-- Icon: undo_latest (Page 7) -->
+    
+    <!-- Icon: export (Page 8) -->
+    
+    <!-- Icon: pin_green (Page 9) -->
+    
+    <!-- Icon: pin_grey (Page 10) -->
+    
+    <!-- Icon: settings (Page 11) -->
+    
+    <!-- Icon: search (Page 12) -->
+    
+    <!-- Icon: add (Page 13) -->
+    
+    <!-- Icon: chevron_down (Page 14) -->
+    
+    <!-- Icon: sort-AZ (Page 15) -->
+    
+    <!-- Icon: sort-reverse-ZA (Page 16) -->
+    
+    <!-- Icon: sort-ascend (Page 17) -->
+    
+    <!-- Icon: sort-dscend (Page 18) -->
+    
+  <path
+   d="m 325.1689,7.6088468 -5.65427,-5.6542803 -0.0226,-0.02261 a 2.2617127,2.2617127 0 0 0 -3.17545,3.2206696 l 1.79354,1.7935378 h -2.45622 q -5.15218,0 -8.79807,3.6413571 -3.64134,3.648143 -3.64134,8.798062 a 2.2617138,2.2617138 0 0 0 4.52342,0 q 0,-3.279484 2.31826,-5.597736 2.31825,-2.318258 5.59773,-2.318258 h 2.45622 l -1.79354,1.79354 a 2.262171,2.262171 0 1 0 3.20032,3.19806 l 5.65429,-5.654282 a 2.2617127,2.2617127 0 0 0 -0.002,-3.1980635 z M 300.95275,30.694151 h 21.48628 a 2.2617141,2.2617141 0 1 0 0,-4.523428 h -21.48628 q -0.93635,0 -1.59902,-0.662678 -0.66269,-0.662683 -0.66269,-1.599032 V 8.0770239 a 2.261715,2.261715 0 0 0 -4.52343,0 V 23.909013 q 0,2.811308 1.98804,4.797092 1.98579,1.988046 4.7971,1.988046 z"
+   fill="#3a3a3a"
+   p-id="7002"
+   id="path1"
+   style="stroke-width:1" /></g>
 </svg>

@@ -1,7 +1,133 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.1695 23.3699">
- <g>
-  <rect height="23.3699" opacity="0" width="15.1695" x="0" y="0"/>
-  <path d="M0 14.6998C0 15.5252 0.560141 16.0748 1.43141 16.0748L6.72137 16.0748L6.72137 20.6289C6.72137 22.1216 7.34111 23.3699 7.57958 23.3699C7.82839 23.3699 8.44813 22.1216 8.44813 20.6289L8.44813 16.0748L13.7277 16.0748C14.6115 16.0748 15.1695 15.5252 15.1695 14.6998C15.1695 12.629 13.5164 10.4677 10.7676 9.46931L10.4478 4.98488C11.8748 4.17361 13.0461 3.25783 13.5488 2.60333C13.8122 2.26307 13.9326 1.93738 13.9326 1.6366C13.9326 1.0433 13.47 0.603547 12.7895 0.603547L2.38004 0.603547C1.68916 0.603547 1.23694 1.0433 1.23694 1.6366C1.23694 1.93738 1.35733 2.26307 1.61248 2.60333C2.11514 3.25783 3.28647 4.17572 4.71134 4.98488L4.40193 9.46931C1.65308 10.4677 0 12.629 0 14.6998Z" fill="#94A3B8"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="0_icons_Component.svg"
+   inkscape:export-batch-name=""
+   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   inkscape:zoom="1.0606602"
+   inkscape:cx="243.71614"
+   inkscape:cy="-158.86332"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="41"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer1">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <inkscape:page
+   x="0"
+   y="0"
+   width="32"
+   height="32"
+   id="page10"
+   margin="0"
+   bleed="0"
+   inkscape:label="pin_grey" />
+    
+    
+    
+    
+    
+    
+    
+    
+  </sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="layer1"
+   style="display:inline"
+   transform="translate(-378)">
+    <!-- Icon: icon (Page 1) -->
+    
+    <!-- Icon: rank (Page 2) -->
+    
+    <!-- Icon: painter (Page 3) -->
+    
+    <!-- Icon: absorb (Page 4) -->
+    
+    <!-- Icon: history (Page 5) -->
+    
+    <!-- Icon: clear (Page 6) -->
+    
+    <!-- Icon: undo_latest (Page 7) -->
+    
+    <!-- Icon: export (Page 8) -->
+    
+    <!-- Icon: pin_green (Page 9) -->
+    
+    <!-- Icon: pin_grey (Page 10) -->
+    <g
+   id="g_pin_grey"
+   inkscape:label="pin_grey"
+   transform="matrix(1.3692784,0,0,1.3692784,383.61442,0)"
+   style="stroke-width:0.730312">
+        <g
+   id="g25"
+   style="stroke-width:0.730312">
+  <rect
+   height="23.3699"
+   opacity="0"
+   width="15.1695"
+   x="0"
+   y="0"
+   id="rect24"
+   style="stroke-width:0.730312" />
+  <path
+   d="m 0,14.6998 c 0,0.8254 0.560141,1.375 1.43141,1.375 h 5.28996 v 4.5541 c 0,1.4927 0.61974,2.741 0.85821,2.741 0.24881,0 0.86855,-1.2483 0.86855,-2.741 v -4.5541 h 5.27957 c 0.8838,0 1.4418,-0.5496 1.4418,-1.375 0,-2.0708 -1.6531,-4.2321 -4.4019,-5.23049 L 10.4478,4.98488 c 1.427,-0.81127 2.5983,-1.72705 3.101,-2.38155 0.2634,-0.34026 0.3838,-0.66595 0.3838,-0.96673 0,-0.5933 -0.4626,-1.033053 -1.1431,-1.033053 H 2.38004 c -0.69088,0 -1.1431,0.439753 -1.1431,1.033053 0,0.30078 0.12039,0.62647 0.37554,0.96673 0.50266,0.6545 1.67399,1.57239 3.09886,2.38155 L 4.40193,9.46931 C 1.65308,10.4677 0,12.629 0,14.6998 Z"
+   fill="#94a3b8"
+   id="path25"
+   style="stroke-width:0.730312" />
  </g>
+
+    </g>
+    <!-- Icon: settings (Page 11) -->
+    
+    <!-- Icon: search (Page 12) -->
+    
+    <!-- Icon: add (Page 13) -->
+    
+    <!-- Icon: chevron_down (Page 14) -->
+    
+    <!-- Icon: sort-AZ (Page 15) -->
+    
+    <!-- Icon: sort-reverse-ZA (Page 16) -->
+    
+    <!-- Icon: sort-ascend (Page 17) -->
+    
+    <!-- Icon: sort-dscend (Page 18) -->
+    
+  </g>
 </svg>

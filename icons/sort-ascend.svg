@@ -1,53 +1,122 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   t="1793020339792"
-   class="icon"
-   viewBox="0 0 1024 1024"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
    version="1.1"
-   p-id="7073"
-   width="200"
-   height="200"
    id="svg1"
-   sodipodi:docname="sort-ascend.svg"
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="0_icons_Component.svg"
+   inkscape:export-batch-name=""
+   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs1" />
   <sodipodi:namedview
-     id="namedview1"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.9525"
-     inkscape:cx="66.069142"
-     inkscape:cy="105.24968"
-     inkscape:window-width="1920"
-     inkscape:window-height="1001"
-     inkscape:window-x="-9"
-     inkscape:window-y="41"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg1" />
-  <path
-     d="m 480,736 a 32,32 0 0 0 -32,32 v 32 a 32,32 0 0 0 32,32 h 448 a 32,32 0 0 0 32,-32 v -32 a 32,32 0 0 0 -32,-32 z"
-     style="fill:#333333"
-     id="path5" />
-  <path
-     d="m 480,464 a 32,32 0 0 0 -32,32 v 32 a 32,32 0 0 0 32,32 h 352 a 32,32 0 0 0 32,-32 v -32 a 32,32 0 0 0 -32,-32 z"
-     style="fill:#333333"
-     id="path4" />
-  <path
-     d="m 480,192 a 32,32 0 0 0 -32,32 v 32 a 32,32 0 0 0 32,32 h 192 a 32,32 0 0 0 32,-32 v -32 a 32,32 0 0 0 -32,-32 z"
-     style="fill:#333333"
-     id="path3" />
-  <path
-     d="m 304.68,895.97003 c -10.93523,0.38742 -22.18,-2.96 -31.75,-10.88 l -3.2,-2.92 -186.75,-183.1 a 32,32 0 0 1 -0.45,-45.28 l 22.4,-22.85 a 32,32 0 0 1 45.25,-0.45 l 105.24,103.14 0.58,-573.82 a 32,32 0 0 1 32.06,-31.94 h 32 a 32,32 0 0 1 31.94,32.1 l -0.67,688 c -0.022,28.204 -22.59248,47.14767 -46.65,48 z"
-     style="fill:#333333"
-     id="path2" />
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   inkscape:zoom="1.0606602"
+   inkscape:cx="243.71614"
+   inkscape:cy="-158.86332"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="41"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="layer1">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <inkscape:page
+   x="0"
+   y="0"
+   width="32"
+   height="32"
+   id="page17"
+   margin="0"
+   bleed="0"
+   inkscape:label="sort-ascend" />
+    
+  </sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="layer1"
+   style="display:inline"
+   transform="translate(-672)">
+    <!-- Icon: icon (Page 1) -->
+    
+    <!-- Icon: rank (Page 2) -->
+    
+    <!-- Icon: painter (Page 3) -->
+    
+    <!-- Icon: absorb (Page 4) -->
+    
+    <!-- Icon: history (Page 5) -->
+    
+    <!-- Icon: clear (Page 6) -->
+    
+    <!-- Icon: undo_latest (Page 7) -->
+    
+    <!-- Icon: export (Page 8) -->
+    
+    <!-- Icon: pin_green (Page 9) -->
+    
+    <!-- Icon: pin_grey (Page 10) -->
+    
+    <!-- Icon: settings (Page 11) -->
+    
+    <!-- Icon: search (Page 12) -->
+    
+    <!-- Icon: add (Page 13) -->
+    
+    <!-- Icon: chevron_down (Page 14) -->
+    
+    <!-- Icon: sort-AZ (Page 15) -->
+    
+    <!-- Icon: sort-reverse-ZA (Page 16) -->
+    
+    <!-- Icon: sort-ascend (Page 17) -->
+    <path
+   d="m 686.805,24.025203 a 1.1463334,1.1463334 0 0 0 -1.14633,1.146333 v 1.146334 a 1.1463334,1.1463334 0 0 0 1.14633,1.146333 h 16.04867 A 1.1463334,1.1463334 0 0 0 704,26.31787 v -1.146334 a 1.1463334,1.1463334 0 0 0 -1.14633,-1.146333 z"
+   style="fill:#333333;stroke-width:0.025391"
+   id="path38" /><path
+   d="m 686.805,14.281369 a 1.1463334,1.1463334 0 0 0 -1.14633,1.146333 v 1.146334 a 1.1463334,1.1463334 0 0 0 1.14633,1.146333 h 12.60967 a 1.1463334,1.1463334 0 0 0 1.14633,-1.146333 v -1.146334 a 1.1463334,1.1463334 0 0 0 -1.14633,-1.146333 z"
+   style="fill:#333333;stroke-width:0.025391"
+   id="path39" /><path
+   d="m 686.805,4.5375345 a 1.1463334,1.1463334 0 0 0 -1.14633,1.1463335 v 1.1463334 a 1.1463334,1.1463334 0 0 0 1.14633,1.1463335 h 6.878 a 1.1463334,1.1463334 0 0 0 1.14634,-1.1463335 V 5.683868 A 1.1463334,1.1463334 0 0 0 693.683,4.5375345 Z"
+   style="fill:#333333;stroke-width:0.025391"
+   id="path40" /><path
+   d="m 680.52453,29.755797 c -0.39173,0.01388 -0.79456,-0.106036 -1.13738,-0.389754 l -0.11463,-0.104603 -6.68993,-6.559176 a 1.1463334,1.1463334 0 0 1 -0.0161,-1.622062 l 0.80243,-0.818554 a 1.1463334,1.1463334 0 0 1 1.62099,-0.01612 l 3.77,3.694776 0.0208,-20.5559082 a 1.1463334,1.1463334 0 0 1 1.14848,-1.144184 h 1.14633 a 1.1463334,1.1463334 0 0 1 1.14419,1.1499157 l -0.024,24.6461685 c -7.9e-4,1.01035 -0.80933,1.688968 -1.67114,1.719501 z"
+   style="fill:#333333;stroke-width:0.025391"
+   id="path41" />
+    <!-- Icon: sort-dscend (Page 18) -->
+    
+  </g>
 </svg>
