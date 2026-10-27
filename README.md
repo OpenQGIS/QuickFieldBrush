@@ -41,17 +41,19 @@ QuickFieldBrush 是一个用于 QGIS 的矢量要素属性快速赋值与修改�
 
 ---
 
-## 安装方法
+## 🗺️ 路线图与规划 (Roadmap)
 
-1. 将 `QuickFieldBrush` 文件夹复制到 QGIS 插件目录：
-   - Windows: `C:\Users\<用户名>\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\`
-2. 打开 QGIS，进入菜单栏 `插件` -> `管理并安装插件` -> `已安装`，勾选 `QuickFieldBrush` 即可。
+本项目当前处于 **v0.5.0 迭代周期**，正在推进属性表内联快速赋值委托支持。
 
----
+```mermaid
+flowchart LR
+    v04["v0.4.1 (已发布)"]:::done --> v05["v0.5.0 (进行中)"]:::doing --> v06["v0.6.0 (待启动)"]:::plan
+    classDef done fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#14532D;
+    classDef doing fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1E3A8A;
+    classDef plan fill:#F1F5F9,stroke:#94A3B8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#475569;
+```
 
-## 开源许可
-
-MIT License
+👉 **查看详细特性矩阵、开发进度条与任务清单**：请参阅 [完整开发路线图 (ROADMAP.md)](ROADMAP.md)。
 
 ---
 
