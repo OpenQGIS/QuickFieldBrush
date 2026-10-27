@@ -3,22 +3,22 @@ name=QuickFieldBrush
 qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
 icon=icon/icon.svg
-description=基于右键菜单的极速矢量要素属性赋级、一键属性格式刷与操作历史面板。 / Rapid interactive feature attribute ranking via right-click, one-click format painter, and modification history palette for QGIS.
+description=矢量要素右键快速赋级、属性格式刷与修改历史面板。 / Rapid attribute ranking via right-click, format painter, and edit history panel for QGIS.
 version=0.2.1
 author=OpenQGIS
 email=OpenQGIS@outlook.com
 about=
-  QuickFieldBrush 是一款专为 QGIS 打造的极速矢量要素属性赋级、格式刷与历史回溯工具。
-  包含三大核心作业模式：
-  1. 交互赋级工具：框选要素后右键呼出极速分级菜单，每次激活主动弹窗确定目标字段并按图层独立记忆；内置双维度智能翻转排序条（高频优先/字母升降序），直接透视要素真实出现频次。
-  2. 属性格式刷工具：无模态常驻置顶控制台，单选或从要素一键吸取属性后，在地图上连续点击要素快速刷入。
-  3. 历史记录面板：悬浮操作面板，记录单点刷入与批量修改；支持地图单击瞬时居中高亮、双击选中要素、单步一键精准还原与 CSV 台账导出。
+  QuickFieldBrush 用于在 QGIS 中给矢量要素快速填写或批量修改属性。
+  包含三个功能模块：
+  1. 交互赋级：框选要素后右键选择属性值进行赋级，按图层记忆目标字段，支持频次与字母排序。
+  2. 属性格式刷：支持从要素吸取值或手动选值，在地图上连续点击要素写入。
+  3. 历史面板：记录修改历史，支持地图单击居中高亮、双击选中要素、单步还原与导出 CSV。
   /
-  QuickFieldBrush provides rapid vector feature attribute ranking, continuous format painting, and a floating history panel for QGIS.
-  Features:
-  1. Interactive ranking: Box-select features, then right-click to rank instantly. Prompts for target field on activation with per-layer memory. Features a 2-button dynamic flipping sort bar (frequency and alphabetical) with feature count statistics.
-  2. Format painter: Modeless always-on-top console for continuous single-click attribute painting with instant absorption from selected features.
-  3. History panel: Floating palette recording all feature attribute changes. Supports instant canvas centering and flash highlight on click, feature selection on double click, single-step revert, undo latest, and CSV audit log export.
+  QuickFieldBrush helps edit and assign vector attributes in QGIS.
+  Modules:
+  1. Interactive ranking: Box-select features and right-click to assign values. Remembers the target field per layer, with frequency and alphabetical sorting.
+  2. Format painter: Pick an attribute value or absorb it from an existing feature, then click features on the canvas to write values continuously.
+  3. History panel: Logs edits, centers the canvas on selected records, reverts individual changes, and exports records to CSV.
 category=Vector
 tags=vector, attributes, ranking, format painter, brush, tagging, history, undo, osm, fast edit
 homepage=https://github.com/OpenQGIS/QuickFieldBrush
@@ -28,20 +28,12 @@ changelog=
   Version 0.2.1:
   - 安全扫描 / Security scan
   Version 0.2.0:
-  - 🎨 格式刷控制台全面重构为原生 4 行紧凑布局，对齐 QGIS 原生控件与矢量字段类型图标。 / Rebuilt format painter into a native 4-row layout aligned with QGIS native controls and field icons.
-  - 🔄 右键分级菜单与格式刷同步搭载双维度两态翻转排序按钮 (A-Z 与 频次升降)。 / Synchronized 2-button dynamic flipping sort (alphabetical and frequency) across context menu and format painter.
-  - 👁️ 属性值与统计频次色彩层级分离（正文深黑，频次中灰），完善悬浮高亮对比度。 / Differentiated attribute values (dark) from feature counts (medium gray) with optimized hover highlight contrast.
-  - 🧪 格式刷地图直接吸取与右键瞬时吸管交互，配备专属蓝色高亮反馈。 / Real eyedropper for format painter with right-click instant absorption and blue canvas feedback.
-  - 🕒 新增操作历史浮动面板。 / Added floating history palette.
-  - 📍 历史记录单项联动：单击画布居中并翠绿闪烁高亮要素，双击自动在图层中选中要素。 / Click history item to center and flash highlight on canvas; double click to select feature.
-  - ↺ 支持单步一键精准还原 (Revert) 到修改前原值，支持撤销最近一步修改。 / Single-step revert to original values and undo latest modification.
-  - 📥 支持将要素修改历史完整导出为 CSV 审计台账。 / Export full modification log to CSV audit table.
-  - 🍎 全系图标升级为苹果 SF Symbols 矢量设计语言。 / Upgraded all icons to Apple SF Symbols vector language.
-  - ⚡ 采用底层 Win32 API 实现零闪烁置顶切换，消除工具栏闪白。 / Zero-flicker window pin via Win32 API and eliminated toolbar white flashing.
+  - 格式刷控制台重构为原生 4 行紧凑布局，支持字段类型图标。 / Rebuilt format painter into a compact 4-row layout with field type icons.
+  - 右键赋级菜单与格式刷支持字母与频次升降序切换。 / Added dynamic flipping sort (alphabetical and frequency) to menu and format painter.
+  - 格式刷支持从要素吸取属性值，支持右键直接吸取。 / Format painter supports absorbing values from canvas features directly.
+  - 新增操作历史面板，支持地图定位、单步还原、撤销与 CSV 导出。 / Added edit history panel with canvas centering, single-step revert, undo, and CSV export.
+  - 更新图标样式，优化置顶稳定性与多语言支持。 / Updated icons, improved window pin stability, and added multilingual support.
   Version 0.1.0:
-  - ✨ 首次发布独立极速赋级与格式刷版本。 / Initial release focused on rapid right-click ranking and format painter.
-  - 🚀 每次激活工具主动弹窗确定目标字段，按图层独立记忆，回车即可复用。 / Prompts for target field on tool activation with per-layer memory.
-  - 📊 右键菜单内置 6 维微型排序条（高频优先/数值升降/字母升降）与要素真实频次统计。 / Integrated 6-mode compact sort bar (frequency, numerical, alphabetical) with feature count statistics.
-  - 🖌️ 新增无模态常驻置顶格式刷控制台，支持从要素一键吸取属性并连续点击刷入。 / Modeless always-on-top format painter console with instant attribute absorption.
+  - 首次发布，支持右键赋级与格式刷基础功能。 / Initial release with right-click ranking and format painter.
 experimental=False
 deprecated=False

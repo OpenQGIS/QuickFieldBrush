@@ -12,8 +12,8 @@
 | **右键分级菜单** | `ui/rank_context_menu.py` | 单行顶栏、2 键智能翻转排序条、深黑值与中灰频次色彩分离、自定义新值 | ✅ PASS |
 | **原生字段选择器** | `ui/rank_context_menu.py` | 支持 QGIS 原生 14 种矢量字段类型图标，过滤系统主键与只读字段 | ✅ PASS |
 | **格式刷控制台** | `ui/format_painter_dialog.py` | 原生 4 行流式布局、2 键翻转排序、Win32 API 零闪烁置顶图钉、纯净属性值 | ✅ PASS |
-| **真·属性吸管** | `core/format_painter_tool.py` | 地图单击直吸、右键瞬时吸管、蓝色 250ms 橡皮筋反馈 | ✅ PASS |
-| **格式刷地图涂抹** | `core/format_painter_tool.py` | 左键连续刷入、绿色 180ms 闪烁、独立撤销单元、ESC 快捷退出 | ✅ PASS |
+| **属性吸管** | `core/format_painter_tool.py` | 地图单击吸取、右键吸取、蓝色橡皮筋高亮反馈 | ✅ PASS |
+| **格式刷地图写入** | `core/format_painter_tool.py` | 左键连续刷入、绿色闪烁高亮、独立撤销、ESC 快捷退出 | ✅ PASS |
 | **悬浮操作历史面板** | `ui/history_dialog.py` | 无模态悬浮、单步一键回滚 (`↺`)、撤销最新、实时搜索筛选、CSV 导出 | ✅ PASS |
 | **历史地图联动** | `ui/history_dialog.py` | 单击居中平移闪烁、双击图层激活并选中要素 | ✅ PASS |
 | **属性核心引擎** | `core/attribute_engine.py` | 强类型转换、会话级唯一值与频次缓存、万级要素 <0.15s | ✅ PASS |
