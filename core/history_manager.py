@@ -170,6 +170,10 @@ class HistoryManager(QObject):
         self._records.clear()
         self.history_changed.emit()
 
+    def clear_history(self):
+        """清空所有历史记录 (别名)"""
+        self.clear()
+
     def export_csv(self, filepath: str) -> tuple:
         """导出所有操作记录明细到 CSV 文件 (带 UTF-8 BOM 兼容 Excel)"""
         try:

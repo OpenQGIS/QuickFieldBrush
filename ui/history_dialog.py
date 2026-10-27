@@ -1,163 +1,38 @@
 # -*- coding: utf-8 -*-
 """
-QuickFieldBrush 历史记录面板 (HistoryDialog):
-无模态悬浮操作历史面板：
-1. 记录格式刷单点写入与框选批量赋值的所有操作历史
-2. 单击记录：画布瞬间居中/平移到该要素，并触发 350ms 翠绿高亮闪烁
-3. 双击记录：自动在矢量图层中选中对应要素 (QgsVectorLayer.selectByIds)
-4. 单步回滚：点击记录右侧 ↺ 按钮或右键菜单，一键将要素恢复到修改前的值 (old_value)
-5. 撤销最近一步、清空历史、导出 CSV 审计台账
-6. 窗口支持随时置顶 (Pin / Always on top)
+QuickFieldBrush 历史记录面板 (HistoryDockWidget):
+QGIS 原生风格的停靠/悬浮历史记录面板：
+1. 原生数据表格视图 (QTreeWidget)，支持斑马线底色、自适应列宽、系统高亮与深浅色模式自适应；
+2. 一体化原生工具栏：搜索过滤、撤回、导出台账、悬浮置顶无缝集成；
+3. 单击条目：画布瞬间居中/平移到该要素，并触发 350ms 翠绿高亮闪烁；
+4. 双击条目：自动在矢量图层中选中对应要素并激活该图层；
+5. 右键菜单与工具栏撤回：支持针对选中项单步回滚或快捷撤销最新一步；
+6. 窗口支持在 QGIS 主窗口停靠 (Dock) 与独立悬浮置顶 (Float & Pin)。
 """
 
 import os
-from qgis.gui import QgsDockWidget
+from qgis.gui import QgsDockWidget, QgsRubberBand
 from qgis.PyQt.QtWidgets import (
-    QDialog, QVBoxLayout, QHBoxLayout, QLabel, QToolButton,
-    QPushButton, QListWidget, QListWidgetItem, QWidget,
-    QLineEdit, QFileDialog, QMenu, QApplication
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QToolButton,
+    QLineEdit, QFileDialog, QMenu, QApplication,
+    QTreeWidget, QTreeWidgetItem, QHeaderView, QAbstractItemView,
+    QMessageBox
 )
-from qgis.PyQt.QtGui import QIcon, QColor, QFont
+from qgis.PyQt.QtGui import QIcon, QColor, QFont, QPalette
 from qgis.PyQt.QtCore import Qt, QTimer, QSize
-from ..core.compat import safe_exec, set_window_stay_on_top
 from qgis.core import (
     QgsProject, QgsVectorLayer, QgsWkbTypes,
     QgsCoordinateTransform, QgsCsException, QgsRectangle, QgsFeatureRequest
 )
-from qgis.gui import QgsRubberBand
 
+from ..core.compat import safe_exec, set_window_stay_on_top
 from ..core.history_manager import HistoryManager, HistoryStep
 from ..i18n_helper import tr
-from . import theme
-
-
-class HistoryCardWidget(QWidget):
-    """历史记录单项卡片组件 (紧凑面板卡片)"""
-
-    def __init__(self, step: HistoryStep, on_revert_cb, parent=None):
-        super().__init__(parent)
-        self.step = step
-        self.on_revert_cb = on_revert_cb
-        self._init_ui()
-
-    def _init_ui(self):
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(6, 4, 6, 4)
-        layout.setSpacing(8)
-
-        # 1. 工具类型徽章图标
-        lbl_badge = QLabel()
-        lbl_badge.setFixedSize(24, 24)
-        lbl_badge.setAlignment(Qt.AlignCenter)
-        icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
-        if self.step.tool_type == "painter":
-            ic = QIcon(os.path.join(icons_dir, "painter.svg"))
-            if not ic.isNull():
-                lbl_badge.setPixmap(ic.pixmap(16, 16))
-            else:
-                lbl_badge.setText("🖌️")
-            lbl_badge.setStyleSheet(
-                "background-color: %s; border-radius: 4px;" % theme.ACCENT_TINT
-            )
-        else:
-            ic = QIcon(os.path.join(icons_dir, "rank.svg"))
-            if not ic.isNull():
-                lbl_badge.setPixmap(ic.pixmap(16, 16))
-            else:
-                lbl_badge.setText("⚡")
-            lbl_badge.setStyleSheet(
-                "background-color: %s; border-radius: 4px;" % theme.PRIMARY_TINT
-            )
-        layout.addWidget(lbl_badge)
-
-        # 2. 文本内容区
-        vbox = QVBoxLayout()
-        vbox.setSpacing(2)
-        vbox.setContentsMargins(0, 0, 0, 0)
-
-        # 第一行：字段名 + 新值 + 时间戳
-        top_row = QHBoxLayout()
-        top_row.setSpacing(4)
-
-        target_display = str(self.step.target_value)
-        if len(target_display) > 20:
-            target_display = target_display[:18] + "..."
-
-        lbl_action = QLabel(f"<b>[{self.step.field_name}]</b> ➔ \"{target_display}\"")
-        font = lbl_action.font()
-        font.setPointSize(9)
-        if self.step.is_reverted:
-            font.setStrikeOut(True)
-            lbl_action.setStyleSheet("color: %s;" % theme.DISABLED_FG)
-        else:
-            lbl_action.setStyleSheet("color: %s;" % theme.FG)
-        lbl_action.setFont(font)
-        top_row.addWidget(lbl_action, 1)
-
-        lbl_time = QLabel(self.step.timestamp)
-        lbl_time.setStyleSheet("color: %s; font-size: 10px;" % theme.FG_MUTED)
-        top_row.addWidget(lbl_time)
-        vbox.addLayout(top_row)
-
-        # 第二行：图层名 + 要素详情 + 回滚状态
-        bot_row = QHBoxLayout()
-        bot_row.setSpacing(4)
-
-        if self.step.tool_type == "painter":
-            fid_val = self.step.changes[0]["fid"] if self.step.changes else ""
-            old_val = self.step.changes[0].get("old_val", "") if self.step.changes else ""
-            old_display = str(old_val)
-            if len(old_display) > 12:
-                old_display = old_display[:10] + ".."
-            detail_str = f"{self.step.layer_name} · FID {fid_val} ({tr('was')}: \"{old_display}\")"
-        else:
-            cnt = self.step.feature_count
-            detail_str = f"{self.step.layer_name} · {cnt} {tr('features')}"
-
-        lbl_detail = QLabel(detail_str)
-        lbl_detail.setStyleSheet("color: %s; font-size: 10px;" % theme.FG_MUTED)
-        bot_row.addWidget(lbl_detail, 1)
-
-        if self.step.is_reverted:
-            lbl_rev_tag = QLabel(f"[{tr('Reverted')}]")
-            lbl_rev_tag.setStyleSheet("color: %s; font-size: 10px; font-weight: 600;" % theme.DANGER)
-            bot_row.addWidget(lbl_rev_tag)
-
-        vbox.addLayout(bot_row)
-        layout.addLayout(vbox, 1)
-
-        # 3. 单步还原快捷按钮
-        self.btn_revert = QToolButton()
-        self.btn_revert.setFixedSize(22, 22)
-        if self.step.is_reverted:
-            self.btn_revert.setText("✓")
-            self.btn_revert.setEnabled(False)
-            self.btn_revert.setStyleSheet("color: %s; border: none; background: transparent; font-weight: bold;" % theme.SUCCESS)
-        else:
-            icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
-            undo_icon = QIcon(os.path.join(icons_dir, "undo_latest.svg"))
-            if not undo_icon.isNull():
-                self.btn_revert.setIcon(undo_icon)
-                self.btn_revert.setIconSize(QSize(13, 13))
-            else:
-                self.btn_revert.setText("↺")
-            self.btn_revert.setToolTip(tr("Revert this operation"))
-            self.btn_revert.setStyleSheet("""
-                QToolButton {
-                    border: 1px solid %s; border-radius: 3px;
-                    background-color: %s;
-                }
-                QToolButton:hover {
-                    background-color: %s; border-color: %s;
-                }
-            """ % (theme.BORDER, theme.CARD, theme.HOVER_FILL, theme.PRIMARY))
-            self.btn_revert.clicked.connect(lambda: self.on_revert_cb(self.step.id))
-        layout.addWidget(self.btn_revert)
 
 
 class HistoryDockWidget(QgsDockWidget):
     """
-    QuickFieldBrush 历史记录面板 (支持侧边栏停靠与独立置顶悬浮)
+    QuickFieldBrush 历史记录面板 (100% QGIS 原生桌面风格)
     """
 
     def __init__(self, iface, parent=None):
@@ -171,8 +46,8 @@ class HistoryDockWidget(QgsDockWidget):
 
         self.setWindowTitle(tr("QuickFieldBrush History"))
         self.setFloating(True)
-        self.resize(320, 480)
-        self.setMinimumSize(280, 320)
+        self.resize(340, 440)
+        self.setMinimumSize(280, 260)
 
         # 地图瞬时高亮橡皮筋
         self._flash_band = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
@@ -190,36 +65,60 @@ class HistoryDockWidget(QgsDockWidget):
     def _init_ui(self):
         container = QWidget(self)
         main_layout = QVBoxLayout(container)
-        main_layout.setContentsMargins(8, 8, 8, 8)
-        main_layout.setSpacing(6)
+        main_layout.setContentsMargins(4, 4, 4, 4)
+        main_layout.setSpacing(4)
 
         icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
 
-        # 1. 顶部标题栏：图标 + 标题 + 置顶按钮（仅悬浮时显示，停靠时由 QGIS 原生标题栏承载）
-        self.top_bar_widget = QWidget()
-        top_bar = QHBoxLayout(self.top_bar_widget)
-        top_bar.setContentsMargins(0, 0, 0, 0)
-        top_bar.setSpacing(6)
+        # 1. 顶部紧凑工具条 (搜索过滤 + 撤回 + 导出 + 悬浮置顶)
+        toolbar_layout = QHBoxLayout()
+        toolbar_layout.setContentsMargins(0, 0, 0, 0)
+        toolbar_layout.setSpacing(2)
 
-        lbl_icon = QLabel()
-        history_icon_path = os.path.join(icons_dir, "history.svg")
-        if os.path.exists(history_icon_path):
-            lbl_icon.setPixmap(QIcon(history_icon_path).pixmap(18, 18))
-        else:
-            lbl_icon.setText("🕒")
-            lbl_icon.setStyleSheet("font-size: 14px;")
-        top_bar.addWidget(lbl_icon)
+        # 搜索框
+        self.txt_filter = QLineEdit()
+        self.txt_filter.setPlaceholderText(tr("Search field, layer, or FID..."))
+        self.txt_filter.setClearButtonEnabled(True)
+        search_icon = QIcon(os.path.join(icons_dir, "search.svg"))
+        leading_pos = getattr(QLineEdit.ActionPosition, "LeadingPosition", getattr(QLineEdit, "LeadingPosition", 0))
+        if not search_icon.isNull():
+            self.txt_filter.addAction(search_icon, leading_pos)
+        self.txt_filter.textChanged.connect(self._filter_items)
+        toolbar_layout.addWidget(self.txt_filter, 1)
 
-        lbl_title = QLabel(tr("Modification History"))
-        lbl_title.setStyleSheet(theme.LABEL_TITLE_SS)
-        top_bar.addWidget(lbl_title, 1)
+        t_beside = getattr(Qt.ToolButtonStyle, "ToolButtonTextBesideIcon", getattr(Qt, "ToolButtonTextBesideIcon", 2))
 
-        # 置顶切换按钮（纯图标两态：激活显示绿图钉，未激活显示灰图钉，无文字不形变）
+        # 撤回按钮 (扁平原生工具按钮)
+        self.btn_undo = QToolButton()
+        self.btn_undo.setAutoRaise(True)
+        self.btn_undo.setToolButtonStyle(t_beside)
+        self.btn_undo.setText(tr("Undo Latest"))
+        undo_icon = QIcon(os.path.join(icons_dir, "undo_latest.svg"))
+        if not undo_icon.isNull():
+            self.btn_undo.setIcon(undo_icon)
+            self.btn_undo.setIconSize(QSize(16, 16))
+        self.btn_undo.setToolTip(tr("Revert selected or latest modification"))
+        self.btn_undo.clicked.connect(self._undo_latest)
+        toolbar_layout.addWidget(self.btn_undo)
+
+        # 导出按钮
+        self.btn_export = QToolButton()
+        self.btn_export.setAutoRaise(True)
+        self.btn_export.setToolButtonStyle(t_beside)
+        self.btn_export.setText(tr("Export"))
+        export_icon = QIcon(os.path.join(icons_dir, "export.svg"))
+        if not export_icon.isNull():
+            self.btn_export.setIcon(export_icon)
+            self.btn_export.setIconSize(QSize(16, 16))
+        self.btn_export.setToolTip(tr("Export history log to CSV file"))
+        self.btn_export.clicked.connect(self._export_csv)
+        toolbar_layout.addWidget(self.btn_export)
+
+        # 悬浮置顶按钮 (悬浮时显示在工具栏右侧，停靠时自动隐藏)
         self.btn_pin = QToolButton()
-        self.btn_pin.setFixedSize(24, 24)
+        self.btn_pin.setAutoRaise(True)
         self.btn_pin.setCheckable(True)
         self.btn_pin.setChecked(True)
-        self.btn_pin.setAutoRaise(True)
         self._icon_pin_on = QIcon(os.path.join(icons_dir, "pin_green.svg"))
         self._icon_pin_off = QIcon(os.path.join(icons_dir, "pin_grey.svg"))
         if not self._icon_pin_on.isNull():
@@ -227,81 +126,67 @@ class HistoryDockWidget(QgsDockWidget):
             self.btn_pin.setIconSize(QSize(15, 15))
         self.btn_pin.setToolTip(tr("Always on top (click to disable)"))
         self.btn_pin.toggled.connect(self._toggle_stay_on_top)
-        top_bar.addWidget(self.btn_pin)
+        toolbar_layout.addWidget(self.btn_pin)
 
-        main_layout.addWidget(self.top_bar_widget)
+        main_layout.addLayout(toolbar_layout)
 
-        # 2. 搜索/过滤栏
-        search_box = QHBoxLayout()
-        self.txt_filter = QLineEdit()
-        self.txt_filter.setPlaceholderText(tr("Search field, layer, or FID..."))
-        search_icon = QIcon(os.path.join(icons_dir, "search.svg"))
-        if not search_icon.isNull():
-            self.txt_filter.addAction(search_icon, QLineEdit.LeadingPosition)
-        self.txt_filter.setClearButtonEnabled(True)
-        self.txt_filter.textChanged.connect(self._filter_items)
-        self.txt_filter.setStyleSheet(theme.LINEEDIT_SS)
-        search_box.addWidget(self.txt_filter)
-        main_layout.addLayout(search_box)
+        # 2. 原生表格/树形列表 (QTreeWidget)
+        self.tree = QTreeWidget()
+        self.tree.setColumnCount(3)
+        self.tree.setHeaderLabels([
+            tr("Field ➔ Value"),
+            tr("Layer · Feature"),
+            tr("Time")
+        ])
+        self.tree.setAlternatingRowColors(True)
+        self.tree.setRootIsDecorated(False)
 
-        # 3. 历史记录列表 (QListWidget)
-        self.list_widget = QListWidget()
-        self.list_widget.setStyleSheet("""
-            QListWidget {
-                border: 1px solid %s; border-radius: 5px;
-                background-color: %s;
-            }
-            QListWidget::item {
-                border-bottom: 1px solid %s;
-                padding: 1px;
-            }
-            QListWidget::item:selected {
-                background-color: %s;
-                border-radius: 4px;
-            }
-        """ % (theme.BORDER, theme.BG, theme.BORDER, theme.PRIMARY_TINT))
-        self.list_widget.itemClicked.connect(self._on_item_clicked)
-        self.list_widget.itemDoubleClicked.connect(self._on_item_double_clicked)
-        self.list_widget.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.list_widget.customContextMenuRequested.connect(self._show_context_menu)
-        main_layout.addWidget(self.list_widget, 1)
+        sel_mode = getattr(QAbstractItemView.SelectionMode, 'SingleSelection', getattr(QAbstractItemView, 'SingleSelection', 1))
+        sel_behav = getattr(QAbstractItemView.SelectionBehavior, 'SelectRows', getattr(QAbstractItemView, 'SelectRows', 1))
+        if sel_mode is not None:
+            self.tree.setSelectionMode(sel_mode)
+        if sel_behav is not None:
+            self.tree.setSelectionBehavior(sel_behav)
 
-        # 4. 底部操作栏
-        bottom_bar = QHBoxLayout()
-        bottom_bar.setSpacing(6)
+        # 表头伸缩策略：第一列自适应拉伸，后两列交互固定宽度
+        rm_stretch = getattr(QHeaderView.ResizeMode, "Stretch", getattr(QHeaderView, "Stretch", 1))
+        rm_interactive = getattr(QHeaderView.ResizeMode, "Interactive", getattr(QHeaderView, "Interactive", 0))
+
+        header = self.tree.header()
+        header.setStretchLastSection(False)
+        header.setSectionResizeMode(0, rm_stretch)
+        header.setSectionResizeMode(1, rm_interactive)
+        header.resizeSection(1, 130)
+        header.setSectionResizeMode(2, rm_interactive)
+        header.resizeSection(2, 58)
+
+        self.tree.itemClicked.connect(self._on_tree_item_clicked)
+        self.tree.itemDoubleClicked.connect(self._on_tree_item_double_clicked)
+        self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree.customContextMenuRequested.connect(self._show_context_menu)
+        main_layout.addWidget(self.tree, 1)
+
+        # 3. 底部状态与操作引导栏
+        status_layout = QHBoxLayout()
+        status_layout.setContentsMargins(2, 2, 2, 2)
+        status_layout.setSpacing(4)
 
         self.lbl_count = QLabel(tr("Total: 0 records"))
-        self.lbl_count.setStyleSheet(theme.HINT_LABEL_SS)
-        bottom_bar.addWidget(self.lbl_count, 1)
+        self.lbl_count.setStyleSheet("font-size: 11px;")
+        status_layout.addWidget(self.lbl_count)
 
-        # 撤销最近一步
-        self.btn_undo_last = QPushButton(tr("Undo Latest"))
-        undo_icon = QIcon(os.path.join(icons_dir, "undo_latest.svg"))
-        if not undo_icon.isNull():
-            self.btn_undo_last.setIcon(undo_icon)
-            self.btn_undo_last.setIconSize(QSize(16, 16))
-        self.btn_undo_last.setStyleSheet(theme.BUTTON_SECONDARY_SS)
-        self.btn_undo_last.setToolTip(tr("Revert the most recent modification step"))
-        self.btn_undo_last.clicked.connect(self._undo_latest)
-        bottom_bar.addWidget(self.btn_undo_last)
+        status_layout.addStretch()
 
-        # 导出 CSV
-        self.btn_export = QPushButton(tr("Export CSV"))
-        export_icon = QIcon(os.path.join(icons_dir, "export.svg"))
-        if not export_icon.isNull():
-            self.btn_export.setIcon(export_icon)
-            self.btn_export.setIconSize(QSize(16, 16))
-        self.btn_export.setStyleSheet(theme.BUTTON_SECONDARY_SS)
-        self.btn_export.setToolTip(tr("Export history log to CSV file"))
-        self.btn_export.clicked.connect(self._export_csv)
-        bottom_bar.addWidget(self.btn_export)
+        self.lbl_hint = QLabel(tr("Click to locate · Double-click to select"))
+        self.lbl_hint.setStyleSheet("color: gray; font-size: 11px;")
+        status_layout.addWidget(self.lbl_hint)
 
-        main_layout.addLayout(bottom_bar)
+        main_layout.addLayout(status_layout)
         self.setWidget(container)
 
     def _on_top_level_changed(self, is_floating):
-        """浮动/停靠状态切换时联动置顶控制"""
-        self.top_bar_widget.setVisible(is_floating)
+        """浮动/停靠状态切换时联动置顶按钮"""
+        self.btn_pin.setVisible(is_floating)
         if is_floating:
             self.btn_pin.setEnabled(True)
             if self.is_pinned:
@@ -309,10 +194,9 @@ class HistoryDockWidget(QgsDockWidget):
             self.btn_pin.setToolTip(tr("Always on top (click to disable)") if self.is_pinned else tr("Not on top (click to enable)"))
         else:
             self.btn_pin.setEnabled(False)
-            self.btn_pin.setToolTip(tr("Docked in main window (pin available when floating)"))
 
     def _toggle_stay_on_top(self, checked):
-        """置顶切换（0 闪烁无感切换）"""
+        """置顶切换"""
         self.is_pinned = checked
         if self.isFloating():
             set_window_stay_on_top(self, checked)
@@ -327,28 +211,91 @@ class HistoryDockWidget(QgsDockWidget):
 
     def _reload_history(self):
         """重新刷新加载历史记录列表（倒序显示：最新记录在最上方）"""
-        self.list_widget.clear()
+        self.tree.clear()
         steps = self.mgr.get_steps()
         total_count = len(steps)
         self.lbl_count.setText(tr("Total: {0} records").format(total_count))
 
+        icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
+        ic_painter = QIcon(os.path.join(icons_dir, "painter.svg"))
+        ic_rank = QIcon(os.path.join(icons_dir, "rank.svg"))
+
+        role_user = getattr(Qt.ItemDataRole, "UserRole", getattr(Qt, "UserRole", 256))
+        cg_dis = getattr(QPalette.ColorGroup, "Disabled", getattr(QPalette, "Disabled", 1))
+        cr_text = getattr(QPalette.ColorRole, "Text", getattr(QPalette, "Text", 6))
+        muted_color = self.tree.palette().color(cg_dis, cr_text)
+
         # 倒序展示：最新操作在顶部
         for step in reversed(steps):
-            item = QListWidgetItem()
-            item.setData(Qt.UserRole, step.id)
-            card = HistoryCardWidget(step, self._revert_step_by_id)
-            item.setSizeHint(card.sizeHint())
-            self.list_widget.addItem(item)
-            self.list_widget.setItemWidget(item, card)
+            item = QTreeWidgetItem(self.tree)
+            item.setData(0, role_user, step.id)
+
+            # 图标
+            if step.tool_type == "painter":
+                item.setIcon(0, ic_painter)
+            else:
+                item.setIcon(0, ic_rank)
+
+            # 第一列：[字段] ➔ "新值"
+            target_display = str(step.target_value)
+            if len(target_display) > 24:
+                target_display = target_display[:22] + "..."
+            item.setText(0, f"[{step.field_name}] ➔ \"{target_display}\"")
+
+            # 第二列：图层 · 要素
+            if step.tool_type == "painter":
+                fid_val = step.changes[0]["fid"] if step.changes else ""
+                layer_feat_str = f"{step.layer_name} · {fid_val}"
+            else:
+                cnt = step.feature_count
+                layer_feat_str = f"{step.layer_name} · {cnt} {tr('features')}"
+            item.setText(1, layer_feat_str)
+
+            # 第三列：时间戳
+            # 如果包含日期，提取时分秒保持紧凑
+            ts_str = step.timestamp
+            if " " in ts_str:
+                time_only = ts_str.split(" ", 1)[1]
+            else:
+                time_only = ts_str
+            item.setText(2, time_only)
+
+            # 完整信息气泡提示 (Tooltip)
+            tt_lines = [
+                f"{tr('Action Type')}: {tr('Format Painter') if step.tool_type == 'painter' else tr('Batch Assignment')}",
+                f"{tr('Layer')}: {step.layer_name}",
+                f"{tr('Field')}: {step.field_name}",
+                f"{tr('Target Value')}: {step.target_value}",
+                f"{tr('Timestamp')}: {step.timestamp}",
+                f"{tr('Reverted')}: {tr('Yes') if step.is_reverted else tr('No')}"
+            ]
+            if step.tool_type == "painter" and step.changes:
+                tt_lines.append(f"{tr('Feature ID (FID)')}: {step.changes[0]['fid']}")
+                tt_lines.append(f"{tr('Old Value')}: {step.changes[0].get('old_val', '')}")
+            else:
+                tt_lines.append(f"{tr('features')}: {step.feature_count}")
+            item.setToolTip(0, "\n".join(tt_lines))
+            item.setToolTip(1, "\n".join(tt_lines))
+            item.setToolTip(2, "\n".join(tt_lines))
+
+            # 如果已撤回，应用原生删除线与置灰样式
+            if step.is_reverted:
+                for col in range(3):
+                    f = item.font(col)
+                    f.setStrikeOut(True)
+                    item.setFont(col, f)
+                    item.setForeground(col, muted_color)
 
         self._filter_items(self.txt_filter.text())
 
     def _filter_items(self, text: str):
         """按关键字过滤历史项"""
         query = text.strip().lower()
-        for i in range(self.list_widget.count()):
-            item = self.list_widget.item(i)
-            step_id = item.data(Qt.UserRole)
+        role_user = getattr(Qt.ItemDataRole, "UserRole", getattr(Qt, "UserRole", 256))
+        root = self.tree.invisibleRootItem()
+        for i in range(root.childCount()):
+            item = root.child(i)
+            step_id = item.data(0, role_user)
             step = self.mgr.get_step_by_id(step_id)
             if not step:
                 item.setHidden(True)
@@ -367,9 +314,20 @@ class HistoryDockWidget(QgsDockWidget):
             )
             item.setHidden(not match)
 
-    def _on_item_clicked(self, item):
+    def _on_tree_item_clicked(self, item, column):
         """单击条目：居中并闪烁高亮对应要素"""
-        step_id = item.data(Qt.UserRole)
+        role_user = getattr(Qt.ItemDataRole, "UserRole", getattr(Qt, "UserRole", 256))
+        step_id = item.data(0, role_user)
+        self._locate_and_flash_step(step_id)
+
+    def _on_tree_item_double_clicked(self, item, column):
+        """双击条目：选中对应要素并设为当前活动图层"""
+        role_user = getattr(Qt.ItemDataRole, "UserRole", getattr(Qt, "UserRole", 256))
+        step_id = item.data(0, role_user)
+        self._select_step_features(step_id)
+
+    def _locate_and_flash_step(self, step_id: int):
+        """定位并在地图闪烁对应要素"""
         step = self.mgr.get_step_by_id(step_id)
         if not step:
             return
@@ -382,7 +340,6 @@ class HistoryDockWidget(QgsDockWidget):
             else:
                 return
 
-        # 获取要素几何
         fids = step.fids
         if not fids:
             return
@@ -400,7 +357,6 @@ class HistoryDockWidget(QgsDockWidget):
             feat = layer.getFeature(fids[0])
             if feat.isValid() and feat.geometry() and not feat.geometry().isEmpty():
                 geom = feat.geometry()
-                # 计算中心点并在画布平移居中
                 center_pt = geom.centroid().asPoint()
                 if transform:
                     try:
@@ -410,7 +366,6 @@ class HistoryDockWidget(QgsDockWidget):
                 self.canvas.setCenter(center_pt)
                 self.canvas.refresh()
 
-                # 绿色高亮闪烁
                 try:
                     self._flash_band.reset(geom.type())
                     self._flash_band.setToGeometry(geom, layer)
@@ -419,7 +374,6 @@ class HistoryDockWidget(QgsDockWidget):
                 except (RuntimeError, TypeError, AttributeError):
                     pass
         else:
-            # 批量要素：缩放到要素的外接矩形并闪烁
             req = QgsFeatureRequest().setFilterFids(fids)
             combined_rect = QgsRectangle()
             first = True
@@ -455,9 +409,8 @@ class HistoryDockWidget(QgsDockWidget):
                 except (RuntimeError, TypeError, AttributeError):
                     pass
 
-    def _on_item_double_clicked(self, item):
-        """双击条目：选中对应要素并设为当前活动图层"""
-        step_id = item.data(Qt.UserRole)
+    def _select_step_features(self, step_id: int):
+        """在图层中选中要素"""
         step = self.mgr.get_step_by_id(step_id)
         if not step:
             return
@@ -479,23 +432,23 @@ class HistoryDockWidget(QgsDockWidget):
 
     def _show_context_menu(self, pos):
         """右键菜单"""
-        item = self.list_widget.itemAt(pos)
+        item = self.tree.itemAt(pos)
         if not item:
             return
 
-        step_id = item.data(Qt.UserRole)
+        role_user = getattr(Qt.ItemDataRole, "UserRole", getattr(Qt, "UserRole", 256))
+        step_id = item.data(0, role_user)
         step = self.mgr.get_step_by_id(step_id)
         if not step:
             return
 
         menu = QMenu(self)
-        menu.setStyleSheet(theme.MENU_SS)
 
         act_zoom = menu.addAction(tr("Zoom and highlight feature(s)"))
-        act_zoom.triggered.connect(lambda: self._on_item_clicked(item))
+        act_zoom.triggered.connect(lambda: self._locate_and_flash_step(step_id))
 
         act_select = menu.addAction(tr("Select feature(s) in layer"))
-        act_select.triggered.connect(lambda: self._on_item_double_clicked(item))
+        act_select.triggered.connect(lambda: self._select_step_features(step_id))
 
         menu.addSeparator()
 
@@ -508,7 +461,17 @@ class HistoryDockWidget(QgsDockWidget):
         act_copy_fids = menu.addAction(tr("Copy Feature ID(s) to Clipboard"))
         act_copy_fids.triggered.connect(lambda: QApplication.clipboard().setText(", ".join(map(str, step.fids))))
 
-        safe_exec(menu, self.list_widget.mapToGlobal(pos))
+        act_copy_info = menu.addAction(tr("Copy Details"))
+        act_copy_info.triggered.connect(lambda: QApplication.clipboard().setText(
+            f"Layer: {step.layer_name}, Field: {step.field_name}, Value: {step.target_value}, FIDs: {step.fids}, Time: {step.timestamp}"
+        ))
+
+        menu.addSeparator()
+
+        act_clear = menu.addAction(tr("Clear all history entries"))
+        act_clear.triggered.connect(self._clear_all_history)
+
+        safe_exec(menu, self.tree.mapToGlobal(pos))
 
     def _revert_step_by_id(self, step_id: int):
         """执行单步还原"""
@@ -519,7 +482,20 @@ class HistoryDockWidget(QgsDockWidget):
             self.iface.messageBar().pushWarning("QuickFieldBrush", msg)
 
     def _undo_latest(self):
-        """撤销最近一步尚未回滚的记录"""
+        """撤销：若当前树形列表中选中了某项，则撤销该项；否则撤销最近一条未撤销的记录"""
+        selected_items = self.tree.selectedItems()
+        role_user = getattr(Qt.ItemDataRole, "UserRole", getattr(Qt, "UserRole", 256))
+
+        if selected_items:
+            sel_step_id = selected_items[0].data(0, role_user)
+            step = self.mgr.get_step_by_id(sel_step_id)
+            if step and not step.is_reverted:
+                self._revert_step_by_id(sel_step_id)
+                return
+            elif step and step.is_reverted:
+                self.iface.messageBar().pushInfo("QuickFieldBrush", tr("Step #{0} has already been reverted!").format(sel_step_id))
+                return
+
         steps = self.mgr.get_steps()
         for step in reversed(steps):
             if not step.is_reverted:
@@ -547,6 +523,19 @@ class HistoryDockWidget(QgsDockWidget):
             else:
                 self.iface.messageBar().pushWarning("QuickFieldBrush", msg)
 
+    def _clear_all_history(self):
+        """清空历史记录 (带二次确认)"""
+        ret = QMessageBox.question(
+            self,
+            tr("Clear all history entries"),
+            tr("Are you sure you want to clear all history records? This cannot be undone."),
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.No
+        )
+        if ret == QMessageBox.Yes:
+            self.mgr.clear_history()
+            self.iface.messageBar().pushInfo("QuickFieldBrush", tr("History log cleared!"))
+
     def closeEvent(self, event):
         if self._flash_band:
             self._flash_band.reset()
@@ -555,4 +544,3 @@ class HistoryDockWidget(QgsDockWidget):
 
 # 向后兼容别名
 HistoryDialog = HistoryDockWidget
-
