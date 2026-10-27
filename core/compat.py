@@ -4,7 +4,10 @@ QuickFieldBrush 跨版本兼容层 (QGIS 3 / Qt5 与 QGIS 4 / Qt6 统一桥接)
 """
 
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QMenu, QDialog, QLineEdit, QHeaderView, QFrame
+from qgis.PyQt.QtWidgets import (
+    QMenu, QDialog, QLineEdit, QHeaderView, QFrame,
+    QStyle, QDialogButtonBox, QMessageBox, QAbstractItemView
+)
 
 try:
     from qgis.PyQt.QtGui import QAction
@@ -31,7 +34,7 @@ def _bridge_scoped_enums(target_cls):
                     except (AttributeError, TypeError):
                         pass
 
-for _cls in (Qt, QLineEdit, QHeaderView, QFrame, QDialog):
+for _cls in (Qt, QLineEdit, QHeaderView, QFrame, QDialog, QStyle, QDialogButtonBox, QMessageBox, QAbstractItemView):
     _bridge_scoped_enums(_cls)
 
 # 特殊枚举组合补丁 (如 Qt.AlignCenter 在 Qt6 为 AlignmentFlag 的复合位运算结果)
@@ -49,6 +52,13 @@ if hasattr(Qt, "CursorShape"):
                 setattr(Qt, _shape, getattr(Qt.CursorShape, _shape))
             except (AttributeError, TypeError):
                 pass
+
+# 显式 QStyle 样式元素枚举兼容补丁
+if hasattr(QStyle, "PrimitiveElement") and not hasattr(QStyle, "PE_Widget"):
+    try:
+        setattr(QStyle, "PE_Widget", getattr(QStyle.PrimitiveElement, "PE_Widget", None))
+    except (AttributeError, TypeError):
+        pass
 
 
 def safe_exec(obj, *args):

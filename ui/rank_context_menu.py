@@ -60,7 +60,9 @@ class RankValueItemWidget(QWidget):
         opt = QStyleOption()
         opt.initFrom(self)
         p = QPainter(self)
-        self.style().drawPrimitive(QStyle.PE_Widget, opt, p, self)
+        pe = getattr(getattr(QStyle, "PrimitiveElement", None), "PE_Widget", getattr(QStyle, "PE_Widget", None))
+        if pe is not None:
+            self.style().drawPrimitive(pe, opt, p, self)
 
     def _update_style(self):
         if self._is_hovered:
