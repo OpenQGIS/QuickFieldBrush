@@ -46,11 +46,28 @@ QuickFieldBrush 是一个用于 QGIS 的矢量要素属性快速赋值与修改�
 本项目当前处于 **v0.5.0 迭代周期**，正在推进属性表内联快速赋值委托支持。
 
 ```mermaid
-flowchart LR
-    v04["v0.4.1 (已发布)"]:::done --> v05["v0.5.0 (进行中)"]:::doing --> v06["v0.6.0 (待启动)"]:::plan
-    classDef done fill:#DCFCE7,stroke:#16A34A,stroke-width:2px,color:#14532D;
-    classDef doing fill:#DBEAFE,stroke:#2563EB,stroke-width:2px,color:#1E3A8A;
-    classDef plan fill:#F1F5F9,stroke:#94A3B8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#475569;
+gantt
+    title AttrSnap / QuickFieldBrush 开发进度甘特图
+    dateFormat  YYYY-MM-DD
+    axisFormat  %m/%d
+    todayMarker stroke-width:2px,stroke:#2563EB,opacity:0.8
+
+    section v0.4.1 (已发布)
+    纯 SVG 矢量图标重构           :done,    t1, 2026-10-26, 2026-10-26
+    去除分级 / 统一快速赋值       :done,    t2, 2026-10-26, 2026-10-27
+    深层国际化与安全加固          :done,    t3, 2026-10-27, 2026-10-27
+    v0.4.1 发布                   :milestone, m1, 2026-10-27, 0d
+
+    section v0.5.0 (当前迭代)
+    属性表内联快速赋值 (进行中)   :active,  t4, 2026-10-28, 2026-11-04
+    预设方案 JSON 导入导出        :         t5, 2026-11-05, 2026-11-09
+    数字快捷键直达 (1-9 键)       :         t6, 2026-11-10, 2026-11-13
+    v0.5.0 体验版发布             :milestone, m2, 2026-11-14, 0d
+
+    section v0.6.0 (规划中)
+    跨图层属性拓扑快刷            :         t7, 2026-11-16, 2026-11-23
+    操作历史高性能事务回滚        :         t8, 2026-11-24, 2026-11-30
+    v0.6.0 年度里程碑发布         :milestone, m3, 2026-12-09, 0d
 ```
 
 👉 **查看详细特性矩阵、开发进度条与任务清单**：请参阅 [完整开发路线图 (ROADMAP.md)](ROADMAP.md)。
