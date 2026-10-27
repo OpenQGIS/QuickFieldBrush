@@ -93,7 +93,7 @@ _zh_translations = {
     "Absorb value from currently selected features": "从当前选中的要素直接吸取属性",
     "Absorb attribute (click map feature / right-click)": "吸取属性 (点击地图要素 / 右键吸取)",
     "Click to enter eyedropper mode, or right-click any feature on map to absorb its value": "点击进入吸管模式在地图上点选吸取，或在地图上直接右键吸取要素属性",
-    "🔍 Click any feature on map to absorb value...": "🔍 请在地图上单击要素吸取属性...",
+    "🔍 Click any feature on map to absorb value...": "🔍 点击要素吸取",
     "Absorb mode: click any feature on map to pick [{0}]": "吸取模式: 请在地图上单击要素吸取 [{0}] 属性",
     "Absorbed FID {0}: [{1} = {2}] (ready to paint)": "已吸取要素 {0}: [{1} = {2}] (可左键刷入)",
     "Please select a target field first!": "请先选择目标字段！",

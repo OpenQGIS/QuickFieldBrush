@@ -536,7 +536,7 @@
     </message>
     <message>
       <source>🔍 Click any feature on map to absorb value...</source>
-      <translation>🔍 请在地图上单击要素吸取属性...</translation>
+      <translation>🔍 点击要素吸取</translation>
     </message>
   </context>
 </TS>

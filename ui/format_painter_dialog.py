@@ -163,7 +163,7 @@ class FormatPainterDialog(QDialog):
 
         self.btn_close = QPushButton(tr("Exit format painter (Esc)"))
         self.btn_close.clicked.connect(self.close)
-        bottom_box.addWidget(self.btn_close)
+        bottom_box.addWidget(self.btn_close, 1)
 
         layout.addLayout(bottom_box)
 
