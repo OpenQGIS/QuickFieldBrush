@@ -55,7 +55,7 @@ graph TD
 | `core/compat.py` | QGIS 跨版本兼容垫片 | 抹平 Qt5 / Qt6 差异，导出统一的 `QAction`、`safe_exec` |
 | `ui/rank_context_menu.py` | 右键极速分级菜单 | 2 按钮智能翻转排序条；深黑属性值与中灰统计频次分离；原生字段类型图标 |
 | `ui/format_painter_dialog.py` | 格式刷无模态常驻控制台 | 原生 4 行流式布局；零闪烁 Win32 API 置顶图钉；动态唯一值下拉与新值自定义 |
-| `ui/history_dialog.py` | Illustrator 风格历史面板 | 独立悬浮无模态调色板；单击地图居中闪烁、双击选中要素；搜索过滤 |
+| `ui/history_dialog.py` | 悬浮操作历史面板 | 独立悬浮无模态面板；单击地图居中闪烁、双击选中要素；搜索过滤 |
 
 ---
 

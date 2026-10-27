@@ -102,7 +102,7 @@ class QuickFieldBrushPlugin:
         self.toolbar.addAction(self.action_painter)
         self.iface.addPluginToVectorMenu(tr("QuickFieldBrush - Format Painter"), self.action_painter)
 
-        # 功能 3: 历史记录面板 (独立浮动面板，类似 Illustrator 历史记录)
+        # 功能 3: 历史记录面板 (独立无模态浮动面板)
         self.action_history = QAction(
             icon_history,
             tr("History panel (browse, flash-zoom, single-step revert, export CSV)"),
@@ -242,7 +242,7 @@ class QuickFieldBrushPlugin:
                 self.canvas.unsetMapTool(self.painter_tool)
 
     def _toggle_history_dialog(self):
-        """切换历史记录面板的显示/隐藏 (Illustrator 风格浮动面板)"""
+        """切换历史记录面板的显示/隐藏 (无模态浮动面板)"""
         if self.history_dialog is None:
             self.history_dialog = HistoryDialog(self.iface, self.iface.mainWindow())
 

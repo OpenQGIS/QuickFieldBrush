@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 QuickFieldBrush 历史记录面板 (HistoryDialog):
-Adobe Illustrator 风格的悬浮操作历史面板：
+无模态悬浮操作历史面板：
 1. 记录格式刷单点写入与框选批量赋级的所有操作历史
 2. 单击记录：画布瞬间居中/平移到该要素，并触发 350ms 翠绿高亮闪烁
 3. 双击记录：自动在矢量图层中选中对应要素 (QgsVectorLayer.selectByIds)
@@ -31,7 +31,7 @@ from . import theme
 
 
 class HistoryCardWidget(QWidget):
-    """历史记录单项卡片组件 (Illustrator/Photoshop 紧凑面板卡片)"""
+    """历史记录单项卡片组件 (紧凑面板卡片)"""
 
     def __init__(self, step: HistoryStep, on_revert_cb, parent=None):
         super().__init__(parent)
@@ -156,7 +156,7 @@ class HistoryCardWidget(QWidget):
 
 class HistoryDialog(QDialog):
     """
-    QuickFieldBrush 历史记录面板 (Illustrator-Style Palette)
+    QuickFieldBrush 历史记录面板
     """
 
     def __init__(self, iface, parent=None):
