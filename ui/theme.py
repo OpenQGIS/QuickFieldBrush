@@ -221,34 +221,32 @@ MENU_SS = """
 QMenu {
     background-color: %s;
     border: 1px solid %s;
-    border-radius: 6px;
-    padding: 3px;
+    border-radius: 4px;
+    padding: 3px 0px;
 }
 QMenu::item {
-    padding: 3px 14px 3px 6px;
-    border-radius: 3px;
+    padding: 4px 22px 4px 8px;
     font-size: 12px;
     color: %s;
 }
 QMenu::item:selected {
-    background-color: %s;
-    color: %s;
+    background-color: #0078D7;
+    color: #FFFFFF;
 }
 QMenu::item:disabled {
-    color: #64748B;
+    color: #94A3B8;
     background-color: transparent;
-    font-weight: 600;
 }
 QMenu::icon {
-    padding-left: 4px;
-    margin-right: 2px;
+    padding-left: 6px;
+    margin-right: 4px;
 }
 QMenu::separator {
     height: 1px;
     background-color: %s;
-    margin: 3px 2px;
+    margin: 3px 0px;
 }
-""" % (CARD, BORDER, FG, PRIMARY_TINT, PRIMARY_HOVER, BORDER)
+""" % (CARD, BORDER, FG, BORDER)
 
 # 对话框基础样式（一次性套用：输入/下拉/列表/分组框全统一）
 DIALOG_BASE_SS = "\n".join([LINEEDIT_SS, COMBO_SS, LIST_SS, GROUPBOX_SS, MENU_SS])

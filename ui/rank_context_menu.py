@@ -18,6 +18,7 @@ from qgis.PyQt.QtWidgets import (
 )
 from qgis.PyQt.QtGui import QIcon, QCursor, QPainter
 from qgis.PyQt.QtCore import QTimer, QSize, Qt, pyqtSignal
+from qgis.core import QgsApplication
 from ..core.compat import safe_exec, QAction
 from ..core.attribute_engine import AttributeEngine
 from ..core.config_manager import ConfigManager
@@ -419,9 +420,11 @@ class RankContextMenu(QMenu):
         selected_count = self.layer.selectedFeatureCount()
 
         # 1. 快捷切换赋值字段（合并显示当前字段与已选要素数）
-        icon_settings = QIcon(os.path.join(icons_dir, "settings.svg"))
+        ic_opt = QgsApplication.getThemeIcon("mActionOptions.svg")
+        if ic_opt.isNull():
+            ic_opt = QIcon(os.path.join(icons_dir, "settings.svg"))
         switch_act = self.addAction(
-            icon_settings,
+            ic_opt,
             tr("Switch field ( {0} )-[{1}]").format(self.target_field, selected_count)
         )
         switch_act.triggered.connect(lambda: self._on_switch_target_field(valid_names))
@@ -438,18 +441,26 @@ class RankContextMenu(QMenu):
         self.addAction(self._values_action)
         self._render_value_items(current_sort_mode, auto_edit)
 
-        # 4. 允许用户临时打字赋一个新分类值
+        # 4. 允许用户临时打字赋一个新分类值 (使用 QGIS 官方原生增加属性图标)
         self.addSeparator()
-        icon_add = QIcon(os.path.join(icons_dir, "add.svg"))
-        custom_act = self.addAction(icon_add, tr("Enter a new value..."))
+        ic_add = QgsApplication.getThemeIcon("symbologyAdd.svg")
+        if ic_add.isNull():
+            ic_add = QgsApplication.getThemeIcon("mActionAdd.svg")
+        if ic_add.isNull():
+            ic_add = QIcon(os.path.join(icons_dir, "add.svg"))
+        custom_act = self.addAction(ic_add, tr("Enter a new value..."))
         custom_act.triggered.connect(
             lambda checked, fn=self.target_field: self._on_custom_input(fn, auto_edit)
         )
 
         self.addSeparator()
-        # 快捷取消选择
-        icon_clear = QIcon(os.path.join(icons_dir, "clear.svg"))
-        clear_act = self.addAction(icon_clear, tr("Cancel selection"))
+        # 5. 快捷取消选择 (使用 QGIS 官方图层取消选择图标)
+        ic_clear = QgsApplication.getThemeIcon("mActionDeselectActiveLayer.svg")
+        if ic_clear.isNull():
+            ic_clear = QgsApplication.getThemeIcon("mActionDeselectAll.svg")
+        if ic_clear.isNull():
+            ic_clear = QIcon(os.path.join(icons_dir, "clear.svg"))
+        clear_act = self.addAction(ic_clear, tr("Cancel selection"))
         clear_act.triggered.connect(lambda: self.layer.removeSelection())
 
     def _on_switch_target_field(self, valid_names):
