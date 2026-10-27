@@ -534,7 +534,7 @@ Select target field after activation, click or box-select features, then right-c
     </message>
     <message>
       <source>Undo Latest</source>
-      <translation>撤回上一步</translation>
+      <translation>撤回</translation>
     </message>
     <message>
       <source>Unknown Layer</source>

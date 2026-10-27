@@ -143,7 +143,7 @@ _zh_translations = {
     "Search field, layer, or FID...": "按字段、图层或 FID 搜索...",
     "Total: 0 records": "共 0 条记录",
     "Total: {0} records": "共 {0} 条记录",
-    "Undo Latest": "撤回上一步",
+    "Undo Latest": "撤回",
     "Revert the most recent modification step": "撤回最近一次未回滚的要素修改",
     "Export CSV": "导出 CSV",
     "Export history log to CSV file": "将修改历史导出为 CSV 表格台账",

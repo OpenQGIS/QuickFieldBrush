@@ -89,13 +89,13 @@ QPushButton:disabled { background-color: %s; color: %s; }
 BUTTON_SECONDARY_SS = """
 QPushButton {
     min-height: 26px; padding: 4px 14px; border-radius: 5px;
-    background-color: %s; color: %s; font-weight: 600;
+    background-color: %s; color: %s; font-size: %s; font-weight: 600;
     border: 1px solid %s;
 }
 QPushButton:hover { background-color: %s; border-color: #CBD5E1; }
 QPushButton:pressed { background-color: %s; }
 QPushButton:disabled { color: %s; }
-""" % (CARD, FG, BORDER, HOVER_FILL, PRESSED_FILL, DISABLED_FG)
+""" % (CARD, FG, FS_BODY, BORDER, HOVER_FILL, PRESSED_FILL, DISABLED_FG)
 
 BUTTON_LINK_SS = """
 QPushButton {
