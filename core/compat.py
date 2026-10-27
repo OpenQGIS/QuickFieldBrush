@@ -41,6 +41,15 @@ if hasattr(Qt, "AlignmentFlag") and not hasattr(Qt, "AlignCenter"):
     except (AttributeError, TypeError):
         pass
 
+# 显式光标枚举兼容补丁
+if hasattr(Qt, "CursorShape"):
+    for _shape in ("CrossCursor", "PointingHandCursor", "ArrowCursor", "WaitCursor"):
+        if hasattr(Qt.CursorShape, _shape) and not hasattr(Qt, _shape):
+            try:
+                setattr(Qt, _shape, getattr(Qt.CursorShape, _shape))
+            except (AttributeError, TypeError):
+                pass
+
 
 def safe_exec(obj, *args):
     """安全执行 QMenu / QDialog 的事件循环，兼容 Qt5 (exec_) 与 Qt6 (exec)"""

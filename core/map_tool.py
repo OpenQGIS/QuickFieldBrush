@@ -41,7 +41,8 @@ class QuickFieldBrushMapTool(QgsMapTool):
         self.rubber_band.setColor(QColor(0, 120, 215, 65))
         self.rubber_band.setStrokeColor(QColor(0, 120, 215, 200))
         self.rubber_band.setWidth(1)
-        self.setCursor(Qt.CrossCursor)
+        cursor_shape = getattr(Qt.CursorShape, "CrossCursor", getattr(Qt, "CrossCursor", None))
+        self.setCursor(QCursor(cursor_shape) if cursor_shape is not None else QCursor())
 
     def canvasPressEvent(self, event):
         layer = self.canvas.currentLayer()

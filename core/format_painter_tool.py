@@ -18,7 +18,7 @@ from qgis.core import (
     QgsFeatureRequest
 )
 from qgis.PyQt.QtCore import Qt, QTimer
-from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtGui import QColor, QCursor
 from .attribute_engine import AttributeEngine
 from .history_manager import HistoryManager
 from ..i18n_helper import tr
@@ -48,7 +48,8 @@ class FormatPainterTool(QgsMapTool):
         self.absorb_band.setStrokeColor(QColor(29, 78, 216, 255))
         self.absorb_band.setWidth(2)
 
-        self.setCursor(Qt.PointingHandCursor)
+        hand_cursor = getattr(Qt.CursorShape, "PointingHandCursor", getattr(Qt, "PointingHandCursor", None))
+        self.setCursor(QCursor(hand_cursor) if hand_cursor is not None else QCursor())
 
     def set_target(self, field_name, value):
         """设定当前画笔持有的字段与属性值（状态由常驻控制台面板自行展示，不再弹消息条）"""
@@ -59,9 +60,11 @@ class FormatPainterTool(QgsMapTool):
         """切换是否处于吸管吸取模式"""
         self.is_picking_mode = enabled
         if enabled:
-            self.setCursor(Qt.CrossCursor)
+            cross_cursor = getattr(Qt.CursorShape, "CrossCursor", getattr(Qt, "CrossCursor", None))
+            self.setCursor(QCursor(cross_cursor) if cross_cursor is not None else QCursor())
         else:
-            self.setCursor(Qt.PointingHandCursor)
+            hand_cursor = getattr(Qt.CursorShape, "PointingHandCursor", getattr(Qt, "PointingHandCursor", None))
+            self.setCursor(QCursor(hand_cursor) if hand_cursor is not None else QCursor())
 
     def canvasReleaseEvent(self, event):
         if event.button() not in (Qt.LeftButton, Qt.RightButton):
