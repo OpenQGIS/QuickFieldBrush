@@ -93,7 +93,7 @@ class QuickFieldBrushPlugin:
         ))
         self.action_toggle.triggered.connect(self._toggle_map_tool)
         self.toolbar.addAction(self.action_toggle)
-        self.iface.addPluginToVectorMenu(tr("QuickFieldBrush - Ranking"), self.action_toggle)
+        self.iface.addPluginToVectorMenu(tr("QuickFieldBrush - Interactive Assignment"), self.action_toggle)
 
         # 功能 2: 格式刷工具 (单选某属性，点击要素连续刷入)
         self.action_painter = QAction(
@@ -165,7 +165,7 @@ class QuickFieldBrushPlugin:
 
         # 移除工具条与菜单项
         if self.action_toggle:
-            self.iface.removePluginVectorMenu(tr("QuickFieldBrush - Ranking"), self.action_toggle)
+            self.iface.removePluginVectorMenu(tr("QuickFieldBrush - Interactive Assignment"), self.action_toggle)
         if self.action_painter:
             self.iface.removePluginVectorMenu(tr("QuickFieldBrush - Format Painter"), self.action_painter)
         if self.action_history:
@@ -208,8 +208,8 @@ class QuickFieldBrushPlugin:
 
             item, ok = QInputDialog.getItem(
                 self.iface.mainWindow(),
-                tr("Specify Ranking Field"),
-                tr("Please select the target field for rapid ranking in layer [{0}]:").format(layer.name()),
+                tr("Specify Target Field"),
+                tr("Please select the target field for rapid assignment in layer [{0}]:").format(layer.name()),
                 valid_names,
                 current_idx,
                 False
@@ -232,7 +232,7 @@ class QuickFieldBrushPlugin:
             self.canvas.setMapTool(self.map_tool)
             self.iface.messageBar().pushInfo(
                 "QuickFieldBrush",
-                tr("Interactive ranking tool activated: box-select features, then right-click to rank!") +
+                tr("Interactive assignment tool activated: box-select features, then right-click to assign values.") +
                 tr(" | Target: [{0}]").format(item))
         else:
             if self.canvas.mapTool() == self.map_tool:

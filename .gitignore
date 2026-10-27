@@ -9,6 +9,8 @@ __pycache__/
 
 # Temporary & intermediate files
 *.tmp
+*.db
+keys.json
 0_*.svg
 
 # IDEs

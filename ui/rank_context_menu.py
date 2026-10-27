@@ -138,9 +138,9 @@ class RankContextMenu(QMenu):
     def _prompt_choose_field(self, valid_names, is_initial=False):
         """弹出字段选择框，由用户显式确定赋值字段（展示 QGIS 原生字段类型图标）"""
         prompt_text = (
-            tr("Please select the target field for rapid ranking in layer [{0}]:").format(self.layer.name())
+            tr("Please select the target field for rapid assignment in layer [{0}]:").format(self.layer.name())
             if is_initial else
-            tr("Switch target ranking field for layer [{0}]:").format(self.layer.name())
+            tr("Switch target field for layer [{0}]:").format(self.layer.name())
         )
         current_idx = 0
         current_field = self.config.get("single_rank_by_layer", {}).get(self.layer.id(), "")
@@ -148,7 +148,7 @@ class RankContextMenu(QMenu):
             current_idx = valid_names.index(current_field)
 
         dlg = QDialog(self.parent())
-        dlg.setWindowTitle(tr("Specify Ranking Field"))
+        dlg.setWindowTitle(tr("Specify Target Field"))
         lay = QVBoxLayout(dlg)
         lay.setContentsMargins(11, 11, 11, 11)
         lay.setSpacing(8)
@@ -403,7 +403,7 @@ class RankContextMenu(QMenu):
         if new_field:
             self.iface.messageBar().pushSuccess(
                 "QuickFieldBrush",
-                tr("Target rank field for layer [{0}] changed to: [{1}]").format(self.layer.name(), new_field)
+                tr("Target field for layer [{0}] changed to: [{1}]").format(self.layer.name(), new_field)
             )
             # 在原位置无缝重新打开分级菜单
             if self.layer and self.layer.selectedFeatureCount() > 0:
@@ -424,7 +424,7 @@ class RankContextMenu(QMenu):
     def _on_custom_input(self, field_name, auto_edit):
         """现场打字输入值"""
         new_val, ok = QInputDialog.getText(
-            self.parent(), tr("Enter a new rank/value"),
+            self.parent(), tr("Enter a new value"),
             tr("Assign a new value to field [{0}] in batch:").format(field_name),
             QLineEdit.Normal, ""
         )

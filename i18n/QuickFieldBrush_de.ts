@@ -105,8 +105,8 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>Attributwert</translation>
     </message>
     <message>
-      <source>Batch Ranking</source>
-      <translation>Batch Ranking</translation>
+      <source>Batch Assignment</source>
+      <translation>Batch Assignment</translation>
     </message>
     <message>
       <source>Cancel selection</source>
@@ -143,8 +143,8 @@ Browse, flash-zoom, single-step revert, and export records</source>
 Browse, flash-zoom, single-step revert, and export records</translation>
     </message>
     <message>
-      <source>Enter a new rank/value</source>
-      <translation>Enter a new rank/value</translation>
+      <source>Enter a new value</source>
+      <translation>Enter a new value</translation>
     </message>
     <message>
       <source>Enter a new value to assign...</source>
@@ -261,8 +261,8 @@ Select target field after activation, click or box-select features, then right-c
 Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</translation>
     </message>
     <message>
-      <source>Interactive ranking tool activated: box-select features, then right-click to rank!</source>
-      <translation>Interactive ranking tool activated: box-select features, then right-click to rank!</translation>
+      <source>Interactive assignment tool activated: box-select features, then right-click to assign values.</source>
+      <translation>Interactive assignment tool activated: box-select features, then right-click to assign values.</translation>
     </message>
     <message>
       <source>Invalid layer</source>
@@ -381,8 +381,8 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Please select target field and value to paint:</translation>
     </message>
     <message>
-      <source>Please select the target field for rapid ranking in layer [{0}]:</source>
-      <translation>Please select the target field for rapid ranking in layer [{0}]:</translation>
+      <source>Please select the target field for rapid assignment in layer [{0}]:</source>
+      <translation>Please select the target field for rapid assignment in layer [{0}]:</translation>
     </message>
     <message>
       <source>QuickFieldBrush - Format Painter</source>
@@ -393,8 +393,8 @@ Select target field after activation, click or box-select features, then right-c
       <translation>QuickFieldBrush - History</translation>
     </message>
     <message>
-      <source>QuickFieldBrush - Ranking</source>
-      <translation>QuickFieldBrush - Einstufung</translation>
+      <source>QuickFieldBrush - Interactive Assignment</source>
+      <translation>QuickFieldBrush - Interactive Assignment</translation>
     </message>
     <message>
       <source>QuickFieldBrush Format Painter</source>
@@ -461,8 +461,8 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Sortierung:</translation>
     </message>
     <message>
-      <source>Specify Ranking Field</source>
-      <translation>Specify Ranking Field</translation>
+      <source>Specify Target Field</source>
+      <translation>Specify Target Field</translation>
     </message>
     <message>
       <source>Status: pick a field and value first</source>
@@ -493,12 +493,12 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Feld wechseln ( {0} )-[{1}]</translation>
     </message>
     <message>
-      <source>Switch target field... (current: [{0}])</source>
-      <translation>Switch target field... (current: [{0}])</translation>
+      <source>Switch target field for layer [{0}]:</source>
+      <translation>Switch target field for layer [{0}]:</translation>
     </message>
     <message>
-      <source>Switch target ranking field for layer [{0}]:</source>
-      <translation>Switch target ranking field for layer [{0}]:</translation>
+      <source>Switch target field... (current: [{0}])</source>
+      <translation>Switch target field... (current: [{0}])</translation>
     </message>
     <message>
       <source>Target Value</source>
@@ -509,12 +509,12 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Zielfeld</translation>
     </message>
     <message>
-      <source>Target field:</source>
-      <translation>Target field:</translation>
+      <source>Target field for layer [{0}] changed to: [{1}]</source>
+      <translation>Target field for layer [{0}] changed to: [{1}]</translation>
     </message>
     <message>
-      <source>Target rank field for layer [{0}] changed to: [{1}]</source>
-      <translation>Target rank field for layer [{0}] changed to: [{1}]</translation>
+      <source>Target field:</source>
+      <translation>Target field:</translation>
     </message>
     <message>
       <source>The [{0}] value of the selected feature is empty and cannot be absorbed.</source>

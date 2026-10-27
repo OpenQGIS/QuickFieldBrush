@@ -105,7 +105,7 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>属性值</translation>
     </message>
     <message>
-      <source>Batch Ranking</source>
+      <source>Batch Assignment</source>
       <translation>批量赋值</translation>
     </message>
     <message>
@@ -143,7 +143,7 @@ Browse, flash-zoom, single-step revert, and export records</source>
 浏览、高亮定位、单步撤销、导出台账</translation>
     </message>
     <message>
-      <source>Enter a new rank/value</source>
+      <source>Enter a new value</source>
       <translation>输入新属性值</translation>
     </message>
     <message>
@@ -261,7 +261,7 @@ Select target field after activation, click or box-select features, then right-c
 激活功能后选择要修改的字段，点选、框选要素后右键快速对选中字段进行属性值修改。</translation>
     </message>
     <message>
-      <source>Interactive ranking tool activated: box-select features, then right-click to rank!</source>
+      <source>Interactive assignment tool activated: box-select features, then right-click to assign values.</source>
       <translation>已激活交互赋值工具：框选要素后点击右键即可快速赋值！</translation>
     </message>
     <message>
@@ -381,7 +381,7 @@ Select target field after activation, click or box-select features, then right-c
       <translation>请选择格式刷目标字段与属性值:</translation>
     </message>
     <message>
-      <source>Please select the target field for rapid ranking in layer [{0}]:</source>
+      <source>Please select the target field for rapid assignment in layer [{0}]:</source>
       <translation>请为图层 [{0}] 选择用于快速赋值的目标字段:</translation>
     </message>
     <message>
@@ -393,7 +393,7 @@ Select target field after activation, click or box-select features, then right-c
       <translation>QuickFieldBrush - 历史面板</translation>
     </message>
     <message>
-      <source>QuickFieldBrush - Ranking</source>
+      <source>QuickFieldBrush - Interactive Assignment</source>
       <translation>QuickFieldBrush - 交互赋值</translation>
     </message>
     <message>
@@ -461,7 +461,7 @@ Select target field after activation, click or box-select features, then right-c
       <translation>排序:</translation>
     </message>
     <message>
-      <source>Specify Ranking Field</source>
+      <source>Specify Target Field</source>
       <translation>指定赋值目标字段</translation>
     </message>
     <message>
@@ -493,12 +493,12 @@ Select target field after activation, click or box-select features, then right-c
       <translation>切换字段 ( {0} )-[{1}]</translation>
     </message>
     <message>
-      <source>Switch target field... (current: [{0}])</source>
-      <translation>切换字段 ( {0} )</translation>
+      <source>Switch target field for layer [{0}]:</source>
+      <translation>切换图层 [{0}] 的快速赋值目标字段:</translation>
     </message>
     <message>
-      <source>Switch target ranking field for layer [{0}]:</source>
-      <translation>切换图层 [{0}] 的快速赋值目标字段:</translation>
+      <source>Switch target field... (current: [{0}])</source>
+      <translation>切换字段 ( {0} )</translation>
     </message>
     <message>
       <source>Target Value</source>
@@ -509,12 +509,12 @@ Select target field after activation, click or box-select features, then right-c
       <translation>目标字段</translation>
     </message>
     <message>
-      <source>Target field:</source>
-      <translation>目标字段:</translation>
+      <source>Target field for layer [{0}] changed to: [{1}]</source>
+      <translation>图层 [{0}] 的赋值字段已更改为: [{1}]</translation>
     </message>
     <message>
-      <source>Target rank field for layer [{0}] changed to: [{1}]</source>
-      <translation>图层 [{0}] 的赋值字段已更改为: [{1}]</translation>
+      <source>Target field:</source>
+      <translation>目标字段:</translation>
     </message>
     <message>
       <source>The [{0}] value of the selected feature is empty and cannot be absorbed.</source>
