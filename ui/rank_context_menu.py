@@ -13,7 +13,8 @@ import os
 from qgis.PyQt.QtWidgets import (
     QMenu, QInputDialog, QLineEdit, QWidgetAction,
     QWidget, QHBoxLayout, QVBoxLayout, QToolButton, QLabel,
-    QDialog, QComboBox, QDialogButtonBox, QStyleOption, QStyle
+    QDialog, QComboBox, QDialogButtonBox, QStyleOption, QStyle,
+    QScrollArea, QFrame
 )
 from qgis.PyQt.QtGui import QIcon, QCursor, QPainter
 from qgis.PyQt.QtCore import QTimer, QSize, Qt, pyqtSignal
@@ -32,6 +33,7 @@ class RankValueItemWidget(QWidget):
         super().__init__(parent)
         self.val = val
         self.count = count
+        self.setFixedHeight(26)
         self.setAttribute(Qt.WA_StyledBackground, True)
         self.setAttribute(Qt.WA_Hover, True)
         self.setMouseTracking(True)
@@ -96,6 +98,9 @@ class RankValueItemWidget(QWidget):
         else:
             super().mouseReleaseEvent(e)
 
+    def wheelEvent(self, e):
+        e.ignore()
+
 
 class RankContextMenu(QMenu):
     def __init__(self, parent, layer, config, iface, spawn_pos=None):
@@ -105,8 +110,42 @@ class RankContextMenu(QMenu):
         self.iface = iface
         self.spawn_pos = spawn_pos
         self.target_field = None
-        self._value_actions = []
-        self._bottom_sep = None
+
+        # 候选分类值平滑滚动区域（限制最高高度，彻底避免屏幕截断；支持滚轮无缝滑动）
+        self._scroll = QScrollArea(self)
+        self._scroll.setWidgetResizable(True)
+        no_frame = getattr(QFrame.Shape, "NoFrame", getattr(QFrame, "NoFrame", 0))
+        self._scroll.setFrameShape(no_frame)
+        sb_off = getattr(Qt.ScrollBarPolicy, "ScrollBarAlwaysOff", getattr(Qt, "ScrollBarAlwaysOff", 1))
+        self._scroll.setHorizontalScrollBarPolicy(sb_off)
+        self._scroll.setStyleSheet("""
+            QScrollArea { border: none; background: transparent; }
+            QScrollBar:vertical {
+                border: none;
+                background: transparent;
+                width: 6px;
+                margin: 0px;
+            }
+            QScrollBar::handle:vertical {
+                background: #CBD5E1;
+                min-height: 20px;
+                border-radius: 3px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background: #94A3B8;
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0px;
+            }
+        """)
+        self._scroll.viewport().setStyleSheet("background: transparent;")
+
+        self._values_container = QWidget()
+        self._values_container.setStyleSheet("background: transparent;")
+        self._values_layout = QVBoxLayout(self._values_container)
+        self._values_layout.setContentsMargins(0, 0, 0, 0)
+        self._values_layout.setSpacing(0)
+        self._scroll.setWidget(self._values_container)
 
         icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
         self._icon_alpha_asc = QIcon(os.path.join(icons_dir, "sort-AZ.svg"))
@@ -308,7 +347,7 @@ class RankContextMenu(QMenu):
         self.btn_sort_freq.blockSignals(False)
 
     def _on_change_sort_mode(self, mode):
-        """切换排序模式并在原地无缝刷新菜单项（菜单不关闭、不闪烁、不改变屏幕位置）"""
+        """切换排序模式并在原地无缝刷新菜单项（零闪烁、不改变窗口尺寸、绝不截断）"""
         self.config["single_rank_sort_mode"] = mode
         ConfigManager.save_config(self.config)
 
@@ -316,33 +355,47 @@ class RankContextMenu(QMenu):
         behavior = self.config.get("behavior", {})
         auto_edit = behavior.get("auto_start_editing", True)
         self._render_value_items(mode, auto_edit)
-        self.adjustSize()
 
     def _render_value_items(self, sort_mode, auto_edit):
         """原地渲染/刷新候选分类值操作项（值为主体黑色，频次为中灰色微弱字号）"""
-        # 清除旧的值操作项
-        for act in self._value_actions:
-            self.removeAction(act)
-        self._value_actions.clear()
+        # 清除旧的子组件
+        while self._values_layout.count():
+            child = self._values_layout.takeAt(0)
+            w = child.widget()
+            if w:
+                w.setParent(None)
+                w.deleteLater()
 
         val_counts = AttributeEngine.extract_unique_values_with_counts(self.layer, self.target_field)
         sorted_val_counts = self._sort_val_counts(val_counts, sort_mode)
 
+        item_h = 26
         if sorted_val_counts:
+            max_w = 160
             for val, cnt in sorted_val_counts:
-                w_act = QWidgetAction(self)
-                w = RankValueItemWidget(val, cnt, self)
+                w = RankValueItemWidget(val, cnt, self._values_container)
                 w.clicked.connect(
                     lambda v=val: (self._on_apply_value(self.target_field, v, auto_edit), self.close())
                 )
-                w_act.setDefaultWidget(w)
-                self.insertAction(self._bottom_sep, w_act)
-                self._value_actions.append(w_act)
+                self._values_layout.addWidget(w)
+                sh = w.sizeHint().width()
+                if sh > max_w:
+                    max_w = sh
+
+            n_items = len(sorted_val_counts)
+            visible_items = min(n_items, 11)  # 最多同时展示 11 项，超过平滑滚动，绝不超出屏幕
+            target_h = visible_items * item_h
+            self._scroll.setFixedHeight(target_h)
+            self._scroll.setMinimumWidth(max(max_w + 24, 210))
         else:
-            empty_item = QAction(tr("(this field currently contains only empty values in the layer)"), self)
-            empty_item.setEnabled(False)
-            self.insertAction(self._bottom_sep, empty_item)
-            self._value_actions.append(empty_item)
+            lbl_empty = QLabel(tr("(this field currently contains only empty values in the layer)"), self._values_container)
+            lbl_empty.setStyleSheet("padding: 8px 16px; color: #94A3B8; font-size: 11px;")
+            self._values_layout.addWidget(lbl_empty)
+            self._scroll.setFixedHeight(36)
+            self._scroll.setMinimumWidth(240)
+
+        # 滚动条回到顶部
+        self._scroll.verticalScrollBar().setValue(0)
 
     def _build_menu(self):
         behavior = self.config.get("behavior", {})
@@ -365,7 +418,7 @@ class RankContextMenu(QMenu):
 
         selected_count = self.layer.selectedFeatureCount()
 
-        # 1. 快捷切换赋值字段（合并显示当前字段与已选要素数，移除了旧版的独立标题行）
+        # 1. 快捷切换赋值字段（合并显示当前字段与已选要素数）
         icon_settings = QIcon(os.path.join(icons_dir, "settings.svg"))
         switch_act = self.addAction(
             icon_settings,
@@ -379,11 +432,14 @@ class RankContextMenu(QMenu):
 
         self.addSeparator()
 
-        # 3. 【核心】：提取唯一值及频次，按用户偏好排序
-        self._bottom_sep = self.addSeparator()
+        # 3. 【核心】：提取唯一值及频次（嵌入滚动区，底部操作项永远可见）
+        self._values_action = QWidgetAction(self)
+        self._values_action.setDefaultWidget(self._scroll)
+        self.addAction(self._values_action)
         self._render_value_items(current_sort_mode, auto_edit)
 
         # 4. 允许用户临时打字赋一个新分类值
+        self.addSeparator()
         icon_add = QIcon(os.path.join(icons_dir, "add.svg"))
         custom_act = self.addAction(icon_add, tr("Enter a new value..."))
         custom_act.triggered.connect(
