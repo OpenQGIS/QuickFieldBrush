@@ -3,7 +3,8 @@
 QuickFieldBrush 跨版本兼容层 (QGIS 3 / Qt5 与 QGIS 4 / Qt6 统一桥接)
 """
 
-from qgis.PyQt.QtWidgets import QMenu, QDialog
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QMenu, QDialog, QLineEdit, QHeaderView, QFrame
 
 try:
     from qgis.PyQt.QtGui import QAction
@@ -17,6 +18,28 @@ if not hasattr(QMenu, "exec_") and hasattr(QMenu, "exec"):
 
 if not hasattr(QDialog, "exec_") and hasattr(QDialog, "exec"):
     QDialog.exec_ = QDialog.exec
+
+# Qt6 Scoped Enums 兼容桥接 (Qt6 将许多无作用域枚举提升为了强类型枚举类)
+def _bridge_scoped_enums(target_cls):
+    for name in dir(target_cls):
+        val = getattr(target_cls, name, None)
+        if isinstance(val, type) or hasattr(val, "__members__"):
+            for m in dir(val):
+                if not m.startswith("_") and not hasattr(target_cls, m):
+                    try:
+                        setattr(target_cls, m, getattr(val, m))
+                    except (AttributeError, TypeError):
+                        pass
+
+for _cls in (Qt, QLineEdit, QHeaderView, QFrame, QDialog):
+    _bridge_scoped_enums(_cls)
+
+# 特殊枚举组合补丁 (如 Qt.AlignCenter 在 Qt6 为 AlignmentFlag 的复合位运算结果)
+if hasattr(Qt, "AlignmentFlag") and not hasattr(Qt, "AlignCenter"):
+    try:
+        setattr(Qt, "AlignCenter", Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignVCenter)
+    except (AttributeError, TypeError):
+        pass
 
 
 def safe_exec(obj, *args):
@@ -56,7 +79,6 @@ def set_window_stay_on_top(widget, on_top: bool):
         except (AttributeError, OSError, ValueError, RuntimeError):
             pass
 
-    from qgis.PyQt.QtCore import Qt
     widget.setWindowFlag(Qt.WindowStaysOnTopHint, on_top)
     widget.show()
     return True
