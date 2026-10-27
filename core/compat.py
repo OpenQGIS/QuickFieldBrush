@@ -101,3 +101,82 @@ def set_window_stay_on_top(widget, on_top: bool):
     widget.setWindowFlag(Qt.WindowStaysOnTopHint, on_top)
     widget.show()
     return True
+
+
+def wrap_text_by_pixel(text: str, max_px: int = 380, font=None) -> str:
+    """
+    根据字体度量自动折行：当单行像素宽度超过 max_px 时自动换行。
+    支持西文按单词边界折行与中日韩字符断句优雅折行，确保气泡提示不超过限定宽度。
+    """
+    if not text:
+        return ""
+    from qgis.PyQt.QtGui import QFontMetrics
+    from qgis.PyQt.QtWidgets import QApplication
+    if font is None:
+        font = QApplication.font("QToolTip")
+    fm = QFontMetrics(font)
+
+    paragraphs = text.split("\n")
+    wrapped_paras = []
+    punctuations = set("，。！？；、,!?; ")
+
+    for para in paragraphs:
+        if not para:
+            wrapped_paras.append("")
+            continue
+        if fm.boundingRect(para).width() <= max_px:
+            wrapped_paras.append(para)
+            continue
+
+        has_spaces = " " in para
+        if has_spaces:
+            words = para.split(" ")
+            lines = []
+            cur_line = ""
+            for w in words:
+                candidate = f"{cur_line} {w}".strip()
+                if fm.boundingRect(candidate).width() > max_px and cur_line:
+                    lines.append(cur_line)
+                    cur_line = w
+                else:
+                    cur_line = candidate
+            if cur_line:
+                lines.append(cur_line)
+            wrapped_paras.append("<br>".join(lines))
+        else:
+            lines = []
+            cur_line = ""
+            for ch in para:
+                candidate = cur_line + ch
+                if fm.boundingRect(candidate).width() > max_px and cur_line:
+                    last_punc_idx = -1
+                    for p_idx in range(len(cur_line) - 1, len(cur_line) // 3, -1):
+                        if cur_line[p_idx] in punctuations:
+                            last_punc_idx = p_idx + 1
+                            break
+                    if last_punc_idx > 0:
+                        lines.append(cur_line[:last_punc_idx])
+                        cur_line = cur_line[last_punc_idx:] + ch
+                    else:
+                        lines.append(cur_line)
+                        cur_line = ch
+                else:
+                    cur_line = candidate
+            if cur_line:
+                lines.append(cur_line)
+            wrapped_paras.append("<br>".join(lines))
+
+    return "<br>".join(wrapped_paras)
+
+
+def format_tooltip(title: str, desc: str = "", max_px: int = 380) -> str:
+    """
+    统一格式化动作与组件悬停提示：
+    - 首行为标题加粗 (<b>title</b>)
+    - 描述文本超过 400px (默认 380px 留安全边距) 自动优雅换行
+    """
+    if not desc:
+        return f"<b>{title}</b>"
+    wrapped_desc = wrap_text_by_pixel(desc, max_px=max_px)
+    return f"<b>{title}</b><br>{wrapped_desc}"
+

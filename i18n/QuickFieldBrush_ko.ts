@@ -71,6 +71,10 @@
       <translation>Always on top (click to disable)</translation>
     </message>
     <message>
+      <source>Are you sure you want to clear all history records? This cannot be undone.</source>
+      <translation>Are you sure you want to clear all history records? This cannot be undone.</translation>
+    </message>
+    <message>
       <source>Assign a new value to field [{0}] in batch:</source>
       <translation>Assign a new value to field [{0}] in batch:</translation>
     </message>
@@ -80,7 +84,7 @@
     </message>
     <message>
       <source>Attribute Format Painter</source>
-      <translation>속성 포맷 페인터</translation>
+      <translation>속성 서식 복사</translation>
     </message>
     <message>
       <source>Attribute Format Painter (console)</source>
@@ -109,6 +113,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>Batch Assignment</translation>
     </message>
     <message>
+      <source>Browse, flash-zoom, single-step revert, and export records</source>
+      <translation>기록 탐색, 위치 강조, 단계별 실행 취소 및 내보내기</translation>
+    </message>
+    <message>
       <source>Cancel selection</source>
       <translation>선택 취소</translation>
     </message>
@@ -125,6 +133,14 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>Click to enter eyedropper mode, or right-click any feature on map to absorb its value</translation>
     </message>
     <message>
+      <source>Click to locate · Double-click to select</source>
+      <translation>Click to locate · Double-click to select</translation>
+    </message>
+    <message>
+      <source>Copy Details</source>
+      <translation>Copy Details</translation>
+    </message>
+    <message>
       <source>Copy Feature ID(s) to Clipboard</source>
       <translation>Copy Feature ID(s) to Clipboard</translation>
     </message>
@@ -134,7 +150,7 @@ Select or absorb attribute, then click features consecutively for rapid assignme
     </message>
     <message>
       <source>Edit History</source>
-      <translation>Edit History</translation>
+      <translation>편집 기록</translation>
     </message>
     <message>
       <source>Edit History, open plugin history panel
@@ -161,6 +177,10 @@ Browse, flash-zoom, single-step revert, and export records</translation>
     <message>
       <source>Exit format painter (Esc)</source>
       <translation>페인터 종료 (Esc)</translation>
+    </message>
+    <message>
+      <source>Export</source>
+      <translation>Export</translation>
     </message>
     <message>
       <source>Export CSV</source>
@@ -201,6 +221,10 @@ Browse, flash-zoom, single-step revert, and export records</translation>
     <message>
       <source>Field not found in layer: {0}</source>
       <translation>Field not found in layer: {0}</translation>
+    </message>
+    <message>
+      <source>Field ➔ Value</source>
+      <translation>Field ➔ Value</translation>
     </message>
     <message>
       <source>Format Painter</source>
@@ -252,7 +276,7 @@ Browse, flash-zoom, single-step revert, and export records</translation>
     </message>
     <message>
       <source>Interactive Assignment</source>
-      <translation>Interactive Assignment</translation>
+      <translation>대화형 값 할당</translation>
     </message>
     <message>
       <source>Interactive Assignment, activate interactive assignment tool
@@ -287,6 +311,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Layer is not in edit mode</source>
       <translation>Layer is not in edit mode</translation>
+    </message>
+    <message>
+      <source>Layer · Feature</source>
+      <translation>Layer · Feature</translation>
     </message>
     <message>
       <source>Layer: {0} (no editable fields)</source>
@@ -429,6 +457,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Revert failed: {0}</translation>
     </message>
     <message>
+      <source>Revert selected or latest modification</source>
+      <translation>Revert selected or latest modification</translation>
+    </message>
+    <message>
       <source>Revert the most recent modification step</source>
       <translation>Revert the most recent modification step</translation>
     </message>
@@ -449,8 +481,16 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Select feature(s) in layer</translation>
     </message>
     <message>
+      <source>Select or absorb attribute, then click features consecutively for rapid assignment</source>
+      <translation>속성을 선택/추출한 후 객체를 연속 클릭하여 빠르게 값을 할당합니다</translation>
+    </message>
+    <message>
       <source>Select or type the value to paint</source>
       <translation>Select or type the value to paint</translation>
+    </message>
+    <message>
+      <source>Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</source>
+      <translation>활성화 후 수정할 필드를 선택하고, 객체를 클릭 또는 박스 선택한 뒤 우클릭하여 속성값을 빠르게 변경합니다.</translation>
     </message>
     <message>
       <source>Selected {0} features on layer [{1}]</source>
@@ -519,6 +559,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>The [{0}] value of the selected feature is empty and cannot be absorbed.</source>
       <translation>The [{0}] value of the selected feature is empty and cannot be absorbed.</translation>
+    </message>
+    <message>
+      <source>Time</source>
+      <translation>Time</translation>
     </message>
     <message>
       <source>Timestamp</source>

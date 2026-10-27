@@ -71,6 +71,10 @@
       <translation>置顶中（点击取消置顶）</translation>
     </message>
     <message>
+      <source>Are you sure you want to clear all history records? This cannot be undone.</source>
+      <translation>确定要清空全部操作历史记录吗？此操作无法撤销。</translation>
+    </message>
+    <message>
       <source>Assign a new value to field [{0}] in batch:</source>
       <translation>为字段 [{0}] 批量赋新值:</translation>
     </message>
@@ -80,7 +84,7 @@
     </message>
     <message>
       <source>Attribute Format Painter</source>
-      <translation>属性格式刷</translation>
+      <translation>屬性格式刷</translation>
     </message>
     <message>
       <source>Attribute Format Painter (console)</source>
@@ -109,6 +113,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>批量赋值</translation>
     </message>
     <message>
+      <source>Browse, flash-zoom, single-step revert, and export records</source>
+      <translation>瀏覽、高亮定位、單步復原、匯出台賬</translation>
+    </message>
+    <message>
       <source>Cancel selection</source>
       <translation>取消选择</translation>
     </message>
@@ -125,6 +133,14 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>点击进入吸管模式在地图上点选吸取，或在地图上直接右键吸取要素属性</translation>
     </message>
     <message>
+      <source>Click to locate · Double-click to select</source>
+      <translation>单击定位 · 双击居中选中</translation>
+    </message>
+    <message>
+      <source>Copy Details</source>
+      <translation>复制记录详情</translation>
+    </message>
+    <message>
       <source>Copy Feature ID(s) to Clipboard</source>
       <translation>复制要素 FID 到剪贴板</translation>
     </message>
@@ -134,7 +150,7 @@ Select or absorb attribute, then click features consecutively for rapid assignme
     </message>
     <message>
       <source>Edit History</source>
-      <translation>历史修改记录</translation>
+      <translation>歷史修改記錄</translation>
     </message>
     <message>
       <source>Edit History, open plugin history panel
@@ -161,6 +177,10 @@ Browse, flash-zoom, single-step revert, and export records</source>
     <message>
       <source>Exit format painter (Esc)</source>
       <translation>退出格式刷 (Esc)</translation>
+    </message>
+    <message>
+      <source>Export</source>
+      <translation>导出</translation>
     </message>
     <message>
       <source>Export CSV</source>
@@ -201,6 +221,10 @@ Browse, flash-zoom, single-step revert, and export records</source>
     <message>
       <source>Field not found in layer: {0}</source>
       <translation>图层中未找到字段: {0}</translation>
+    </message>
+    <message>
+      <source>Field ➔ Value</source>
+      <translation>字段 ➔ 新值</translation>
     </message>
     <message>
       <source>Format Painter</source>
@@ -252,7 +276,7 @@ Browse, flash-zoom, single-step revert, and export records</source>
     </message>
     <message>
       <source>Interactive Assignment</source>
-      <translation>交互赋值</translation>
+      <translation>交互賦值</translation>
     </message>
     <message>
       <source>Interactive Assignment, activate interactive assignment tool
@@ -287,6 +311,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Layer is not in edit mode</source>
       <translation>图层未处于编辑状态</translation>
+    </message>
+    <message>
+      <source>Layer · Feature</source>
+      <translation>图层 · 要素</translation>
     </message>
     <message>
       <source>Layer: {0} (no editable fields)</source>
@@ -429,6 +457,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>回滚失败: {0}</translation>
     </message>
     <message>
+      <source>Revert selected or latest modification</source>
+      <translation>撤回操作 (选中项或最新一步)</translation>
+    </message>
+    <message>
       <source>Revert the most recent modification step</source>
       <translation>撤回最近一次未回滚的要素修改</translation>
     </message>
@@ -449,8 +481,16 @@ Select target field after activation, click or box-select features, then right-c
       <translation>在图层中选中要素</translation>
     </message>
     <message>
+      <source>Select or absorb attribute, then click features consecutively for rapid assignment</source>
+      <translation>點選/吸取屬性後連續點擊要素快速賦值</translation>
+    </message>
+    <message>
       <source>Select or type the value to paint</source>
       <translation>选择或直接输入要刷入的值</translation>
+    </message>
+    <message>
+      <source>Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</source>
+      <translation>啟動功能後選擇要修改的欄位，點選、框選要素後右鍵快速對選取欄位進行屬性值修改。</translation>
     </message>
     <message>
       <source>Selected {0} features on layer [{1}]</source>
@@ -519,6 +559,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>The [{0}] value of the selected feature is empty and cannot be absorbed.</source>
       <translation>选中要素的 [{0}] 属性值为空，无法吸取。</translation>
+    </message>
+    <message>
+      <source>Time</source>
+      <translation>时间</translation>
     </message>
     <message>
       <source>Timestamp</source>

@@ -71,6 +71,10 @@
       <translation>Always on top (click to disable)</translation>
     </message>
     <message>
+      <source>Are you sure you want to clear all history records? This cannot be undone.</source>
+      <translation>Are you sure you want to clear all history records? This cannot be undone.</translation>
+    </message>
+    <message>
       <source>Assign a new value to field [{0}] in batch:</source>
       <translation>Assign a new value to field [{0}] in batch:</translation>
     </message>
@@ -109,6 +113,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>Batch Assignment</translation>
     </message>
     <message>
+      <source>Browse, flash-zoom, single-step revert, and export records</source>
+      <translation>Durchsuchen, Hervorheben, schrittweises Rückgängigmachen und Protokolle exportieren</translation>
+    </message>
+    <message>
       <source>Cancel selection</source>
       <translation>Auswahl aufheben</translation>
     </message>
@@ -125,6 +133,14 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>Click to enter eyedropper mode, or right-click any feature on map to absorb its value</translation>
     </message>
     <message>
+      <source>Click to locate · Double-click to select</source>
+      <translation>Click to locate · Double-click to select</translation>
+    </message>
+    <message>
+      <source>Copy Details</source>
+      <translation>Copy Details</translation>
+    </message>
+    <message>
       <source>Copy Feature ID(s) to Clipboard</source>
       <translation>Copy Feature ID(s) to Clipboard</translation>
     </message>
@@ -134,7 +150,7 @@ Select or absorb attribute, then click features consecutively for rapid assignme
     </message>
     <message>
       <source>Edit History</source>
-      <translation>Edit History</translation>
+      <translation>Bearbeitungsverlauf</translation>
     </message>
     <message>
       <source>Edit History, open plugin history panel
@@ -161,6 +177,10 @@ Browse, flash-zoom, single-step revert, and export records</translation>
     <message>
       <source>Exit format painter (Esc)</source>
       <translation>Formatpinsel beenden (Esc)</translation>
+    </message>
+    <message>
+      <source>Export</source>
+      <translation>Export</translation>
     </message>
     <message>
       <source>Export CSV</source>
@@ -201,6 +221,10 @@ Browse, flash-zoom, single-step revert, and export records</translation>
     <message>
       <source>Field not found in layer: {0}</source>
       <translation>Field not found in layer: {0}</translation>
+    </message>
+    <message>
+      <source>Field ➔ Value</source>
+      <translation>Field ➔ Value</translation>
     </message>
     <message>
       <source>Format Painter</source>
@@ -252,7 +276,7 @@ Browse, flash-zoom, single-step revert, and export records</translation>
     </message>
     <message>
       <source>Interactive Assignment</source>
-      <translation>Interactive Assignment</translation>
+      <translation>Interaktive Zuweisung</translation>
     </message>
     <message>
       <source>Interactive Assignment, activate interactive assignment tool
@@ -287,6 +311,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Layer is not in edit mode</source>
       <translation>Layer is not in edit mode</translation>
+    </message>
+    <message>
+      <source>Layer · Feature</source>
+      <translation>Layer · Feature</translation>
     </message>
     <message>
       <source>Layer: {0} (no editable fields)</source>
@@ -429,6 +457,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Revert failed: {0}</translation>
     </message>
     <message>
+      <source>Revert selected or latest modification</source>
+      <translation>Revert selected or latest modification</translation>
+    </message>
+    <message>
       <source>Revert the most recent modification step</source>
       <translation>Revert the most recent modification step</translation>
     </message>
@@ -449,8 +481,16 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Select feature(s) in layer</translation>
     </message>
     <message>
+      <source>Select or absorb attribute, then click features consecutively for rapid assignment</source>
+      <translation>Attribute auswählen oder aufnehmen und Objekte durch Anklicken fortlaufend belegen</translation>
+    </message>
+    <message>
       <source>Select or type the value to paint</source>
       <translation>Select or type the value to paint</translation>
+    </message>
+    <message>
+      <source>Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</source>
+      <translation>Nach Aktivierung Zielfeld wählen, Objekte anklicken oder aufziehen und per Rechtsklick Attributwerte schnell ändern.</translation>
     </message>
     <message>
       <source>Selected {0} features on layer [{1}]</source>
@@ -519,6 +559,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>The [{0}] value of the selected feature is empty and cannot be absorbed.</source>
       <translation>The [{0}] value of the selected feature is empty and cannot be absorbed.</translation>
+    </message>
+    <message>
+      <source>Time</source>
+      <translation>Time</translation>
     </message>
     <message>
       <source>Timestamp</source>

@@ -12,7 +12,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsVectorLayer
 
-from .core.compat import safe_exec, QAction
+from .core.compat import safe_exec, QAction, format_tooltip
 
 from .core.config_manager import ConfigManager
 from .core.attribute_engine import AttributeEngine
@@ -87,9 +87,9 @@ class QuickFieldBrushPlugin:
             self.iface.mainWindow()
         )
         self.action_toggle.setCheckable(True)
-        self.action_toggle.setToolTip(tr(
-            "Interactive Assignment, activate interactive assignment tool\n"
-            "Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values."
+        self.action_toggle.setToolTip(format_tooltip(
+            tr("Interactive Assignment"),
+            tr("Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.")
         ))
         self.action_toggle.triggered.connect(self._toggle_map_tool)
         self.toolbar.addAction(self.action_toggle)
@@ -102,9 +102,9 @@ class QuickFieldBrushPlugin:
             self.iface.mainWindow()
         )
         self.action_painter.setCheckable(True)
-        self.action_painter.setToolTip(tr(
-            "Attribute Format Painter, activate format painter console\n"
-            "Select or absorb attribute, then click features consecutively for rapid assignment"
+        self.action_painter.setToolTip(format_tooltip(
+            tr("Attribute Format Painter"),
+            tr("Select or absorb attribute, then click features consecutively for rapid assignment")
         ))
         self.action_painter.triggered.connect(self._toggle_painter_tool)
         self.toolbar.addAction(self.action_painter)
@@ -116,9 +116,9 @@ class QuickFieldBrushPlugin:
             tr("Edit History"),
             self.iface.mainWindow()
         )
-        self.action_history.setToolTip(tr(
-            "Edit History, open plugin history panel\n"
-            "Browse, flash-zoom, single-step revert, and export records"
+        self.action_history.setToolTip(format_tooltip(
+            tr("Edit History"),
+            tr("Browse, flash-zoom, single-step revert, and export records")
         ))
         self.action_history.triggered.connect(self._toggle_history_dialog)
         self.toolbar.addAction(self.action_history)
