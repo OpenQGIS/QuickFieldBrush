@@ -25,3 +25,4 @@ QuickFieldBrush-4QGIS/
 QuickFieldBrush_History/
 *.zip
 dist/
+!icons_Component/0_icons_Component.svg
