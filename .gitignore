@@ -23,3 +23,5 @@ Thumbs.db
 
 QuickFieldBrush-4QGIS/
 QuickFieldBrush_History/
+*.zip
+dist/
