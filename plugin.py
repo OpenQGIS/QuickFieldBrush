@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
 QuickFieldBrush 插件主控制器：
-专注两大核心极速赋级工具：
-1. 交互赋级工具 (框选+右键极速分级，每次激活弹窗选定字段，集成6维智能排序与要素频次)
+1. 交互赋值工具 (框选+右键快速赋值，每次激活弹窗选定字段，集成智能排序与要素频次)
 2. 属性格式刷工具 (无模态常驻置顶控制台，单选/吸取属性后连续点击要素快速刷入)
+3. 操作历史面板 (记录修改、地图定位闪烁、单步精准还原与导出 CSV)
 """
 
 import os
@@ -80,7 +80,7 @@ class QuickFieldBrushPlugin:
         icon_painter = self._load_icon(os.path.join(icons_dir, "painter.svg"))
         icon_history = self._load_icon(os.path.join(icons_dir, "history.svg"))
 
-        # 3. 功能 1: 激活/停用快捷赋级工具 (框选+右键)
+        # 3. 功能 1: 激活/停用快捷赋值工具 (框选+右键)
         self.action_toggle = QAction(
             icon_active,
             tr("Activate QuickFieldBrush interactive ranking tool (box select + right click)"),
@@ -178,7 +178,7 @@ class QuickFieldBrushPlugin:
 
             valid_names = [f["name"] for f in fields]
 
-            # 每次激活工具均弹窗让用户确定目标赋级字段
+            # 每次激活工具均弹窗让用户确定目标赋值字段
             self.config = ConfigManager.get_config()
             by_layer = self.config.get("single_rank_by_layer", {})
             current_field = by_layer.get(layer.id()) or self.config.get("single_rank", {}).get("field_name", "")

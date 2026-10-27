@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-功能 1：右键极速分级菜单
+功能 1：右键快速赋值菜单
 纯粹、专注、单层菜单：
-- 支持初次使用或换图层时主动弹窗引导用户显式确定赋级字段，绝不静默绑定错误字段
-- 菜单顶部提供 6 模式微型排序切换控制条（A-Z、Z-A、高频↓、低频↑、1-9、9-1）
-- 展示字段值及其在图层中的真实频次统计，高频优先排序大幅提升赋级效率
+- 支持初次使用或换图层时主动弹窗引导用户显式确定赋值字段，绝不静默绑定错误字段
+- 菜单顶部提供微型翻转排序切换控制条（字母顺序、频次排序）
+- 展示字段值及其在图层中的真实频次统计，高频优先排序大幅提升赋值效率
 - 菜单顶部常驻【切换目标字段】操作项，随时一键切换，切换后自动刷新菜单
-- 支持按图层记住各自设定的赋级字段与排序偏好
+- 支持按图层记住各自设定的赋值字段与排序偏好
 """
 
 import os
@@ -118,7 +118,7 @@ class RankContextMenu(QMenu):
         self._build_menu()
 
     def _resolve_target_field(self, valid_names):
-        """解析当前图层的赋级目标字段；若未设定则主动弹出选择框让用户确定"""
+        """解析当前图层的赋值目标字段；若未设定则主动弹出选择框让用户确定"""
         layer_id = self.layer.id() if self.layer else ""
         by_layer = self.config.get("single_rank_by_layer", {})
         target = by_layer.get(layer_id)
@@ -136,7 +136,7 @@ class RankContextMenu(QMenu):
         return target
 
     def _prompt_choose_field(self, valid_names, is_initial=False):
-        """弹出字段选择框，由用户显式确定赋级字段（展示 QGIS 原生字段类型图标）"""
+        """弹出字段选择框，由用户显式确定赋值字段（展示 QGIS 原生字段类型图标）"""
         prompt_text = (
             tr("Please select the target field for rapid ranking in layer [{0}]:").format(self.layer.name())
             if is_initial else
@@ -365,7 +365,7 @@ class RankContextMenu(QMenu):
 
         selected_count = self.layer.selectedFeatureCount()
 
-        # 1. 快捷切换赋级字段（合并显示当前字段与已选要素数，移除了旧版的独立标题行）
+        # 1. 快捷切换赋值字段（合并显示当前字段与已选要素数，移除了旧版的独立标题行）
         icon_settings = QIcon(os.path.join(icons_dir, "settings.svg"))
         switch_act = self.addAction(
             icon_settings,

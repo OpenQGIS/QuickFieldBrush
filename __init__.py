@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-QuickFieldBrush - QGIS 极速属性赋级与格式刷工具
+QuickFieldBrush - QGIS 矢量属性快速赋值与格式刷工具
 """
 
 def classFactory(iface):

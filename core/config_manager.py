@@ -20,9 +20,9 @@ DEFAULT_CONFIG = {
         "field_name": "",
         "ranks": ["1级", "2级", "3级", "4级"]
     },
-    # 按图层独立记忆的赋级字段: layer_id -> field_name
+    # 按图层独立记忆的赋值字段: layer_id -> field_name
     "single_rank_by_layer": {},
-    # 右键分级候选值排序偏好: alpha_asc, alpha_desc, freq_desc, freq_asc, num_asc, num_desc
+    # 右键赋值候选值排序偏好: alpha_asc, alpha_desc, freq_desc, freq_asc, num_asc, num_desc
     "single_rank_sort_mode": "freq_desc",
 
     # 功能2：格式刷配置
@@ -33,7 +33,7 @@ DEFAULT_CONFIG = {
 
     # 交互行为设置
     "behavior": {
-        "auto_start_editing": True     # 赋级时若图层未开启编辑，是否自动开启编辑模式
+        "auto_start_editing": True     # 赋值时若图层未开启编辑，是否自动开启编辑模式
     }
 }
 

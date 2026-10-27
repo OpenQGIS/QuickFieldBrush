@@ -48,7 +48,7 @@
     </message>
     <message>
       <source>Activate QuickFieldBrush interactive ranking tool (box select + right click)</source>
-      <translation>激活 QuickFieldBrush 交互赋級工具 (框選+右鍵)</translation>
+      <translation>激活 QuickFieldBrush 交互賦值工具 (框選+右鍵)</translation>
     </message>
     <message>
       <source>Add New Attribute Value</source>
@@ -72,11 +72,11 @@
     </message>
     <message>
       <source>Assign a new value to field [{0}] in batch:</source>
-      <translation>为字段 [{0}] 批量赋新值:</translation>
+      <translation>为字段 [{0}] 批量賦新值:</translation>
     </message>
     <message>
       <source>Assign rank: [{0}] (selected: {1})</source>
-      <translation>赋級字段: [{0}] (已選: {1} 个)</translation>
+      <translation>賦值字段: [{0}] (已選: {1} 个)</translation>
     </message>
     <message>
       <source>Attribute Format Painter</source>
@@ -88,7 +88,7 @@
     </message>
     <message>
       <source>Attribute format painter (pick field/value, then click features to assign)</source>
-      <translation>属性格式刷 (點選/吸取属性后连续點擊要素快速赋值)</translation>
+      <translation>属性格式刷 (點選/吸取属性后连续點擊要素快速賦值)</translation>
     </message>
     <message>
       <source>Attribute update failed: {0}</source>
@@ -100,7 +100,7 @@
     </message>
     <message>
       <source>Batch Ranking</source>
-      <translation>批量赋級</translation>
+      <translation>批量賦值</translation>
     </message>
     <message>
       <source>Cancel selection</source>
@@ -124,7 +124,7 @@
     </message>
     <message>
       <source>Enter a new rank/value</source>
-      <translation>输入新等級/属性值</translation>
+      <translation>输入新属性值</translation>
     </message>
     <message>
       <source>Enter a new value to assign...</source>
@@ -188,7 +188,7 @@
     </message>
     <message>
       <source>Format painter assignment failed: {0}</source>
-      <translation>格式刷赋属性失败: {0}</translation>
+      <translation>格式刷賦属性失败: {0}</translation>
     </message>
     <message>
       <source>Format painter console</source>
@@ -232,7 +232,7 @@
     </message>
     <message>
       <source>Interactive ranking tool activated: box-select features, then right-click to rank!</source>
-      <translation>已激活交互赋級工具：框選要素后點擊右鍵即可快速分級！</translation>
+      <translation>已激活交互賦值工具：框選要素后點擊右鍵即可快速賦值！</translation>
     </message>
     <message>
       <source>Invalid layer</source>
@@ -304,7 +304,7 @@
     </message>
     <message>
       <source>No target field selected (click to specify)</source>
-      <translation>未選擇赋級字段 (點擊指定)</translation>
+      <translation>未選擇賦值字段 (點擊指定)</translation>
     </message>
     <message>
       <source>Not on top</source>
@@ -352,7 +352,7 @@
     </message>
     <message>
       <source>Please select the target field for rapid ranking in layer [{0}]:</source>
-      <translation>请为圖層 [{0}] 選擇用于快速赋級的目標字段:</translation>
+      <translation>请为圖層 [{0}] 選擇用于快速賦值的目標字段:</translation>
     </message>
     <message>
       <source>QuickFieldBrush - Format Painter</source>
@@ -364,7 +364,7 @@
     </message>
     <message>
       <source>QuickFieldBrush - Ranking</source>
-      <translation>QuickFieldBrush - 交互分級</translation>
+      <translation>QuickFieldBrush - 交互賦值</translation>
     </message>
     <message>
       <source>QuickFieldBrush Format Painter</source>
@@ -432,7 +432,7 @@
     </message>
     <message>
       <source>Specify Ranking Field</source>
-      <translation>指定赋級目標字段</translation>
+      <translation>指定賦值目標字段</translation>
     </message>
     <message>
       <source>Status: pick a field and value first</source>
@@ -468,11 +468,11 @@
     </message>
     <message>
       <source>Switch target ranking field for layer [{0}]:</source>
-      <translation>切換圖層 [{0}] 的快速赋級目標字段:</translation>
+      <translation>切換圖層 [{0}] 的快速賦值目標字段:</translation>
     </message>
     <message>
       <source>Target Value</source>
-      <translation>赋級目標值</translation>
+      <translation>賦值目標值</translation>
     </message>
     <message>
       <source>Target field</source>
@@ -484,7 +484,7 @@
     </message>
     <message>
       <source>Target rank field for layer [{0}] changed to: [{1}]</source>
-      <translation>圖層 [{0}] 的赋級字段已更改为: [{1}]</translation>
+      <translation>圖層 [{0}] 的賦值字段已更改为: [{1}]</translation>
     </message>
     <message>
       <source>The [{0}] value of the selected feature is empty and cannot be absorbed.</source>

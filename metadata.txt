@@ -3,14 +3,14 @@ name=QuickFieldBrush
 qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
 icon=icon/icon.svg
-description=矢量要素右键快速赋级、属性格式刷与修改历史面板。 / Rapid attribute ranking via right-click, format painter, and edit history panel for QGIS.
+description=矢量要素右键快速赋值、属性值格式刷与要素修改历史面板。 / Rapid attribute assignment via right-click, format painter, and edit history panel for QGIS.
 version=0.2.1
 author=OpenQGIS
 email=OpenQGIS@outlook.com
 about=
   QuickFieldBrush 用于在 QGIS 中给矢量要素快速填写或批量修改属性。
   包含三个功能模块：
-  1. 交互赋级：框选要素后右键选择属性值进行赋级，按图层记忆目标字段，支持频次与字母排序。
+  1. 交互赋值：框选要素后右键选择属性值进行赋值，按图层记忆目标字段，支持频次与字母排序。
   2. 属性格式刷：支持从要素吸取值或手动选值，在地图上连续点击要素写入。
   3. 历史面板：记录修改历史，支持地图单击居中高亮、双击选中要素、单步还原与导出 CSV。
   /
@@ -29,11 +29,11 @@ changelog=
   - 安全扫描 / Security scan
   Version 0.2.0:
   - 格式刷控制台重构为原生 4 行紧凑布局，支持字段类型图标。 / Rebuilt format painter into a compact 4-row layout with field type icons.
-  - 右键赋级菜单与格式刷支持字母与频次升降序切换。 / Added dynamic flipping sort (alphabetical and frequency) to menu and format painter.
+  - 右键赋值菜单与格式刷支持字母与频次升降序切换。 / Added dynamic flipping sort (alphabetical and frequency) to menu and format painter.
   - 格式刷支持从要素吸取属性值，支持右键直接吸取。 / Format painter supports absorbing values from canvas features directly.
   - 新增操作历史面板，支持地图定位、单步还原、撤销与 CSV 导出。 / Added edit history panel with canvas centering, single-step revert, undo, and CSV export.
   - 更新图标样式，优化置顶稳定性与多语言支持。 / Updated icons, improved window pin stability, and added multilingual support.
   Version 0.1.0:
-  - 首次发布，支持右键赋级与格式刷基础功能。 / Initial release with right-click ranking and format painter.
+  - 首次发布，支持右键赋值与格式刷基础功能。 / Initial release with right-click ranking and format painter.
 experimental=False
 deprecated=False

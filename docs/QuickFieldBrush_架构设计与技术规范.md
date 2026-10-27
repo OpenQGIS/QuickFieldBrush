@@ -1,7 +1,7 @@
 # QuickFieldBrush 架构设计与技术规范文档
 
 > 版本：v0.2.1 ｜ 状态：正式发布 ｜ 日期：2026-10-26
-> 定位：专为 QGIS 打造的高生产力矢量要素交互赋级、属性格式刷与历史回溯工具集。
+> 定位：专为 QGIS 打造的高生产力矢量要素交互赋值、属性格式刷与历史回溯工具集。
 
 ---
 
@@ -47,7 +47,7 @@ graph TD
 | 模块文件 | 核心职能 | 关键设计模式与性能策略 |
 |---|---|---|
 | `plugin.py` | 插件生命周期管理、工具栏与菜单入口挂载 | 无感加载、`unload()` 干净注销翻译器与地图工具 |
-| `core/map_tool.py` | 框选交互赋级地图工具 | 空间矩形范围快速拾取、Shift 并集 / Ctrl 对称差 |
+| `core/map_tool.py` | 框选交互赋值地图工具 | 空间矩形范围快速拾取、Shift 并集 / Ctrl 对称差 |
 | `core/format_painter_tool.py` | 格式刷地图作业工具 | `QgsFeatureRequest.setFilterRect` 走空间索引快速命中；左键刷属性、右键瞬时吸管；绿色赋属性反馈、蓝色吸取反馈 |
 | `core/attribute_engine.py` | 矢量数据操作核心底座 | 强类型安全转换 (`convertCompatible`)；`NoGeometry` 属性流提取唯一值与出现频次；会话级内存缓存 |
 | `core/history_manager.py` | 操作历史审计与撤销栈 | 全流程修改记录、单步精准还原 (`Revert`)、逆序撤销最新修改、CSV UTF-8 BOM 导出 |
@@ -61,7 +61,7 @@ graph TD
 
 ## 二、核心作业模式技术规范
 
-### 2.1 交互赋级工具 (Interactive Ranking)
+### 2.1 交互赋值工具 (Interactive Ranking)
 * **显式字段引导**：激活工具或右键呼出时，校验图层配置。初次激活弹出原生字段选择器，显示 QGIS 14 种矢量字段类型图标（`123`/`abc`/`1.2`），按图层独立记忆；
 * **双维度两态翻转排序条 (2-Button Dynamic Sort)**：
   - **字母维** (`sort-AZ.svg` ⇋ `sort-reverse-ZA.svg`)：文本升降序；
