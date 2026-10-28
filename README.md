@@ -2,11 +2,6 @@
 
 <p align="left">
   <img src="https://img.shields.io/badge/status-pending%20approval-orange?style=flat&logo=clockify&logoColor=white" alt="Status: Pending Approval">
-  <img src="https://img.shields.io/badge/QGIS%20Plugin-Under%20Review-orange?style=flat&logo=qgis&logoColor=white" alt="QGIS Plugin: Under Review">
-  <img src="https://img.shields.io/badge/QGIS%20Version-%E2%89%A5%203.16-589632?style=flat&logo=qgis&logoColor=white" alt="QGIS Version">
-  <a href="https://github.com/OpenQGIS/QuickFieldBrush/releases"><img src="https://img.shields.io/github/v/release/OpenQGIS/QuickFieldBrush?style=flat&color=007ec6&label=release" alt="Release"></a>
-  <img src="https://img.shields.io/badge/platform-Windows%20|%20macOS-blue?style=flat&logo=apple&logoColor=white" alt="Platform">
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/OpenQGIS/QuickFieldBrush?style=flat&color=blue" alt="License"></a>
 </p>
 
 > ⏳ **项目状态说明 (Project Status)**：  
