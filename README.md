@@ -1,5 +1,18 @@
 # QuickFieldBrush
 
+<p align="left">
+  <img src="https://img.shields.io/badge/status-pending%20approval-orange?style=flat&logo=clockify&logoColor=white" alt="Status: Pending Approval">
+  <img src="https://img.shields.io/badge/QGIS%20Plugin-Under%20Review-orange?style=flat&logo=qgis&logoColor=white" alt="QGIS Plugin: Under Review">
+  <a href="https://github.com/OpenQGIS/QuickFieldBrush/releases"><img src="https://img.shields.io/github/v/release/OpenQGIS/QuickFieldBrush?style=flat&color=007ec6&label=release" alt="Release"></a>
+  <img src="https://img.shields.io/badge/QGIS-3.16%2B-589632?style=flat&logo=qgis&logoColor=white" alt="QGIS Version">
+  <img src="https://img.shields.io/badge/platform-Windows%20|%20macOS-blue?style=flat&logo=apple&logoColor=white" alt="Platform">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/OpenQGIS/QuickFieldBrush?style=flat&color=blue" alt="License"></a>
+</p>
+
+> ⏳ **项目状态说明 (Project Status)**：  
+> 本插件 **v0.4.0 正式分发包已提交至 QGIS 官方插件门户（plugins.qgis.org）**，当前正处于 **官方人工与自动化安全审核通道中 (Pending Approval / Under Review)**。  
+> 在官方插件库正式上线前，用户可直接前往 [Releases 页面](https://github.com/OpenQGIS/QuickFieldBrush/releases) 下载最新 ZIP 分发包，在 QGIS 菜单栏选择 **【插件】➔【管理并安装插件】➔【从 ZIP 文件安装】** 即插即用。
+
 QuickFieldBrush 是一个用于 QGIS 的矢量要素属性快速赋值与修改插件，包含右键快速赋值、属性格式刷和操作历史面板。
 
 适用于路网分级、水系等级划分、POI 分类等需要频繁修改属性字段的场景，省去反复打开属性表修改数值的操作。
