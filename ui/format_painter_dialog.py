@@ -16,7 +16,7 @@ from qgis.PyQt.QtWidgets import (
 from qgis.gui import QgsDockWidget
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import Qt, pyqtSignal, QSize
-from qgis.core import QgsVectorLayer
+from qgis.core import QgsVectorLayer, QgsApplication
 from ..core.compat import set_window_stay_on_top
 from ..core.attribute_engine import AttributeEngine
 from ..core.config_manager import ConfigManager
@@ -59,10 +59,11 @@ class FormatPainterDockWidget(QgsDockWidget):
         # 监听浮动/停靠状态切换
         self.topLevelChanged.connect(self._on_top_level_changed)
 
-        # 恢复上次使用的刷入值
-        last_val = self.config.get("format_painter", {}).get("value")
-        if last_val:
-            self.combo_val.setEditText(str(last_val))
+    def refresh_state(self):
+        """重新打开面板时刷新配置、当前活动图层字段与画笔绑定状态"""
+        self.config = ConfigManager.get_config()
+        self._reset_absorb_btn_text()
+        self._load_fields()
 
     def _init_ui(self):
         container = QWidget(self)
@@ -168,9 +169,9 @@ class FormatPainterDockWidget(QgsDockWidget):
 
         layout.addSpacing(2)
 
-        # 4. 最下边的一行：左侧为吸取属性，右边为退出按钮
-        bottom_box = QHBoxLayout()
-        bottom_box.setSpacing(6)
+        # 4. 最下边的一行：吸取属性、置空为 NULL、退出按钮
+        action_box = QHBoxLayout()
+        action_box.setSpacing(6)
 
         self.btn_pick_from_selected = QPushButton(tr("Absorb attribute from feature"))
         absorb_icon = QIcon(os.path.join(icons_dir, "absorb.svg"))
@@ -179,13 +180,26 @@ class FormatPainterDockWidget(QgsDockWidget):
             self.btn_pick_from_selected.setIconSize(QSize(15, 15))
         self.btn_pick_from_selected.setToolTip(tr("Click to enter eyedropper mode, or right-click any feature on map to absorb its value"))
         self.btn_pick_from_selected.clicked.connect(self._toggle_pick_mode)
-        bottom_box.addWidget(self.btn_pick_from_selected, 1)
+        action_box.addWidget(self.btn_pick_from_selected, 2)
+
+        self.btn_clear_null = QPushButton(tr("Set to NULL"))
+        ic_null = QgsApplication.getThemeIcon("mIconClearText.svg")
+        if ic_null.isNull():
+            ic_null = QgsApplication.getThemeIcon("mIconClearItem.svg")
+        if ic_null.isNull():
+            ic_null = QIcon(os.path.join(icons_dir, "clear.svg"))
+        self.btn_clear_null.setIcon(ic_null)
+        self.btn_clear_null.setIconSize(QSize(15, 15))
+        self.btn_clear_null.setToolTip(tr("Set painter value to NULL, or batch clear selected features"))
+        self.btn_clear_null.clicked.connect(self._on_set_null_clicked)
+        action_box.addWidget(self.btn_clear_null, 1)
+
+        layout.addLayout(action_box)
 
         self.btn_close = QPushButton(tr("Exit format painter (Esc)"))
         self.btn_close.clicked.connect(self.close)
-        bottom_box.addWidget(self.btn_close, 1)
+        layout.addWidget(self.btn_close)
 
-        layout.addLayout(bottom_box)
         layout.addStretch(1)
 
         self.setWidget(container)
@@ -237,6 +251,10 @@ class FormatPainterDockWidget(QgsDockWidget):
         if not self.layer or not isinstance(self.layer, QgsVectorLayer) or not self.layer.isValid():
             self.combo_field.addItem(tr("(no valid vector layer selected)"))
             self.combo_field.blockSignals(False)
+            self.combo_val.blockSignals(True)
+            self.combo_val.clear()
+            self.combo_val.blockSignals(False)
+            self.painter_tool.set_target(None, None)
             self.lbl_status.setText(tr("Status: pick a field and value first"))
             return
 
@@ -244,16 +262,19 @@ class FormatPainterDockWidget(QgsDockWidget):
         for f in fields:
             self.combo_field.addItem(f.get("icon", QIcon()), f['name'], f['name'])
 
-        self.combo_field.blockSignals(False)
-
         # 优先选中上次使用的字段或配置字段
         fp_cfg = self.config.get("format_painter", {})
-        default_field = fp_cfg.get("field_name") or self.config.get("single_rank", {}).get("field_name")
+        default_field = (
+            fp_cfg.get("field_name")
+            or self.config.get("single_rank_by_layer", {}).get(self.layer.id())
+            or self.config.get("single_rank", {}).get("field_name")
+        )
         if default_field:
             idx = self.combo_field.findData(default_field)
             if idx != -1:
                 self.combo_field.setCurrentIndex(idx)
 
+        self.combo_field.blockSignals(False)
         self._on_field_changed()
 
     def _on_sort_alpha_clicked(self):
@@ -294,6 +315,18 @@ class FormatPainterDockWidget(QgsDockWidget):
 
         self._populate_val_combo()
 
+    def _extract_current_value(self) -> str:
+        """从可编辑下拉框中提取真实目标属性值（优先尊重用户在输入框中手动输入的文本）"""
+        txt = self.combo_val.currentText().strip()
+        empty_placeholder = tr("(no values yet in this layer)")
+        add_custom_label = "➕ " + tr("Enter a new value...")
+        null_label = "∅ " + tr("Set to NULL (Clear field)")
+        if txt in ("", empty_placeholder, add_custom_label):
+            return ""
+        if txt == null_label or txt.upper() == "NULL" or self.combo_val.currentData() == "__set_null_value__":
+            return "__NULL__"
+        return txt
+
     def _on_field_changed(self):
         fname = self.combo_field.currentData()
         self._cached_val_counts = []
@@ -302,24 +335,32 @@ class FormatPainterDockWidget(QgsDockWidget):
         self._populate_val_combo(initial_load=True)
 
     def _populate_val_combo(self, initial_load=False):
-        current_text = self.combo_val.currentText().strip()
+        current_text = self._extract_current_value()
         self.combo_val.blockSignals(True)
         self.combo_val.clear()
         self._prev_val_idx = 0
 
         val_counts = list(self._cached_val_counts) if hasattr(self, "_cached_val_counts") else []
 
-        # 排序计算
+        # 排序计算（支持自然序及频次同频自然序）
         if self.current_sort_dim == "freq":
-            rev = (self.sort_freq_dir == "desc")
-            val_counts_sorted = sorted(val_counts, key=lambda x: (x[1] if x[1] is not None else 0), reverse=rev)
+            if self.sort_freq_dir == "desc":
+                val_counts_sorted = sorted(
+                    val_counts,
+                    key=lambda x: (-(x[1] if x[1] is not None else 0), AttributeEngine.natural_sort_key(x[0]))
+                )
+            else:
+                val_counts_sorted = sorted(
+                    val_counts,
+                    key=lambda x: ((x[1] if x[1] is not None else 0), AttributeEngine.natural_sort_key(x[0]))
+                )
         else:
             rev = (self.sort_alpha_dir == "desc")
-            val_counts_sorted = sorted(val_counts, key=lambda x: str(x[0]).lower(), reverse=rev)
+            val_counts_sorted = sorted(val_counts, key=lambda x: AttributeEngine.natural_sort_key(x[0]), reverse=rev)
 
         has_values = False
         for val, cnt in val_counts_sorted:
-            if val is None or str(val).strip() == "":
+            if AttributeEngine.is_empty_or_null(val):
                 continue
             display_str = str(val)
             self.combo_val.addItem(display_str, userData=str(val))
@@ -330,33 +371,56 @@ class FormatPainterDockWidget(QgsDockWidget):
 
         # 添加「输入新值...」选项
         self.combo_val.addItem("➕ " + tr("Enter a new value..."), userData="__custom_add_value__")
-        self.combo_val.blockSignals(False)
+        # 添加「设为 NULL / 清空字段」选项
+        self.combo_val.addItem("∅ " + tr("Set to NULL (Clear field)"), userData="__set_null_value__")
 
         # 保持或恢复选中项
         matched = False
         if not initial_load and current_text:
-            idx = self.combo_val.findData(current_text)
-            if idx != -1:
-                self.combo_val.setCurrentIndex(idx)
-                self._prev_val_idx = idx
-                matched = True
+            if current_text == "__NULL__":
+                idx = self.combo_val.findData("__set_null_value__")
+                if idx != -1:
+                    self.combo_val.setCurrentIndex(idx)
+                    self._prev_val_idx = idx
+                    matched = True
             else:
-                self.combo_val.setEditText(current_text)
-                matched = True
+                idx = self.combo_val.findData(current_text)
+                if idx != -1:
+                    self.combo_val.setCurrentIndex(idx)
+                    self._prev_val_idx = idx
+                    matched = True
+                else:
+                    self.combo_val.setEditText(current_text)
+                    matched = True
         elif initial_load:
             fp_cfg = self.config.get("format_painter", {})
+            last_field = fp_cfg.get("field_name")
             last_val = fp_cfg.get("value")
+            cur_field = self.combo_field.currentData()
             if last_val:
                 idx = self.combo_val.findData(str(last_val))
                 if idx != -1:
                     self.combo_val.setCurrentIndex(idx)
                     self._prev_val_idx = idx
                     matched = True
+                elif last_field and last_field == cur_field:
+                    # 同一字段下用户曾自定义输入过尚未写入图层的候选值，予以保留
+                    insert_pos = max(0, self.combo_val.count() - 1)
+                    self.combo_val.insertItem(insert_pos, str(last_val), userData=str(last_val))
+                    self.combo_val.setCurrentIndex(insert_pos)
+                    self._prev_val_idx = insert_pos
+                    matched = True
 
-        if not matched and has_values:
-            self.combo_val.setCurrentIndex(0)
-            self._prev_val_idx = 0
+        if not matched:
+            if has_values:
+                self.combo_val.setCurrentIndex(0)
+                self._prev_val_idx = 0
+            else:
+                self.combo_val.setCurrentIndex(0)
+                self.combo_val.setEditText("")
+                self._prev_val_idx = 0
 
+        self.combo_val.blockSignals(False)
         self._sync_target_to_tool()
 
     def _on_val_index_changed(self, idx):
@@ -370,27 +434,52 @@ class FormatPainterDockWidget(QgsDockWidget):
                 tr("Add New Attribute Value"),
                 tr("Enter new value for [{0}]:").format(fname)
             )
-            if ok and new_val.strip():
+            if ok:
                 clean_val = new_val.strip()
-                # 检查下拉列表中是否已有该值
-                found_idx = -1
-                for i in range(self.combo_val.count()):
-                    if self.combo_val.itemData(i) == clean_val:
-                        found_idx = i
-                        break
-                if found_idx != -1:
-                    self.combo_val.setCurrentIndex(found_idx)
+                if clean_val == "" or clean_val.upper() == "NULL":
+                    # 自动规整为 NULL
+                    self.combo_val.blockSignals(True)
+                    null_idx = self.combo_val.findData("__set_null_value__")
+                    if null_idx != -1:
+                        self.combo_val.setCurrentIndex(null_idx)
+                    self.combo_val.setEditText("NULL")
+                    self._prev_val_idx = self.combo_val.currentIndex()
+                    self.combo_val.blockSignals(False)
+                    self._sync_target_to_tool()
                 else:
-                    insert_pos = max(0, self.combo_val.count() - 1)
-                    self.combo_val.insertItem(insert_pos, clean_val, userData=clean_val)
-                    self.combo_val.setCurrentIndex(insert_pos)
-                self._prev_val_idx = self.combo_val.currentIndex()
-                self._sync_target_to_tool()
+                    found_idx = -1
+                    for i in range(self.combo_val.count()):
+                        if self.combo_val.itemData(i) == clean_val:
+                            found_idx = i
+                            break
+                    self.combo_val.blockSignals(True)
+                    if found_idx != -1:
+                        self.combo_val.setCurrentIndex(found_idx)
+                    else:
+                        insert_pos = max(0, self.combo_val.count() - 2)
+                        self.combo_val.insertItem(insert_pos, clean_val, userData=clean_val)
+                        self.combo_val.setCurrentIndex(insert_pos)
+                    self._prev_val_idx = self.combo_val.currentIndex()
+                    self.combo_val.blockSignals(False)
+                    self._sync_target_to_tool()
             else:
                 # 用户取消输入，平滑恢复回之前的选择
                 self.combo_val.blockSignals(True)
                 self.combo_val.setCurrentIndex(self._prev_val_idx)
                 self.combo_val.blockSignals(False)
+        elif data == "__set_null_value__":
+            self.combo_val.blockSignals(True)
+            self.combo_val.setEditText("NULL")
+            self.combo_val.blockSignals(False)
+            self._prev_val_idx = idx
+            self._sync_target_to_tool()
+        elif data == "":
+            # 选中了「暂无候选值」占位项时清空输入框，避免占位文字被当成属性值
+            self.combo_val.blockSignals(True)
+            self.combo_val.setEditText("")
+            self.combo_val.blockSignals(False)
+            self._prev_val_idx = idx
+            self._sync_target_to_tool()
         else:
             self._prev_val_idx = idx
             self._sync_target_to_tool()
@@ -399,20 +488,52 @@ class FormatPainterDockWidget(QgsDockWidget):
         self._sync_target_to_tool()
 
     def _sync_target_to_tool(self):
-        """毫秒级即时同步当前选中的字段与值给画笔地图工具"""
+        """毫秒级即时同步当前选中的字段与值给画笔地图工具（即使值为空也同步字段，确保吸管可用且不残留旧字段）"""
         fname = self.combo_field.currentData()
-        data = self.combo_val.currentData()
-        if data == "__custom_add_value__":
+        if not fname:
+            self.painter_tool.set_target(None, None, is_null=False)
+            self.lbl_status.setText(tr("Status: pick a field and value first"))
             return
 
-        if data is not None and data != "":
-            val = str(data)
-        else:
-            val = self.combo_val.currentText().strip()
+        if self.combo_val.currentData() == "__custom_add_value__" and self.combo_val.currentText().startswith("➕"):
+            return
 
-        if fname and val:
-            self.painter_tool.set_target(fname, val)
+        val = self._extract_current_value()
+        if val == "__NULL__":
+            self.painter_tool.set_target(fname, None, is_null=True)
+            self.lbl_status.setText(tr("Painting: [{0} = NULL] (clear field)").format(fname))
+        elif val != "":
+            self.painter_tool.set_target(fname, val, is_null=False)
             self.lbl_status.setText(tr("Painting: [{0} = {1}]").format(fname, val))
+        else:
+            self.painter_tool.set_target(None, None, is_null=False)
+            self.lbl_status.setText(tr("Status: pick a field and value first"))
+
+    def _on_set_null_clicked(self):
+        """点击面板底部的【设为 NULL / 清空】快捷按钮"""
+        fname = self.combo_field.currentData()
+        if not fname or not self.layer or not self.layer.isValid():
+            return
+
+        # 1. 将画笔和下拉框置为 NULL 模式
+        self.combo_val.blockSignals(True)
+        idx = self.combo_val.findData("__set_null_value__")
+        if idx != -1:
+            self.combo_val.setCurrentIndex(idx)
+        self.combo_val.setEditText("NULL")
+        self._prev_val_idx = self.combo_val.currentIndex()
+        self.combo_val.blockSignals(False)
+        self._sync_target_to_tool()
+
+        # 2. 若当前地图图层中已有被选中的要素，立即批量将它们置为 NULL
+        if self.layer.selectedFeatureCount() > 0:
+            auto_edit = ConfigManager.get_config().get("behavior", {}).get("auto_start_editing", True)
+            count, msg = AttributeEngine.batch_update_single_field(
+                self.layer, fname, None, auto_start_editing=auto_edit
+            )
+            self.iface.messageBar().pushInfo("QuickFieldBrush", msg)
+        else:
+            self.lbl_status.setText(tr("Painting: [{0} = NULL] (clear field)").format(fname))
 
     def _toggle_pick_mode(self):
         """进入/退出吸管模式，或者直接从已选要素吸取"""
@@ -452,41 +573,44 @@ class FormatPainterDockWidget(QgsDockWidget):
     def _on_feature_absorbed_from_map(self, field_name, val, feat_id):
         """地图要素被吸取时的回调：更新属性值下拉框，并恢复格式刷状态"""
         self._reset_absorb_btn_text()
-        val_str = "" if val is None else str(val).strip()
 
-        # 在下拉框中选中或添加该吸取值
-        found_idx = -1
-        for i in range(self.combo_val.count()):
-            if self.combo_val.itemData(i) == val_str or self.combo_val.itemText(i) == val_str:
-                found_idx = i
-                break
-        if found_idx != -1:
-            self.combo_val.setCurrentIndex(found_idx)
+        self.combo_val.blockSignals(True)
+        if AttributeEngine.is_empty_or_null(val):
+            null_idx = self.combo_val.findData("__set_null_value__")
+            if null_idx != -1:
+                self.combo_val.setCurrentIndex(null_idx)
+            self.combo_val.setEditText("NULL")
+            self._prev_val_idx = self.combo_val.currentIndex()
+            self.combo_val.blockSignals(False)
+            self._sync_target_to_tool()
+            self.lbl_status.setText(tr("Absorbed FID {0}: [{1} = NULL] (ready to paint)").format(feat_id, field_name))
         else:
-            insert_pos = max(0, self.combo_val.count() - 1)
-            self.combo_val.insertItem(insert_pos, val_str, userData=val_str)
-            self.combo_val.setCurrentIndex(insert_pos)
-
-        self._prev_val_idx = self.combo_val.currentIndex()
-        self._sync_target_to_tool()
-        self.lbl_status.setText(tr("Absorbed FID {0}: [{1} = {2}] (ready to paint)").format(feat_id, field_name, val_str))
+            val_str = str(val).strip()
+            # 在下拉框中选中或添加该吸取值
+            found_idx = -1
+            for i in range(self.combo_val.count()):
+                if self.combo_val.itemData(i) == val_str or self.combo_val.itemText(i) == val_str:
+                    found_idx = i
+                    break
+            if found_idx != -1:
+                self.combo_val.setCurrentIndex(found_idx)
+            else:
+                insert_pos = max(0, self.combo_val.count() - 2)
+                self.combo_val.insertItem(insert_pos, val_str, userData=val_str)
+                self.combo_val.setCurrentIndex(insert_pos)
+            self._prev_val_idx = self.combo_val.currentIndex()
+            self.combo_val.blockSignals(False)
+            self._sync_target_to_tool()
+            self.lbl_status.setText(tr("Absorbed FID {0}: [{1} = {2}] (ready to paint)").format(feat_id, field_name, val_str))
 
     def closeEvent(self, event):
-        """窗口关闭时：断开图层监听、持久化本次配置并退出格式刷模式"""
-        try:
-            self.iface.currentLayerChanged.disconnect(self._on_layer_changed)
-        except (TypeError, RuntimeError, AttributeError):
-            pass
-
+        """窗口关闭时：持久化本次配置并退出格式刷模式"""
         if hasattr(self.painter_tool, "set_picking_mode"):
             self.painter_tool.set_picking_mode(False)
+        self._reset_absorb_btn_text()
 
         fname = self.combo_field.currentData()
-        data = self.combo_val.currentData()
-        if data and data != "__custom_add_value__":
-            val = str(data).strip()
-        else:
-            val = self.combo_val.currentText().strip()
+        val = self._extract_current_value()
         if fname and val:
             ConfigManager.update_section("format_painter", {"field_name": fname, "value": val})
 

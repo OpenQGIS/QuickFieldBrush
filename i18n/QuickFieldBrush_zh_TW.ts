@@ -39,6 +39,10 @@
       <translation>从当前选中的要素直接吸取属性</translation>
     </message>
     <message>
+      <source>Absorbed FID {0}: [{1} = NULL] (ready to paint)</source>
+      <translation>已吸取要素 {0}: [{1} = NULL] (可左键刷入)</translation>
+    </message>
+    <message>
       <source>Absorbed FID {0}: [{1} = {2}] (ready to paint)</source>
       <translation>已吸取要素 {0}: [{1} = {2}] (可左键刷入)</translation>
     </message>
@@ -84,7 +88,7 @@
     </message>
     <message>
       <source>Attribute Format Painter</source>
-      <translation>屬性格式刷</translation>
+      <translation>属性格式刷</translation>
     </message>
     <message>
       <source>Attribute Format Painter (console)</source>
@@ -93,12 +97,16 @@
     <message>
       <source>Attribute Format Painter, activate format painter console
 Select or absorb attribute, then click features consecutively for rapid assignment</source>
-      <translation>属性格式刷，激活格式刷面板
+      <translation>属性格式刷
 点选/吸取属性后连续点击要素快速赋值</translation>
     </message>
     <message>
       <source>Attribute format painter (pick field/value, then click features to assign)</source>
       <translation>属性格式刷 (点选/吸取属性后连续点击要素快速赋值)</translation>
+    </message>
+    <message>
+      <source>Attribute update failed: field [{0}] may be read-only</source>
+      <translation>属性修改失败: 字段 [{0}] 可能为只读字段</translation>
     </message>
     <message>
       <source>Attribute update failed: {0}</source>
@@ -114,11 +122,19 @@ Select or absorb attribute, then click features consecutively for rapid assignme
     </message>
     <message>
       <source>Browse, flash-zoom, single-step revert, and export records</source>
-      <translation>瀏覽、高亮定位、單步復原、匯出台賬</translation>
+      <translation>浏览、高亮定位、单步撤销、导出台账</translation>
     </message>
     <message>
       <source>Cancel selection</source>
       <translation>取消选择</translation>
+    </message>
+    <message>
+      <source>Cannot convert '{0}' to float for field [{1}]</source>
+      <translation>无法将 '{0}' 转换为字段 [{1}] 所需的浮点数值</translation>
+    </message>
+    <message>
+      <source>Cannot convert '{0}' to integer for field [{1}]</source>
+      <translation>无法将 '{0}' 转换为字段 [{1}] 所需的整型数值</translation>
     </message>
     <message>
       <source>Clear</source>
@@ -150,12 +166,12 @@ Select or absorb attribute, then click features consecutively for rapid assignme
     </message>
     <message>
       <source>Edit History</source>
-      <translation>歷史修改記錄</translation>
+      <translation>历史修改记录</translation>
     </message>
     <message>
       <source>Edit History, open plugin history panel
 Browse, flash-zoom, single-step revert, and export records</source>
-      <translation>历史修改记录，打开插件历史记录面板
+      <translation>历史修改记录
 浏览、高亮定位、单步撤销、导出台账</translation>
     </message>
     <message>
@@ -276,12 +292,12 @@ Browse, flash-zoom, single-step revert, and export records</source>
     </message>
     <message>
       <source>Interactive Assignment</source>
-      <translation>交互賦值</translation>
+      <translation>交互赋值</translation>
     </message>
     <message>
       <source>Interactive Assignment, activate interactive assignment tool
 Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</source>
-      <translation>交互赋值，激活交互赋值工具
+      <translation>交互赋值
 激活功能后选择要修改的字段，点选、框选要素后右键快速对选中字段进行属性值修改。</translation>
     </message>
     <message>
@@ -385,6 +401,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>修改前原值</translation>
     </message>
     <message>
+      <source>Painting: [{0} = NULL] (clear field)</source>
+      <translation>当前刷入: [{0} = NULL] (清空字段)</translation>
+    </message>
+    <message>
       <source>Painting: [{0} = {1}]</source>
       <translation>当前刷入: [{0} = {1}]</translation>
     </message>
@@ -438,7 +458,7 @@ Select target field after activation, click or box-select features, then right-c
     </message>
     <message>
       <source>QuickFieldBrush format painter: set {1}={2} on feature {0}</source>
-      <translation>QuickFieldBrush 格式刷: 要素 {0} 设为 {1}={2}</translation>
+      <translation>QuickFieldBrush 格式刷: 为要素 {0} 的 {1} 设为 {2}</translation>
     </message>
     <message>
       <source>QuickFieldBrush: batch multi-field update</source>
@@ -451,6 +471,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>QuickFieldBrush: set {0}={1}</source>
       <translation>QuickFieldBrush: 设为 {0}={1}</translation>
+    </message>
+    <message>
+      <source>Revert failed: target feature(s) no longer exist or field is read-only!</source>
+      <translation>撤销失败: 目标要素已不存在或字段为只读！</translation>
     </message>
     <message>
       <source>Revert failed: {0}</source>
@@ -482,7 +506,7 @@ Select target field after activation, click or box-select features, then right-c
     </message>
     <message>
       <source>Select or absorb attribute, then click features consecutively for rapid assignment</source>
-      <translation>點選/吸取屬性後連續點擊要素快速賦值</translation>
+      <translation>点选/吸取属性后连续点击要素快速赋值</translation>
     </message>
     <message>
       <source>Select or type the value to paint</source>
@@ -490,11 +514,23 @@ Select target field after activation, click or box-select features, then right-c
     </message>
     <message>
       <source>Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</source>
-      <translation>啟動功能後選擇要修改的欄位，點選、框選要素後右鍵快速對選取欄位進行屬性值修改。</translation>
+      <translation>激活功能后选择要修改的字段，点选、框选要素后右键快速对选中字段进行属性值修改。</translation>
     </message>
     <message>
       <source>Selected {0} features on layer [{1}]</source>
       <translation>已在图层 [{1}] 中选中 {0} 个要素</translation>
+    </message>
+    <message>
+      <source>Set painter value to NULL, or batch clear selected features</source>
+      <translation>将画笔值设为 NULL，或直接清空已选要素</translation>
+    </message>
+    <message>
+      <source>Set to NULL</source>
+      <translation>设为 NULL</translation>
+    </message>
+    <message>
+      <source>Set to NULL (Clear field)</source>
+      <translation>设为 NULL / 清空字段</translation>
     </message>
     <message>
       <source>Sort:</source>

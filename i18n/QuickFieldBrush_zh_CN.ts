@@ -39,6 +39,10 @@
       <translation>从当前选中的要素直接吸取属性</translation>
     </message>
     <message>
+      <source>Absorbed FID {0}: [{1} = NULL] (ready to paint)</source>
+      <translation>已吸取要素 {0}: [{1} = NULL] (可左键刷入)</translation>
+    </message>
+    <message>
       <source>Absorbed FID {0}: [{1} = {2}] (ready to paint)</source>
       <translation>已吸取要素 {0}: [{1} = {2}] (可左键刷入)</translation>
     </message>
@@ -101,6 +105,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>属性格式刷 (点选/吸取属性后连续点击要素快速赋值)</translation>
     </message>
     <message>
+      <source>Attribute update failed: field [{0}] may be read-only</source>
+      <translation>属性修改失败: 字段 [{0}] 可能为只读字段</translation>
+    </message>
+    <message>
       <source>Attribute update failed: {0}</source>
       <translation>更新属性失败: {0}</translation>
     </message>
@@ -119,6 +127,14 @@ Select or absorb attribute, then click features consecutively for rapid assignme
     <message>
       <source>Cancel selection</source>
       <translation>取消选择</translation>
+    </message>
+    <message>
+      <source>Cannot convert '{0}' to float for field [{1}]</source>
+      <translation>无法将 '{0}' 转换为字段 [{1}] 所需的浮点数值</translation>
+    </message>
+    <message>
+      <source>Cannot convert '{0}' to integer for field [{1}]</source>
+      <translation>无法将 '{0}' 转换为字段 [{1}] 所需的整型数值</translation>
     </message>
     <message>
       <source>Clear</source>
@@ -385,6 +401,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>修改前原值</translation>
     </message>
     <message>
+      <source>Painting: [{0} = NULL] (clear field)</source>
+      <translation>当前刷入: [{0} = NULL] (清空字段)</translation>
+    </message>
+    <message>
       <source>Painting: [{0} = {1}]</source>
       <translation>当前刷入: [{0} = {1}]</translation>
     </message>
@@ -438,7 +458,7 @@ Select target field after activation, click or box-select features, then right-c
     </message>
     <message>
       <source>QuickFieldBrush format painter: set {1}={2} on feature {0}</source>
-      <translation>QuickFieldBrush 格式刷: 要素 {0} 设为 {1}={2}</translation>
+      <translation>QuickFieldBrush 格式刷: 为要素 {0} 的 {1} 设为 {2}</translation>
     </message>
     <message>
       <source>QuickFieldBrush: batch multi-field update</source>
@@ -451,6 +471,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>QuickFieldBrush: set {0}={1}</source>
       <translation>QuickFieldBrush: 设为 {0}={1}</translation>
+    </message>
+    <message>
+      <source>Revert failed: target feature(s) no longer exist or field is read-only!</source>
+      <translation>撤销失败: 目标要素已不存在或字段为只读！</translation>
     </message>
     <message>
       <source>Revert failed: {0}</source>
@@ -495,6 +519,18 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Selected {0} features on layer [{1}]</source>
       <translation>已在图层 [{1}] 中选中 {0} 个要素</translation>
+    </message>
+    <message>
+      <source>Set painter value to NULL, or batch clear selected features</source>
+      <translation>将画笔值设为 NULL，或直接清空已选要素</translation>
+    </message>
+    <message>
+      <source>Set to NULL</source>
+      <translation>设为 NULL</translation>
+    </message>
+    <message>
+      <source>Set to NULL (Clear field)</source>
+      <translation>设为 NULL / 清空字段</translation>
     </message>
     <message>
       <source>Sort:</source>

@@ -165,13 +165,7 @@ class RankContextMenu(QMenu):
         by_layer = self.config.get("single_rank_by_layer", {})
         target = by_layer.get(layer_id)
 
-        # 回退到全局设置（仅当该字段确实存在于当前图层中）
-        if not target or target not in valid_names:
-            global_field = self.config.get("single_rank", {}).get("field_name", "")
-            if global_field and global_field in valid_names:
-                target = global_field
-
-        # 如果依然未确定，主动弹窗让用户指定，严禁静默默认取第一个字段
+        # 如果当前图层尚未指定或字段不存在，主动弹窗让用户指定，严禁静默绑定错误字段
         if not target or target not in valid_names:
             target = self._prompt_choose_field(valid_names, is_initial=True)
 
@@ -185,7 +179,10 @@ class RankContextMenu(QMenu):
             tr("Switch target field for layer [{0}]:").format(self.layer.name())
         )
         current_idx = 0
-        current_field = self.config.get("single_rank_by_layer", {}).get(self.layer.id(), "")
+        current_field = (
+            self.config.get("single_rank_by_layer", {}).get(self.layer.id(), "")
+            or self.config.get("single_rank", {}).get("field_name", "")
+        )
         if current_field in valid_names:
             current_idx = valid_names.index(current_field)
 
@@ -224,29 +221,19 @@ class RankContextMenu(QMenu):
         return None
 
     def _sort_val_counts(self, val_counts, mode):
-        """对 (val_str, count) 进行 6 维排序"""
+        """对 (val_str, count) 进行智能排序（支持自然序与同频次正序排列）"""
         if mode == "alpha_asc":
-            return sorted(val_counts, key=lambda x: str(x[0]).lower())
+            return sorted(val_counts, key=lambda x: AttributeEngine.natural_sort_key(x[0]))
         elif mode == "alpha_desc":
-            return sorted(val_counts, key=lambda x: str(x[0]).lower(), reverse=True)
+            return sorted(val_counts, key=lambda x: AttributeEngine.natural_sort_key(x[0]), reverse=True)
         elif mode == "freq_desc":
-            return sorted(val_counts, key=lambda x: (x[1], str(x[0]).lower()), reverse=True)
+            return sorted(val_counts, key=lambda x: (-x[1], AttributeEngine.natural_sort_key(x[0])))
         elif mode == "freq_asc":
-            return sorted(val_counts, key=lambda x: (x[1], str(x[0]).lower()))
+            return sorted(val_counts, key=lambda x: (x[1], AttributeEngine.natural_sort_key(x[0])))
         elif mode == "num_asc":
-            def _num_key(x):
-                try:
-                    return (0, float(x[0]))
-                except (ValueError, TypeError):
-                    return (1, str(x[0]).lower())
-            return sorted(val_counts, key=_num_key)
+            return sorted(val_counts, key=lambda x: AttributeEngine.natural_sort_key(x[0]))
         elif mode == "num_desc":
-            def _num_key_rev(x):
-                try:
-                    return (0, -float(x[0]))
-                except (ValueError, TypeError):
-                    return (1, str(x[0]).lower())
-            return sorted(val_counts, key=_num_key_rev)
+            return sorted(val_counts, key=lambda x: AttributeEngine.natural_sort_key(x[0]), reverse=True)
         return val_counts
 
     def _create_sort_bar_action(self, current_mode):
@@ -455,6 +442,17 @@ class RankContextMenu(QMenu):
             lambda checked, fn=self.target_field: self._on_custom_input(fn, auto_edit)
         )
 
+        # 4.1 设置为 NULL / 清空字段值
+        ic_null = QgsApplication.getThemeIcon("mIconClearText.svg")
+        if ic_null.isNull():
+            ic_null = QgsApplication.getThemeIcon("mIconClearItem.svg")
+        if ic_null.isNull():
+            ic_null = QIcon(os.path.join(icons_dir, "clear.svg"))
+        null_act = self.addAction(ic_null, tr("Set to NULL (Clear field)"))
+        null_act.triggered.connect(
+            lambda checked, fn=self.target_field: (self._on_apply_value(fn, None, auto_edit), self.close())
+        )
+
         self.addSeparator()
         # 5. 快捷取消选择 (使用 QGIS 官方图层取消选择图标)
         ic_clear = QgsApplication.getThemeIcon("mActionDeselectActiveLayer.svg")
@@ -497,5 +495,10 @@ class RankContextMenu(QMenu):
             tr("Assign a new value to field [{0}] in batch:").format(field_name),
             QLineEdit.Normal, ""
         )
-        if ok and new_val.strip():
-            self._on_apply_value(field_name, new_val.strip(), auto_edit)
+        if ok:
+            clean_val = new_val.strip()
+            # 自动规整：输入 "NULL"、"null" 或留空，自动转为赋底层的真 NULL
+            if clean_val == "" or clean_val.upper() == "NULL":
+                self._on_apply_value(field_name, None, auto_edit)
+            else:
+                self._on_apply_value(field_name, clean_val, auto_edit)

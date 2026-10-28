@@ -147,6 +147,10 @@ class QuickFieldBrushPlugin:
 
         if self.painter_dialog:
             try:
+                self.iface.currentLayerChanged.disconnect(self.painter_dialog._on_layer_changed)
+            except (TypeError, RuntimeError, AttributeError):
+                pass
+            try:
                 self.iface.removeDockWidget(self.painter_dialog)
             except (RuntimeError, AttributeError, TypeError):
                 pass
@@ -250,6 +254,8 @@ class QuickFieldBrushPlugin:
                 self.painter_dialog = FormatPainterDialog(self.iface, self.painter_tool, self.iface.mainWindow())
                 self.iface.addDockWidget(Qt.RightDockWidgetArea, self.painter_dialog)
                 self.painter_dialog.visibilityChanged.connect(self._on_painter_visibility_changed)
+            else:
+                self.painter_dialog.refresh_state()
 
             self.painter_dialog.show()
             self.painter_dialog.raise_()

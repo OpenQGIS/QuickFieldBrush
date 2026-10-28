@@ -27,6 +27,7 @@ from qgis.core import (
 
 from ..core.compat import safe_exec, set_window_stay_on_top
 from ..core.history_manager import HistoryManager, HistoryStep
+from ..core.attribute_engine import AttributeEngine
 from ..i18n_helper import tr
 
 
@@ -54,6 +55,10 @@ class HistoryDockWidget(QgsDockWidget):
         self._flash_band.setColor(QColor(76, 175, 80, 130))
         self._flash_band.setStrokeColor(QColor(46, 125, 50, 255))
         self._flash_band.setWidth(3)
+
+        self._flash_timer = QTimer(self)
+        self._flash_timer.setSingleShot(True)
+        self._flash_timer.timeout.connect(self._flash_band.reset)
 
         self._init_ui()
         self._reload_history()
@@ -237,7 +242,7 @@ class HistoryDockWidget(QgsDockWidget):
                 item.setIcon(0, ic_rank)
 
             # 第一列：[字段] ➔ "新值"
-            target_display = str(step.target_value)
+            target_display = "NULL" if AttributeEngine.is_null_value(step.target_value) else str(step.target_value)
             if len(target_display) > 24:
                 target_display = target_display[:22] + "..."
             item.setText(0, f"[{step.field_name}] ➔ \"{target_display}\"")
@@ -261,17 +266,19 @@ class HistoryDockWidget(QgsDockWidget):
             item.setText(2, time_only)
 
             # 完整信息气泡提示 (Tooltip)
+            display_val = "NULL" if AttributeEngine.is_null_value(step.target_value) else step.target_value
             tt_lines = [
                 f"{tr('Action Type')}: {tr('Format Painter') if step.tool_type == 'painter' else tr('Batch Assignment')}",
                 f"{tr('Layer')}: {step.layer_name}",
                 f"{tr('Field')}: {step.field_name}",
-                f"{tr('Target Value')}: {step.target_value}",
+                f"{tr('Target Value')}: {display_val}",
                 f"{tr('Timestamp')}: {step.timestamp}",
                 f"{tr('Reverted')}: {tr('Yes') if step.is_reverted else tr('No')}"
             ]
             if step.tool_type == "painter" and step.changes:
+                old_val = "NULL" if AttributeEngine.is_null_value(step.changes[0].get('old_val')) else step.changes[0].get('old_val', '')
                 tt_lines.append(f"{tr('Feature ID (FID)')}: {step.changes[0]['fid']}")
-                tt_lines.append(f"{tr('Old Value')}: {step.changes[0].get('old_val', '')}")
+                tt_lines.append(f"{tr('Old Value')}: {old_val}")
             else:
                 tt_lines.append(f"{tr('features')}: {step.feature_count}")
             item.setToolTip(0, "\n".join(tt_lines))
@@ -367,10 +374,11 @@ class HistoryDockWidget(QgsDockWidget):
                 self.canvas.refresh()
 
                 try:
+                    self._flash_timer.stop()
                     self._flash_band.reset(geom.type())
                     self._flash_band.setToGeometry(geom, layer)
                     self._flash_band.show()
-                    QTimer.singleShot(350, self._flash_band.reset)
+                    self._flash_timer.start(350)
                 except (RuntimeError, TypeError, AttributeError):
                     pass
         else:
@@ -401,11 +409,12 @@ class HistoryDockWidget(QgsDockWidget):
 
             if geoms:
                 try:
+                    self._flash_timer.stop()
                     self._flash_band.reset(geoms[0].type())
                     for g in geoms:
                         self._flash_band.addGeometry(g, layer)
                     self._flash_band.show()
-                    QTimer.singleShot(400, self._flash_band.reset)
+                    self._flash_timer.start(400)
                 except (RuntimeError, TypeError, AttributeError):
                     pass
 
@@ -537,6 +546,8 @@ class HistoryDockWidget(QgsDockWidget):
             self.iface.messageBar().pushInfo("QuickFieldBrush", tr("History log cleared!"))
 
     def closeEvent(self, event):
+        if hasattr(self, "_flash_timer"):
+            self._flash_timer.stop()
         if self._flash_band:
             self._flash_band.reset()
         super().closeEvent(event)

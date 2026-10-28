@@ -6,12 +6,15 @@
 3. 严格遵循 Python / Qt 数据类型转换，杜绝 Provider 类型错误
 """
 
+import re
 from qgis.core import (
     QgsVectorLayer,
     QgsField,
+    QgsFields,
     QgsMessageLog,
     Qgis,
-    QgsFeatureRequest
+    QgsFeatureRequest,
+    NULL
 )
 from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.QtGui import QIcon
@@ -23,7 +26,45 @@ class AttributeEngine:
     _unique_cache = {}
     # 频次会话级缓存: (layer_id, field_name) -> [(val, count), ...]
     _freq_cache = {}
-    _CACHE_LIMIT = 100
+    _CACHE_LIMIT = 150
+
+    @staticmethod
+    def is_null_value(val) -> bool:
+        """统一判断 PyQGIS / Qt 属性值是否为 NULL 或空对象"""
+        if val is None or val == NULL:
+            return True
+        if hasattr(val, "isNull") and callable(val.isNull):
+            try:
+                if val.isNull():
+                    return True
+            except (AttributeError, RuntimeError, TypeError):
+                pass
+        return False
+
+    @staticmethod
+    def is_empty_or_null(val) -> bool:
+        """统一判断是否为真 NULL、None、纯空格或假空值（'NULL', 'null' 等）"""
+        if AttributeEngine.is_null_value(val):
+            return True
+        s = str(val).strip()
+        if s == "" or s.upper() == "NULL":
+            return True
+        return False
+
+    @staticmethod
+    def natural_sort_key(val):
+        """自然排序键：支持 '1级, 2级, 10级' 或纯数字与文本混合稳定排序，绝不抛 TypeError"""
+        s = "" if val is None else str(val).strip().lower()
+        parts = re.split(r'(\d+(?:\.\d+)?)', s)
+        key_parts = []
+        for part in parts:
+            if not part:
+                continue
+            try:
+                key_parts.append((0, float(part), ""))
+            except ValueError:
+                key_parts.append((1, 0.0, part))
+        return key_parts
 
     @staticmethod
     def invalidate_cache(layer=None):
@@ -103,12 +144,25 @@ class AttributeEngine:
 
     @staticmethod
     def get_editable_fields(layer):
-        """获取图层中所有可编辑的普通字段名称列表（严格限制矢量图层）"""
+        """获取图层中所有可编辑的普通字段名称列表（过滤连接字段、虚拟表达式字段与只读字段）"""
         if not layer or not isinstance(layer, QgsVectorLayer) or not layer.isValid():
             return []
-        
+
+        qgs_fields = layer.fields()
+        origin_join = getattr(QgsFields, "OriginJoin", getattr(getattr(QgsFields, "FieldOrigin", None), "OriginJoin", 2))
+        origin_expr = getattr(QgsFields, "OriginExpression", getattr(getattr(QgsFields, "FieldOrigin", None), "OriginExpression", 3))
+
         fields = []
-        for i, field in enumerate(layer.fields()):
+        for i, field in enumerate(qgs_fields):
+            try:
+                origin = qgs_fields.fieldOrigin(i)
+                if origin in (origin_join, origin_expr):
+                    continue
+            except (AttributeError, RuntimeError, TypeError):
+                pass
+            if hasattr(field, "isReadOnly") and callable(field.isReadOnly) and field.isReadOnly():
+                continue
+
             fields.append({
                 "name": field.name(),
                 "typeName": field.typeName(),
@@ -119,7 +173,30 @@ class AttributeEngine:
         return fields
 
     @staticmethod
-    def extract_unique_values(layer, field_name: str, limit: int = 100):
+    def _extract_valuemap_values(layer, field_idx: int) -> list:
+        """从图层属性表单 ValueMap 配置中提取预设值列表"""
+        try:
+            editor_widget_setup = layer.editorWidgetSetup(field_idx)
+            if editor_widget_setup and editor_widget_setup.type() == "ValueMap":
+                config_map = editor_widget_setup.config() or {}
+                raw_map = config_map.get("map")
+                values = []
+                if isinstance(raw_map, list):
+                    for item in raw_map:
+                        if isinstance(item, dict):
+                            values.extend(list(item.values()))
+                elif isinstance(raw_map, dict):
+                    values.extend(list(raw_map.values()))
+                return [
+                    str(v) for v in values
+                    if not AttributeEngine.is_empty_or_null(v)
+                ]
+        except (AttributeError, RuntimeError, TypeError, KeyError):
+            pass
+        return []
+
+    @staticmethod
+    def extract_unique_values(layer, field_name: str, limit: int = 150):
         """
         从图层中吸取某个字段已存在的不重复唯一值（严格限制矢量图层）
         """
@@ -138,43 +215,30 @@ class AttributeEngine:
                 return list(cached[:limit])
 
             # 优先从属性表单配置中读取值映射 (Value Map)
-            editor_widget_setup = layer.editorWidgetSetup(field_idx)
-            if editor_widget_setup.type() == "ValueMap":
-                config_map = editor_widget_setup.config()
-                if "map" in config_map and isinstance(config_map["map"], list):
-                    values = []
-                    for item in config_map["map"]:
-                        if isinstance(item, dict):
-                            values.extend(list(item.values()))
-                    if values:
-                        result_vm = [str(v) for v in values if v is not None]
-                        AttributeEngine._unique_cache[key] = result_vm
-                        return result_vm
+            result_vm = AttributeEngine._extract_valuemap_values(layer, field_idx)
+            if result_vm:
+                AttributeEngine._unique_cache[key] = result_vm
+                return list(result_vm[:limit])
 
             # 否则从图层要素数据中获取 uniqueValues（统一按缓存上限提取，调用方再截断）
             unique_vals = layer.uniqueValues(field_idx, AttributeEngine._CACHE_LIMIT)
             result = []
             for val in unique_vals:
-                if val is not None and str(val).strip() != "" and str(val) != "NULL":
+                if not AttributeEngine.is_empty_or_null(val):
                     result.append(str(val))
 
-            # 尝试自然排序
-            try:
-                result = sorted(result, key=lambda x: float(x) if x.replace('.', '', 1).isdigit() else x)
-            except Exception:
-                result = sorted(result)
-
+            result = sorted(result, key=AttributeEngine.natural_sort_key)
             AttributeEngine._unique_cache[key] = result
-            return result
+            return list(result[:limit])
         except Exception as e:
             QgsMessageLog.logMessage(f"提取唯一值失败: {str(e)}", "QuickFieldBrush", Qgis.Warning)
             return []
 
     @staticmethod
-    def extract_unique_values_with_counts(layer, field_name: str):
+    def extract_unique_values_with_counts(layer, field_name: str, limit: int = 150):
         """
         提取字段的不重复唯一值及其在图层中的出现频次: [(val, count), ...]
-        走 NoGeometry + setSubsetOfAttributes 极速属性流，全表万级要素 < 0.15s，并享受会话级缓存。
+        走 NoGeometry + setSubsetOfAttributes 极速属性流，并带有缓存与高基数截断保护（防止数万唯一值卡死 UI）。
         """
         if not layer or not isinstance(layer, QgsVectorLayer) or not layer.isValid():
             return []
@@ -186,7 +250,7 @@ class AttributeEngine:
         key = (layer.id(), field_name)
         cached = AttributeEngine._freq_cache.get(key)
         if cached is not None:
-            return list(cached)
+            return list(cached[:limit]) if limit else list(cached)
 
         try:
             from collections import Counter
@@ -194,15 +258,21 @@ class AttributeEngine:
             req = QgsFeatureRequest().setSubsetOfAttributes([field_idx]).setFlags(QgsFeatureRequest.NoGeometry)
             for feat in layer.getFeatures(req):
                 val = feat[field_idx]
-                if val is not None and str(val).strip() != "" and str(val) != "NULL":
+                if not AttributeEngine.is_empty_or_null(val):
                     counter[str(val)] += 1
 
-            result = counter.most_common()
+            # 合并表单 ValueMap 预设枚举值（若在要素中尚未出现则记频次为 0）
+            for vm_val in AttributeEngine._extract_valuemap_values(layer, field_idx):
+                if vm_val not in counter:
+                    counter[vm_val] = 0
+
+            cap = limit if limit and limit > 0 else AttributeEngine._CACHE_LIMIT
+            result = counter.most_common(cap)
             AttributeEngine._freq_cache[key] = result
             return list(result)
         except Exception as e:
             QgsMessageLog.logMessage(f"提取字段频次失败: {str(e)}", "QuickFieldBrush", Qgis.Warning)
-            uniques = AttributeEngine.extract_unique_values(layer, field_name)
+            uniques = AttributeEngine.extract_unique_values(layer, field_name, limit=limit)
             return [(u, 0) for u in uniques]
 
     @staticmethod
@@ -210,53 +280,59 @@ class AttributeEngine:
         """
         将原始值精确转换为该字段底层所需的强类型 Python 对象（int, float, str, bool）
         """
-        if raw_val is None or str(raw_val).strip() == "" or str(raw_val).upper() == "NULL":
+        if AttributeEngine.is_empty_or_null(raw_val):
             return None
 
-        # 优先通过 field_obj.convertCompatible(raw_val) 处理
+        str_val = str(raw_val).strip()
+        f_type = field_obj.type()
+
+        # 1. 整数型 (Int, UInt, LongLong, ULongLong)
+        if f_type in [QVariant.Int, QVariant.UInt, QVariant.LongLong, QVariant.ULongLong, 2, 3, 4, 5]:
+            try:
+                return int(float(str_val))
+            except (ValueError, TypeError) as err:
+                raise ValueError(tr("Cannot convert '{0}' to integer for field [{1}]").format(str_val, field_obj.name())) from err
+
+        # 2. 浮点型 (Double)
+        if f_type in [QVariant.Double, 6]:
+            try:
+                return float(str_val)
+            except (ValueError, TypeError) as err:
+                raise ValueError(tr("Cannot convert '{0}' to float for field [{1}]").format(str_val, field_obj.name())) from err
+
+        # 3. 布尔型 (Bool)
+        if f_type in [QVariant.Bool, 1]:
+            if isinstance(raw_val, bool):
+                return raw_val
+            lower_v = str_val.lower()
+            if lower_v in ['true', '1', 't', 'y', 'yes', '是']:
+                return True
+            if lower_v in ['false', '0', 'f', 'n', 'no', '否']:
+                return False
+            return bool(raw_val)
+
+        # 4. 字符串类型 (String)
+        if f_type in [QVariant.String, 10]:
+            return str(raw_val)
+
+        # 5. 其它复杂类型（Date, DateTime, Time 等）：通过 field_obj.convertCompatible 处理
         try:
             res = field_obj.convertCompatible(raw_val)
-            # PyQGIS convertCompatible: 如果返回 tuple/list 则解包 (val, ok)，否则直接返回转换后的值
             if isinstance(res, (tuple, list)):
-                converted_val = res[0]
-                ok = res[1] if len(res) > 1 else True
-                if ok:
-                    return converted_val
+                if len(res) >= 2:
+                    # 兼容不同 SIP 绑定下的 (val, ok) 与 (ok, val) 顺序
+                    if isinstance(res[1], bool) and not isinstance(res[0], bool):
+                        converted_val, ok = res[0], res[1]
+                    elif isinstance(res[0], bool) and not isinstance(res[1], bool):
+                        ok, converted_val = res[0], res[1]
+                    else:
+                        converted_val, ok = res[0], bool(res[1])
+                    if ok:
+                        return converted_val
             elif res is not None:
                 return res
         except (TypeError, ValueError, AttributeError, RuntimeError):
             pass
-
-        # 兜底：根据字段元类型手动类型转换
-        f_type = field_obj.type()
-        str_val = str(raw_val).strip()
-
-        # 整数型 (Int, LongLong 等)
-        if f_type in [QVariant.Int, QVariant.UInt, QVariant.LongLong, QVariant.ULongLong, 2, 3]:
-            try:
-                return int(float(str_val))
-            except (ValueError, TypeError):
-                return raw_val
-
-        # 浮点型 (Double 等)
-        elif f_type in [QVariant.Double, 6]:
-            try:
-                return float(str_val)
-            except (ValueError, TypeError):
-                return raw_val
-
-        # 布尔型
-        elif f_type in [QVariant.Bool, 1]:
-            lower_v = str_val.lower()
-            if lower_v in ['true', '1', 't', 'y', 'yes', '是']:
-                return True
-            elif lower_v in ['false', '0', 'f', 'n', 'no', '否']:
-                return False
-            return bool(raw_val)
-
-        # 字符串类型
-        elif f_type in [QVariant.String, 10]:
-            return str_val
 
         return raw_val
 
@@ -304,14 +380,21 @@ class AttributeEngine:
             except (AttributeError, KeyError, RuntimeError):
                 pass
 
+        val_display = "NULL" if AttributeEngine.is_empty_or_null(value) else str(value)
         # 开启 QGIS 命令栈，保证 Ctrl+Z 能够一键整体撤销
-        layer.beginEditCommand(tr("QuickFieldBrush: set {0}={1}").format(field_name, value))
+        layer.beginEditCommand(tr("QuickFieldBrush: set {0}={1}").format(field_name, val_display))
         try:
             field_obj = layer.fields().at(field_idx)
             val_to_write = AttributeEngine.convert_value_for_field(field_obj, value)
 
+            updated_fids = []
             for fid in selected_fids:
-                layer.changeAttributeValue(fid, field_idx, val_to_write)
+                if layer.changeAttributeValue(fid, field_idx, val_to_write):
+                    updated_fids.append(fid)
+
+            if not updated_fids:
+                layer.destroyEditCommand()
+                return 0, tr("Attribute update failed: field [{0}] may be read-only").format(field_name)
 
             layer.endEditCommand()
             layer.triggerRepaint()
@@ -322,7 +405,7 @@ class AttributeEngine:
                 from .history_manager import HistoryManager
                 changes = [
                     {"fid": fid, "old_val": old_values.get(fid), "new_val": val_to_write}
-                    for fid in selected_fids
+                    for fid in updated_fids
                 ]
                 HistoryManager.instance().add_step(
                     tool_type="batch_rank",
@@ -334,8 +417,8 @@ class AttributeEngine:
             except (AttributeError, KeyError, RuntimeError) as hist_err:
                 QgsMessageLog.logMessage(f"History record error: {hist_err}", "QuickFieldBrush", Qgis.Info)
 
-            return len(selected_fids), tr("Successfully set {1}={2} on {0} features").format(
-                len(selected_fids), field_name, value)
+            return len(updated_fids), tr("Successfully set {1}={2} on {0} features").format(
+                len(updated_fids), field_name, val_display)
         except Exception as e:
             layer.destroyEditCommand()
             return 0, tr("Attribute update failed: {0}").format(str(e))

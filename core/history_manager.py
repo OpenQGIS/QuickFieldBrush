@@ -147,12 +147,13 @@ class HistoryManager(QObject):
             for item in step.changes:
                 fid = item["fid"]
                 old_val = item["old_val"]
-                feat = layer.getFeature(fid)
-                if not feat.isValid():
-                    continue
                 conv_val = AttributeEngine.convert_value_for_field(field_obj, old_val)
-                layer.changeAttributeValue(fid, field_idx, conv_val)
-                reverted_count += 1
+                if layer.changeAttributeValue(fid, field_idx, conv_val):
+                    reverted_count += 1
+
+            if reverted_count == 0:
+                layer.destroyEditCommand()
+                return False, tr("Revert failed: target feature(s) no longer exist or field is read-only!")
 
             layer.endEditCommand()
             layer.triggerRepaint()

@@ -3,28 +3,30 @@
 自定义地图交互工具：
 继承自 QgsMapToolIdentify，使用 QGIS 原生成熟的图元选择体系：
 1. 默认左键画框或单选要素（支持多选、Shift 加选、Ctrl 切换选）
-2. 坐标系自动转换（画布 CRS -> 图层 CRS）
-3. 容差自适应计算（点、线、面要素均可稳定捕获）
-4. 右键直接捕获并发出信号，弹出极速分级菜单
+2. 原生适配 macOS Retina / Windows 4K High-DPI 缩放与坐标系自动转换
+3. 单击点选使用 TopDownAll 几何最近距离与最小图斑优选算法
+4. 容差自适应计算（点、线、面要素均可稳定精准捕获）
+5. 右键直接捕获并发出信号，弹出极速分级菜单
 """
 
-from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.gui import QgsMapToolIdentify, QgsRubberBand
 from qgis.core import (
     QgsWkbTypes,
     QgsRectangle,
     QgsPointXY,
+    QgsGeometry,
     QgsCoordinateTransform,
     QgsCsException,
     QgsProject,
     QgsVectorLayer,
     QgsFeatureRequest
 )
-from qgis.PyQt.QtCore import Qt, QRect
+from qgis.PyQt.QtCore import Qt, QRect, QPoint
 from qgis.PyQt.QtGui import QColor, QCursor
 from ..i18n_helper import tr
 
 
-class QuickFieldBrushMapTool(QgsMapTool):
+class QuickFieldBrushMapTool(QgsMapToolIdentify):
     def __init__(self, canvas, iface, plugin):
         super().__init__(canvas)
         self.canvas = canvas
@@ -49,7 +51,7 @@ class QuickFieldBrushMapTool(QgsMapTool):
 
         if event.button() == Qt.LeftButton:
             self.start_pos = event.pos()
-            self.start_point = self.toMapCoordinates(event.pos())
+            self.start_point = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(event.pos())
             self.end_point = self.start_point
             self.is_dragging = True
             self.rubber_band.reset(QgsWkbTypes.PolygonGeometry)
@@ -62,8 +64,68 @@ class QuickFieldBrushMapTool(QgsMapTool):
         if not self.is_dragging:
             return
 
-        self.end_point = self.toMapCoordinates(event.pos())
+        self.end_point = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(event.pos())
         self._update_rubber_band()
+
+    def _find_clicked_feature(self, layer: QgsVectorLayer, event):
+        """高精度要素点击识别，解决要素在高分屏/Retina下的微偏移与邻近线误选"""
+        results = self.identify(event.x(), event.y(), [layer], self.TopDownAll)
+        map_pt = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(event.pos())
+        click_layer_pt = self.toLayerCoordinates(layer, map_pt)
+        click_geom = QgsGeometry.fromPointXY(click_layer_pt)
+        is_polygon = (layer.geometryType() == QgsWkbTypes.PolygonGeometry)
+
+        if results:
+            if len(results) == 1:
+                return results[0].mFeature
+
+            def _sort_key(res):
+                feat = res.mFeature
+                geom = feat.geometry()
+                if geom.isEmpty():
+                    return (float('inf'), float('inf'))
+                dist = geom.distance(click_geom)
+                if is_polygon and dist == 0:
+                    return (0, geom.area())
+                return (dist, 0)
+
+            best_res = min(results, key=_sort_key)
+            return best_res.mFeature
+
+        # 容差补充查找（高分辨率下对细线有微小容差偏移）
+        p0 = event.pos()
+        p1 = p0 + QPoint(12, 0)
+        pt0 = self.toLayerCoordinates(layer, p0)
+        pt1 = self.toLayerCoordinates(layer, p1)
+        tolerance = pt0.distance(pt1)
+
+        search_rect = QgsRectangle(
+            click_layer_pt.x() - tolerance, click_layer_pt.y() - tolerance,
+            click_layer_pt.x() + tolerance, click_layer_pt.y() + tolerance
+        )
+        request = QgsFeatureRequest().setFilterRect(search_rect)
+
+        best_feat = None
+        min_dist = float('inf')
+        best_area = float('inf')
+
+        for feat in layer.getFeatures(request):
+            geom = feat.geometry()
+            if geom.isEmpty():
+                continue
+            dist = geom.distance(click_geom)
+            if dist <= tolerance:
+                if is_polygon and dist == 0:
+                    area = geom.area()
+                    if area < best_area:
+                        best_area = area
+                        best_feat = feat
+                        min_dist = 0
+                elif dist < min_dist:
+                    min_dist = dist
+                    best_feat = feat
+
+        return best_feat
 
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.LeftButton and self.is_dragging:
@@ -76,7 +138,7 @@ class QuickFieldBrushMapTool(QgsMapTool):
                     "QuickFieldBrush", tr("Please select a vector layer in the Layers panel first!"))
                 return
 
-            end_pt = self.toMapCoordinates(event.pos())
+            end_pt = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(event.pos())
             
             # 判断移动距离（像素差 < 4 判定为单击点选）
             dx = abs(event.pos().x() - self.start_pos.x())
@@ -89,22 +151,16 @@ class QuickFieldBrushMapTool(QgsMapTool):
             is_ctrl = bool(modifiers & Qt.ControlModifier)
 
             if is_click:
-                # 单击模式：根据图元类型给与合适的屏幕容差半径（线要素给 8 像素容差）
-                pixel_tolerance = 8
-                mu_tolerance = self.canvas.mapUnitsPerPixel() * pixel_tolerance
-                canvas_rect = QgsRectangle(
-                    end_pt.x() - mu_tolerance, end_pt.y() - mu_tolerance,
-                    end_pt.x() + mu_tolerance, end_pt.y() + mu_tolerance
-                )
+                clicked_feat = self._find_clicked_feature(layer, event)
+                matched_fids = [clicked_feat.id()] if clicked_feat else []
             else:
-                # 框选模式：取对角坐标矩形
                 canvas_rect = QgsRectangle(self.start_point, end_pt)
+                matched_fids = self._get_box_matched_fids(layer, canvas_rect)
 
-            self._perform_selection(layer, canvas_rect, is_shift, is_ctrl, is_click)
+            self._apply_selection(layer, matched_fids, is_shift, is_ctrl)
 
-    def _perform_selection(self, layer: QgsVectorLayer, canvas_rect: QgsRectangle, is_shift: bool, is_ctrl: bool, is_click: bool):
-        """执行空间相交选择，兼容坐标系转换与多要素选择"""
-        # 1. 处理画布 CRS 与图层 CRS 不同的投影转换
+    def _get_box_matched_fids(self, layer: QgsVectorLayer, canvas_rect: QgsRectangle):
+        """框选空间查询"""
         canvas_crs = self.canvas.mapSettings().destinationCrs()
         layer_crs = layer.crs()
         if canvas_crs.isValid() and layer_crs.isValid() and canvas_crs != layer_crs:
@@ -114,8 +170,6 @@ class QuickFieldBrushMapTool(QgsMapTool):
             except (QgsCsException, RuntimeError, ValueError):
                 pass
 
-        # 2. 空间查询走 provider 空间索引（FilterRect 预筛 + 精确相交），
-        #    避免在 Python 层逐要素全表遍历（大图层框选卡顿的根源）
         flag_exact = getattr(QgsFeatureRequest, "ExactIntersect", None)
         if flag_exact is None and hasattr(QgsFeatureRequest, "Flag"):
             flag_exact = getattr(QgsFeatureRequest.Flag, "ExactIntersect", None)
@@ -123,32 +177,23 @@ class QuickFieldBrushMapTool(QgsMapTool):
         request = QgsFeatureRequest().setFilterRect(canvas_rect)
         if flag_exact is not None:
             request.setFlags(flag_exact)
-        matched_fids = []
-        for feature in layer.getFeatures(request):
-            matched_fids.append(feature.id())
-            if is_click:
-                # 单击模式下如果已经碰到一个要素即可停止
-                break
 
-        # 3. 组合选中要素 ID
+        return [f.id() for f in layer.getFeatures(request)]
+
+    def _apply_selection(self, layer: QgsVectorLayer, matched_fids: list, is_shift: bool, is_ctrl: bool):
+        """根据修饰键组合选中要素集合并提交刷新"""
         current_fids = set(layer.selectedFeatureIds())
         new_matched_set = set(matched_fids)
 
         if is_ctrl:
-            # Ctrl：反选/切换选择
             final_fids = current_fids.symmetric_difference(new_matched_set)
         elif is_shift:
-            # Shift：追加多选
             final_fids = current_fids.union(new_matched_set)
         else:
-            # 普通选择：直接设为本次框选到的所有要素
             final_fids = new_matched_set
 
-        # 4. 提交选择并刷新视图
         layer.selectByIds(list(final_fids))
         self.canvas.refresh()
-
-        # 5. 通知插件更新面板
         self.plugin._on_selection_changed(layer, len(final_fids))
 
     def _update_rubber_band(self):
