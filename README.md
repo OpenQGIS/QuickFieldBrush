@@ -3,14 +3,16 @@
 <p align="left">
   <img src="https://img.shields.io/badge/status-pending%20approval-orange?style=flat&logo=clockify&logoColor=white" alt="Status: Pending Approval">
   <img src="https://img.shields.io/badge/QGIS%20Plugin-Under%20Review-orange?style=flat&logo=qgis&logoColor=white" alt="QGIS Plugin: Under Review">
+  <img src="https://img.shields.io/badge/QGIS%20Version-%E2%89%A5%203.16-589632?style=flat&logo=qgis&logoColor=white" alt="QGIS Version">
   <a href="https://github.com/OpenQGIS/QuickFieldBrush/releases"><img src="https://img.shields.io/github/v/release/OpenQGIS/QuickFieldBrush?style=flat&color=007ec6&label=release" alt="Release"></a>
-  <img src="https://img.shields.io/badge/QGIS-3.16%2B-589632?style=flat&logo=qgis&logoColor=white" alt="QGIS Version">
   <img src="https://img.shields.io/badge/platform-Windows%20|%20macOS-blue?style=flat&logo=apple&logoColor=white" alt="Platform">
   <a href="LICENSE"><img src="https://img.shields.io/github/license/OpenQGIS/QuickFieldBrush?style=flat&color=blue" alt="License"></a>
 </p>
 
 > ⏳ **项目状态说明 (Project Status)**：  
-> 本插件 **v0.4.0 正式分发包已提交至 QGIS 官方插件门户（plugins.qgis.org）**，当前正处于 **官方人工与自动化安全审核通道中 (Pending Approval / Under Review)**。  
+> - **QGIS Plugin 状态**：`Under Review`（本插件 **v0.4.0 正式分发包已提交至 QGIS 官方插件门户 plugins.qgis.org**，当前正处于 **官方人工与自动化安全审核通道中**）。  
+> - **QGIS Version 支持范围**：`≥ 3.16`（实测覆盖 QGIS 3.16 ~ 3.40 LTR，全面兼容 Windows 与 macOS Retina 高分屏环境）。  
+> 
 > 在官方插件库正式上线前，用户可直接前往 [Releases 页面](https://github.com/OpenQGIS/QuickFieldBrush/releases) 下载最新 ZIP 分发包，在 QGIS 菜单栏选择 **【插件】➔【管理并安装插件】➔【从 ZIP 文件安装】** 即插即用。
 
 QuickFieldBrush 是一个用于 QGIS 的矢量要素属性快速赋值与修改插件，包含右键快速赋值、属性格式刷和操作历史面板。
@@ -78,6 +80,14 @@ gantt
 - **v0.2.1** (2026-10-26): 安全扫描合规加固。
 - **v0.2.0** (2026-10-26): 格式刷面板重构为原生紧凑布局，新增双维动态排序、操作历史面板、要素吸取与多语言支持。
 - **v0.1.0** (2026-10-25): 初始版本，支持右键赋值与格式刷基础功能。
+
+---
+
+## 运行要求与状态 (Requirements & Status)
+
+- **QGIS Plugin 状态**：`Under Review`（官方审核通过后，将可在 QGIS 插件管理器直接搜索安装并自动更新）
+- **QGIS Version 支持**：`≥ 3.16`（全面适配 3.16、3.22、3.28、3.34、3.40 LTR 等版本）
+- **操作系统**：Windows 10/11、macOS (Intel / Apple Silicon)、Linux
 
 ---
 
