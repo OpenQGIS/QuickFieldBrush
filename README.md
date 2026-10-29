@@ -1,14 +1,18 @@
 # QuickFieldBrush
 
 <p align="left">
-  <img src="https://img.shields.io/badge/status-pending%20approval-orange?style=flat&logo=clockify&logoColor=white" alt="Status: Pending Approval">
+  <a href="https://plugins.qgis.org/plugins/QuickFieldBrush/"><img src="https://img.shields.io/badge/QGIS%20Plugin-QuickFieldBrush-589632?style=flat&logo=qgis&logoColor=white" alt="QGIS Plugins Repository"></a>
+  <a href="https://plugins.qgis.org/plugins/QuickFieldBrush/"><img src="https://img.shields.io/badge/status-approved-brightgreen?style=flat&logo=qgis&logoColor=white" alt="Status: Approved"></a>
+  <a href="https://plugins.qgis.org/plugins/QuickFieldBrush/"><img src="https://img.shields.io/badge/QGIS-%E2%89%A5%203.16-2b7489?style=flat&logo=qgis&logoColor=white" alt="QGIS Version"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL%20v3-blue.svg?style=flat" alt="License: AGPL-3.0"></a>
 </p>
 
-> ⏳ **项目状态说明 (Project Status)**：  
-> - **QGIS Plugin 状态**：`Under Review`（本插件 **v0.4.0 正式分发包已提交至 QGIS 官方插件门户 plugins.qgis.org**，当前正处于 **官方人工与自动化安全审核通道中**）。  
-> - **QGIS Version 支持范围**：`≥ 3.16`（实测覆盖 QGIS 3.16 ~ 3.40 LTR，全面兼容 Windows 与 macOS Retina 高分屏环境）。  
+> 🎉 **项目状态说明 (Project Status)**：  
+> - **官方插件主页**：👉 [plugins.qgis.org/plugins/QuickFieldBrush](https://plugins.qgis.org/plugins/QuickFieldBrush/)  
+> - **QGIS Plugin 状态**：`Approved & Published`（**已通过 QGIS 官方人工与自动化审核，正式上线官方插件库**）。  
+> - **QGIS Version 支持范围**：`≥ 3.16`（实测覆盖 QGIS 3.16 ~ 3.40 LTR，全面兼容 Windows、macOS 与 Linux 环境）。  
 > 
-> 在官方插件库正式上线前，用户可直接前往 [Releases 页面](https://github.com/OpenQGIS/QuickFieldBrush/releases) 下载最新 ZIP 分发包，在 QGIS 菜单栏选择 **【插件】➔【管理并安装插件】➔【从 ZIP 文件安装】** 即插即用。
+> 用户现在可直接在 QGIS 菜单栏选择 **【插件】➔【管理并安装插件】**，在搜索栏输入 **`QuickFieldBrush`** 即可一键在线安装与自动检查升级。亦可在 [Releases 页面](https://github.com/OpenQGIS/QuickFieldBrush/releases) 或官方主页下载最新 ZIP 分发包离线安装。
 
 QuickFieldBrush 是一个用于 QGIS 的矢量要素属性快速赋值与修改插件，包含右键快速赋值、属性格式刷和操作历史面板。
 
@@ -52,14 +56,23 @@ gantt
     axisFormat  %m/%d
     todayMarker stroke-width:2px,stroke:#2563EB,opacity:0.8
 
-    section v0.4.0 (已发布)
-    NULL 值智能清洗与全链路置空   :done,    t2, 2026-10-27, 2026-10-27
-    v0.4.0 发布                   :milestone, m2, 2026-10-27, 0d
+    section v0.1.0 (已发布)
+    交互赋值与格式刷原型构建     :done,    t0, 2026-10-24, 2026-10-25
+
+    section v0.2.0 (已发布)
+    4行紧凑布局与操作历史台账   :done,    t1, 2026-10-25, 2026-10-26
+
+    section v0.3.0 (已发布)
+    原生停靠与 QGIS 4/Qt6 兼容  :done,    t2, 2026-10-26, 2026-10-27
+
+    section v0.4.0 (官方审核认证)
+    High-DPI精度识别与NULL清洗 :done,    t3, 2026-10-27, 2026-10-28
+    官方审核上线                :milestone, m3, 2026-10-28, 0d
 
     section v0.5.0 (当前迭代)
-    右键面板激活位置优化         :active,  t3, 2026-10-28, 2026-11-03
-    多字段组合快刷与模板配置      :active,  t4, 2026-10-28, 2026-11-06
-    v0.5.0 发布                   :milestone, m3, 2026-11-13, 0d
+    右键面板激活位置优化       :active,  t4, 2026-10-28, 2026-11-03
+    多字段组合快刷与模板配置    :active,  t5, 2026-10-28, 2026-11-06
+    v0.5.0 发布                 :milestone, m4, 2026-11-13, 0d
 ```
 
 👉 **查看详细特性矩阵、开发进度条与任务清单**：请参阅 [完整开发路线图 (ROADMAP.md)](ROADMAP.md)。
@@ -80,7 +93,8 @@ gantt
 
 ## 运行要求与状态 (Requirements & Status)
 
-- **QGIS Plugin 状态**：`Under Review`（官方审核通过后，将可在 QGIS 插件管理器直接搜索安装并自动更新）
+- **官方插件主页**：[https://plugins.qgis.org/plugins/QuickFieldBrush/](https://plugins.qgis.org/plugins/QuickFieldBrush/)
+- **QGIS Plugin 状态**：`Approved`（已通过官方审核，正式收录于 QGIS 官方插件仓库）
 - **QGIS Version 支持**：`≥ 3.16`（全面适配 3.16、3.22、3.28、3.34、3.40 LTR 等版本）
 - **操作系统**：Windows 10/11、macOS (Intel / Apple Silicon)、Linux
 
@@ -88,12 +102,28 @@ gantt
 
 ## 安装方法
 
+### 方式一：QGIS 官方插件管理器在线安装（推荐）
+
+1. 打开 QGIS，在顶部菜单栏依次点击 **【插件】➔【管理并安装插件...】**。
+2. 切换至 **【全部】** 选项卡，在搜索框中输入 `QuickFieldBrush`。
+3. 选中插件并点击右下角 **【安装插件】** 即可完成安装，未来享有官方一键更新推送。
+
+### 方式二：从 ZIP 压缩包安装（离线安装）
+
+1. 前往 [QGIS 官方插件主页](https://plugins.qgis.org/plugins/QuickFieldBrush/) 或 [Releases 页面](https://github.com/OpenQGIS/QuickFieldBrush/releases) 下载最新 ZIP 分发包。
+2. 打开 QGIS 菜单栏 **【插件】➔【管理并安装插件...】➔【从 ZIP 文件安装】**。
+3. 选取下载的 ZIP 文件并点击 **【安装插件】** 即插即用。
+
+### 方式三：手动目录部署（开发与调试）
+
 1. 将 `QuickFieldBrush` 文件夹复制到 QGIS 插件目录：
    - Windows: `C:\Users\<用户名>\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\`
-2. 打开 QGIS，进入菜单栏 `插件` -> `管理并安装插件` -> `已安装`，勾选 `QuickFieldBrush` 即可。
+   - macOS: `~/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins/`
+   - Linux: `~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/`
+2. 打开 QGIS，进入菜单栏 **【插件】➔【管理并安装插件】➔【已安装】**，勾选 `QuickFieldBrush` 即可。
 
 ---
 
 ## 开源许可
 
-MIT License
+GNU Affero General Public License v3.0 (AGPL-3.0-or-later)
