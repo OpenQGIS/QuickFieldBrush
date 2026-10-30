@@ -183,11 +183,8 @@ class FormatPainterDockWidget(QgsDockWidget):
         action_box.addWidget(self.btn_pick_from_selected, 2)
 
         self.btn_clear_null = QPushButton(tr("Set to NULL"))
-        ic_null = QgsApplication.getThemeIcon("mIconClearText.svg")
-        if ic_null.isNull():
-            ic_null = QgsApplication.getThemeIcon("mIconClearItem.svg")
-        if ic_null.isNull():
-            ic_null = QIcon(os.path.join(icons_dir, "clear.svg"))
+        null_path = os.path.join(icons_dir, "clear.svg")
+        ic_null = QIcon(null_path) if os.path.exists(null_path) else QgsApplication.getThemeIcon("mIconClearText.svg")
         self.btn_clear_null.setIcon(ic_null)
         self.btn_clear_null.setIconSize(QSize(15, 15))
         self.btn_clear_null.setToolTip(tr("Set painter value to NULL, or batch clear selected features"))

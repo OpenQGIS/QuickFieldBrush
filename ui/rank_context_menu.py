@@ -19,10 +19,11 @@ from qgis.PyQt.QtWidgets import (
 from qgis.PyQt.QtGui import QIcon, QCursor, QPainter
 from qgis.PyQt.QtCore import QTimer, QSize, Qt, pyqtSignal
 from qgis.core import QgsApplication
-from ..core.compat import safe_exec, QAction
+from ..core.compat import safe_exec, QAction, calculate_menu_spawn_pos
 from ..core.attribute_engine import AttributeEngine
 from ..core.config_manager import ConfigManager
 from ..i18n_helper import tr
+from .target_field_dialog import TargetFieldDialog
 from . import theme
 
 
@@ -106,12 +107,13 @@ class RankValueItemWidget(QWidget):
 
 
 class RankContextMenu(QMenu):
-    def __init__(self, parent, layer, config, iface, spawn_pos=None):
+    def __init__(self, parent, layer, config, iface, spawn_pos=None, is_reopen=False):
         super().__init__(parent)
         self.layer = layer
         self.config = config
         self.iface = iface
         self.spawn_pos = spawn_pos
+        self.is_reopen = is_reopen
         self.target_field = None
 
         # 候选分类值平滑滚动区域（限制最高高度，彻底避免屏幕截断；支持滚轮无缝滑动）
@@ -173,51 +175,22 @@ class RankContextMenu(QMenu):
 
     def _prompt_choose_field(self, valid_names, is_initial=False):
         """弹出字段选择框，由用户显式确定赋值字段（展示 QGIS 原生字段类型图标）"""
-        prompt_text = (
-            tr("Please select the target field for rapid assignment in layer [{0}]:").format(self.layer.name())
-            if is_initial else
-            tr("Switch target field for layer [{0}]:").format(self.layer.name())
-        )
-        current_idx = 0
         current_field = (
             self.config.get("single_rank_by_layer", {}).get(self.layer.id(), "")
             or self.config.get("single_rank", {}).get("field_name", "")
         )
-        if current_field in valid_names:
-            current_idx = valid_names.index(current_field)
-
-        dlg = QDialog(self.parent())
-        dlg.setWindowTitle(tr("Specify Target Field"))
-        lay = QVBoxLayout(dlg)
-        lay.setContentsMargins(11, 11, 11, 11)
-        lay.setSpacing(8)
-
-        lbl = QLabel(prompt_text)
-        lay.addWidget(lbl)
-
-        cb = QComboBox()
-        for name in valid_names:
-            ic = AttributeEngine.get_field_icon(self.layer, name)
-            cb.addItem(ic, name, name)
-
-        if 0 <= current_idx < cb.count():
-            cb.setCurrentIndex(current_idx)
-        lay.addWidget(cb)
-
-        btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        btn_box.accepted.connect(dlg.accept)
-        btn_box.rejected.connect(dlg.reject)
-        lay.addWidget(btn_box)
-
-        dlg.resize(340, 110)
-        if safe_exec(dlg) == QDialog.Accepted:
-            item = cb.currentData()
-            if item:
-                by_layer = self.config.setdefault("single_rank_by_layer", {})
-                by_layer[self.layer.id()] = item
-                self.config.setdefault("single_rank", {})["field_name"] = item
-                ConfigManager.save_config(self.config)
-                return item
+        item = TargetFieldDialog.select_field(
+            self.parent(),
+            self.layer,
+            valid_names,
+            current_field=current_field
+        )
+        if item:
+            by_layer = self.config.setdefault("single_rank_by_layer", {})
+            by_layer[self.layer.id()] = item
+            self.config.setdefault("single_rank", {})["field_name"] = item
+            ConfigManager.save_config(self.config)
+            return item
         return None
 
     def _sort_val_counts(self, val_counts, mode):
@@ -409,9 +382,8 @@ class RankContextMenu(QMenu):
         selected_count = self.layer.selectedFeatureCount()
 
         # 1. 快捷切换赋值字段（合并显示当前字段与已选要素数）
-        ic_opt = QgsApplication.getThemeIcon("mActionOptions.svg")
-        if ic_opt.isNull():
-            ic_opt = QIcon(os.path.join(icons_dir, "settings.svg"))
+        opt_path = os.path.join(icons_dir, "settings.svg")
+        ic_opt = QIcon(opt_path) if os.path.exists(opt_path) else QgsApplication.getThemeIcon("mActionOptions.svg")
         switch_act = self.addAction(
             ic_opt,
             tr("Switch field ( {0} )-[{1}]").format(self.target_field, selected_count)
@@ -430,38 +402,43 @@ class RankContextMenu(QMenu):
         self.addAction(self._values_action)
         self._render_value_items(current_sort_mode, auto_edit)
 
-        # 4. 允许用户临时打字赋一个新分类值 (使用 QGIS 官方原生增加属性图标)
+        # 4. 允许用户临时打字赋一个新分类值 (使用与图标库一致的原生增加属性图标)
         self.addSeparator()
-        ic_add = QgsApplication.getThemeIcon("symbologyAdd.svg")
-        if ic_add.isNull():
-            ic_add = QgsApplication.getThemeIcon("mActionAdd.svg")
-        if ic_add.isNull():
-            ic_add = QIcon(os.path.join(icons_dir, "add.svg"))
+        add_path = os.path.join(icons_dir, "add.svg")
+        ic_add = QIcon(add_path) if os.path.exists(add_path) else QgsApplication.getThemeIcon("symbologyAdd.svg")
         custom_act = self.addAction(ic_add, tr("Enter a new value..."))
         custom_act.triggered.connect(
             lambda checked, fn=self.target_field: self._on_custom_input(fn, auto_edit)
         )
 
         # 4.1 设置为 NULL / 清空字段值
-        ic_null = QgsApplication.getThemeIcon("mIconClearText.svg")
-        if ic_null.isNull():
-            ic_null = QgsApplication.getThemeIcon("mIconClearItem.svg")
-        if ic_null.isNull():
-            ic_null = QIcon(os.path.join(icons_dir, "clear.svg"))
+        null_path = os.path.join(icons_dir, "clear.svg")
+        ic_null = QIcon(null_path) if os.path.exists(null_path) else QgsApplication.getThemeIcon("mIconClearText.svg")
         null_act = self.addAction(ic_null, tr("Set to NULL (Clear field)"))
         null_act.triggered.connect(
             lambda checked, fn=self.target_field: (self._on_apply_value(fn, None, auto_edit), self.close())
         )
 
         self.addSeparator()
-        # 5. 快捷取消选择 (使用 QGIS 官方图层取消选择图标)
-        ic_clear = QgsApplication.getThemeIcon("mActionDeselectActiveLayer.svg")
-        if ic_clear.isNull():
-            ic_clear = QgsApplication.getThemeIcon("mActionDeselectAll.svg")
-        if ic_clear.isNull():
-            ic_clear = QIcon(os.path.join(icons_dir, "clear.svg"))
+        # 5. 快捷取消选择 (使用与图标库一致的图层取消选择图标)
+        deselect_path = os.path.join(icons_dir, "deselect.svg")
+        ic_clear = QIcon(deselect_path) if os.path.exists(deselect_path) else QgsApplication.getThemeIcon("mActionDeselectActiveLayer.svg")
         clear_act = self.addAction(ic_clear, tr("Cancel selection"))
         clear_act.triggered.connect(lambda: self.layer.removeSelection())
+
+    def show_at(self, click_pos=None, is_reopen=False):
+        """以左侧垂直居中对齐与全向工作区防溢出安全弹出菜单"""
+        target_click = click_pos if click_pos is not None else self.spawn_pos
+        if target_click is None:
+            target_click = QCursor.pos()
+
+        if is_reopen or self.is_reopen:
+            final_pos = target_click
+        else:
+            final_pos = calculate_menu_spawn_pos(target_click, self.sizeHint())
+
+        self.spawn_pos = final_pos
+        return safe_exec(self, final_pos)
 
     def _on_switch_target_field(self, valid_names):
         """用户点击切换目标字段"""
@@ -477,9 +454,12 @@ class RankContextMenu(QMenu):
                 QTimer.singleShot(60, lambda: self._reopen_menu_at(saved_pos))
 
     def _reopen_menu_at(self, pos):
-        new_menu = RankContextMenu(self.parent(), self.layer, ConfigManager.get_config(), self.iface, spawn_pos=pos)
+        new_menu = RankContextMenu(
+            self.parent(), self.layer, ConfigManager.get_config(), self.iface,
+            spawn_pos=pos, is_reopen=True
+        )
         target_pos = pos if pos is not None else QCursor.pos()
-        safe_exec(new_menu, target_pos)
+        new_menu.show_at(target_pos, is_reopen=True)
 
     def _on_apply_value(self, field_name, value, auto_edit):
         """执行批量写入"""

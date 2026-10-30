@@ -4,7 +4,7 @@ qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
 icon=icon/icon.svg
 description=矢量要素右键快速赋值、属性值格式刷与要素修改历史面板。 / Rapid attribute assignment via right-click, format painter, and edit history panel for QGIS.
-version=0.4.0
+version=0.5.0
 author=OpenQGIS
 email=OpenQGIS@outlook.com
 about=
@@ -25,18 +25,20 @@ homepage=https://github.com/OpenQGIS/QuickFieldBrush
 tracker=https://github.com/OpenQGIS/QuickFieldBrush/issues
 repository=https://github.com/OpenQGIS/QuickFieldBrush
 changelog=
+  Version 0.5.0:
+  - 🔄 原生选择工具伴随工作流：激活“交互赋值”自动联动 QGIS 原生选择工具（支持矩形、多边形、手绘、圆选等），切换平移等非选择工具或按 Esc 自动休眠。 / Selection Companion Workflow: Linked with QGIS native selection tools (box, polygon, freehand, radius) with auto-sleep on non-selection tools or Esc.
+  - 📏 310px 紧凑字段选择弹窗：重构 TargetFieldDialog，消除长文本撑爆窗口问题，集成矢量几何类型图标与 14 种原生字段类型图标。 / Rebuilt compact 310px TargetFieldDialog with native layer geometry and field type icons.
+  - 📐 菜单垂直居中与工作区防溢出：右键菜单优化为光标垂直居中对齐，支持系统任务栏与多屏工作区边缘自动翻转与防遮挡。 / Center-aligned menu spawn with workspace collision detection and screen clamping.
+  - 🎨 原生矢量图标本地规整：右键菜单操作项（添加新值、清空字段、取消选择、设置）全部采用本地 QGIS 原生主题矢量 SVG。 / Replaced menu runtime theme icons with local native theme SVGs.
   Version 0.4.0:
-  - 🎯 高分屏与跨平台精准识别：重构要素拾取引擎为 QgsMapToolIdentify 原生识别体系，接入 event.mapPoint() 与 TopDownAll 几何距离优选，彻底消除 Mac Retina 视网膜屏与 Windows 4K 非整数缩放下的坐标漂移及邻近线误选。 / High-DPI precision hit-testing: Refactored feature identification to QgsMapToolIdentify with native event.mapPoint() and TopDownAll distance sorting, eliminating coordinate drift on Mac Retina and Windows 4K displays.
-  - 🎨 光标精准对齐：格式刷工具统一采用中心对称的十字准星（CrossCursor），实现瞄准中心即落点。 / Pixel-perfect crosshair cursor: Replaced hand cursor with CrossCursor for zero-offset alignment on fine vector lines.
+  - 🎯 高分屏与跨平台精准识别：彻底消除 Mac Retina 视网膜屏与 Windows 4K 非整数缩放下的坐标漂移及邻近线误选。 / High-DPI precision hit-testing: Eliminates coordinate drift and adjacent line mis-selection on Mac Retina and Windows 4K displays.
   - ✨ 右键菜单新增【设为 NULL / 清空字段】快捷项，支持一键清空选中要素属性。 / Added "Set to NULL (Clear field)" in right-click menu to batch clear selected features.
   - 🧹 自动过滤与规整假空值：文本字面量 "NULL"、"null" 及空白纯空格自动排除，不再污染常规分类列表。 / Auto-cleans false null literals ("NULL", "null", blank spaces) from candidate lists.
   - 🛠️ 格式刷控制台新增【设为 NULL】操作按钮与下拉选项，支持将画笔切换为清空刷入模式或批量置空已选要素。 / Added "Set to NULL" button and option in format painter to paint NULL or clear selected features.
   - 🧭 优化操作历史面板的 NULL 值展示，规范显示为 "NULL" 并保持单步撤销与精准还原。 / Standardized NULL values display in edit history ledger with full single-step revert support.
   - ⚡ 橡皮筋几何类型自适应：点、线、面要素瞬时高亮完美贴合要素轮廓。 / Dynamic rubber band geometry adaptation for points, lines, and polygons.
   Version 0.3.0:
-  - 格式刷控制台与历史面板支持 QgsDockWidget 原生停靠与悬浮切换。 / Format painter and history dialog now support QgsDockWidget native docking and floating.
-  - 面板宽度调整为 310px 与 320px，置顶图钉独立为微顶栏。 / Narrowed panel widths (310px/320px) and separated stay-on-top pin into an independent top bar.
-  - 工具栏图标 Tooltip 增加两行操作提示，规范术语为“赋值”。 / Enhanced toolbar tooltips with 2-line instructions and standardized terminology to assignment.
+  - 格式刷控制台与历史面板支持原生停靠与悬浮切换。 / Format painter and history dialog now support QgsDockWidget native docking and floating.
   - 兼容 QGIS 4 与 Qt6（自动桥接强类型枚举）。 / Added full compatibility for QGIS 4 and Qt6 with scoped enum bridging.
   Version 0.2.1:
   - 安全扫描与规范检查 / Security scan and standards review.

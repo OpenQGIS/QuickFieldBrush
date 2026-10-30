@@ -55,6 +55,10 @@
       <translation>激活 QuickFieldBrush 交互赋值工具 (框选+右键)</translation>
     </message>
     <message>
+      <source>Activate to enter rapid assignment mode, automatically linking with QGIS native selection tools (supports box, polygon, freehand, radius, etc.). Box-select features or right-click any selected features on the canvas to rapidly assign values. Press Esc or switch to non-selection tools to exit.</source>
+      <translation>开启后自动联动 QGIS 原生选择工具（支持矩形框选、多边形、自由手绘、半径圆选等），框选或在已有选中要素时鼠标右键即可极速赋值；切换至平移等非选择工具或按 Esc 键自动退出。</translation>
+    </message>
+    <message>
       <source>Add New Attribute Value</source>
       <translation>添加新属性值</translation>
     </message>
@@ -123,6 +127,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
     <message>
       <source>Browse, flash-zoom, single-step revert, and export records</source>
       <translation>浏览、高亮定位、单步撤销、导出台账</translation>
+    </message>
+    <message>
+      <source>Cancel</source>
+      <translation>取消</translation>
     </message>
     <message>
       <source>Cancel selection</source>
@@ -301,6 +309,10 @@ Select target field after activation, click or box-select features, then right-c
 激活功能后选择要修改的字段，点选、框选要素后右键快速对选中字段进行属性值修改。</translation>
     </message>
     <message>
+      <source>Interactive assignment mode active: Linked with QGIS native selection tools (supports box, polygon, freehand, etc.). Right-click on map to assign values. (Press Esc to exit)</source>
+      <translation>已自动联动 QGIS 原生选择工具，选中要素右键即可快速赋值</translation>
+    </message>
+    <message>
       <source>Interactive assignment tool activated: box-select features, then right-click to assign values.</source>
       <translation>已激活交互赋值工具：框选要素后点击右键即可快速赋值！</translation>
     </message>
@@ -333,8 +345,16 @@ Select target field after activation, click or box-select features, then right-c
       <translation>图层 · 要素</translation>
     </message>
     <message>
+      <source>Layer:</source>
+      <translation>图层:</translation>
+    </message>
+    <message>
       <source>Layer: {0} (no editable fields)</source>
       <translation>图层: {0} (无可编辑字段)</translation>
+    </message>
+    <message>
+      <source>Linked with QGIS native selection tools, right-click selected features to rapidly assign values.</source>
+      <translation>已自动联动 QGIS 原生选择工具，选中要素右键即可快速赋值</translation>
     </message>
     <message>
       <source>Modification History</source>
@@ -395,6 +415,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Numeric Descending (9 -&gt; 1)</source>
       <translation>按数值大小降序 (9 -&gt; 1)</translation>
+    </message>
+    <message>
+      <source>OK</source>
+      <translation>确定</translation>
     </message>
     <message>
       <source>Old Value</source>
@@ -514,7 +538,7 @@ Select target field after activation, click or box-select features, then right-c
     </message>
     <message>
       <source>Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</source>
-      <translation>激活功能后选择要修改的字段，点选、框选要素后右键快速对选中字段进行属性值修改。</translation>
+      <translation>开启后自动联动 QGIS 原生选择工具（支持矩形框选、多边形、自由手绘、半径圆选等），框选或在已有选中要素时鼠标右键即可极速赋值；切换至平移等非选择工具或按 Esc 键自动退出。</translation>
     </message>
     <message>
       <source>Selected {0} features on layer [{1}]</source>
@@ -575,6 +599,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Switch target field... (current: [{0}])</source>
       <translation>切换字段 ( {0} )</translation>
+    </message>
+    <message>
+      <source>Target Field:</source>
+      <translation>目标字段:</translation>
     </message>
     <message>
       <source>Target Value</source>

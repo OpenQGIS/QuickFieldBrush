@@ -16,9 +16,10 @@ from .core.compat import safe_exec, QAction, format_tooltip
 
 from .core.config_manager import ConfigManager
 from .core.attribute_engine import AttributeEngine
-from .core.map_tool import QuickFieldBrushMapTool
+from .core.map_tool import QuickFieldBrushMapTool, AssignmentModeEventFilter
 from .core.format_painter_tool import FormatPainterTool
 from .ui.rank_context_menu import RankContextMenu
+from .ui.target_field_dialog import TargetFieldDialog
 from .ui.format_painter_dialog import FormatPainterDialog
 from .ui.history_dialog import HistoryDialog
 from .i18n_helper import tr, load_translator, unload_translator
@@ -40,6 +41,9 @@ class QuickFieldBrushPlugin:
         self.toolbar = None
         self._connected_layer = None
         self.translator = None
+
+        self.is_assignment_mode = False
+        self.canvas_filter = None
 
         # 翻译器加载
         self.translator = load_translator(os.path.dirname(os.path.abspath(__file__)))
@@ -80,7 +84,7 @@ class QuickFieldBrushPlugin:
         icon_painter = self._load_icon(os.path.join(icons_dir, "painter.svg"))
         icon_history = self._load_icon(os.path.join(icons_dir, "history.svg"))
 
-        # 3. 功能 1: 激活/停用快捷赋值工具 (框选+右键)
+        # 3. 功能 1: 交互赋值作业模式 (联动原生选择+右键赋值)
         self.action_toggle = QAction(
             icon_active,
             tr("Interactive Assignment"),
@@ -89,7 +93,7 @@ class QuickFieldBrushPlugin:
         self.action_toggle.setCheckable(True)
         self.action_toggle.setToolTip(format_tooltip(
             tr("Interactive Assignment"),
-            tr("Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.")
+            tr("Activate to enter rapid assignment mode, automatically linking with QGIS native selection tools (supports box, polygon, freehand, radius, etc.). Box-select features or right-click any selected features on the canvas to rapidly assign values. Press Esc or switch to non-selection tools to exit.")
         ))
         self.action_toggle.triggered.connect(self._toggle_map_tool)
         self.toolbar.addAction(self.action_toggle)
@@ -133,6 +137,9 @@ class QuickFieldBrushPlugin:
         self._bind_layer_selection_signal(self.iface.activeLayer())
 
     def unload(self):
+        # 退出赋值模式并清理过滤器
+        self._enable_assignment_mode(False)
+
         # 卸载地图工具
         if self.canvas.mapTool() in [self.map_tool, self.painter_tool]:
             self.canvas.unsetMapTool(self.canvas.mapTool())
@@ -184,6 +191,61 @@ class QuickFieldBrushPlugin:
         # 卸载翻译器
         self.translator = unload_translator(self.translator)
 
+    def _is_selection_tool(self, tool):
+        """判断给定的地图工具是否属于选择工具家族（矩形/多边形/手绘/半径）"""
+        if not tool:
+            return False
+        if hasattr(tool, "action") and tool.action():
+            act_name = tool.action().objectName()
+            if act_name in ("mActionSelectFeatures", "mActionSelectPolygon", "mActionSelectFreehand", "mActionSelectRadius"):
+                return True
+        tool_name = tool.__class__.__name__
+        if "Select" in tool_name:
+            return True
+        return False
+
+    def _enable_assignment_mode(self, enabled):
+        """开启或退出快速赋值增强作业流模式"""
+        self.is_assignment_mode = enabled
+        if enabled:
+            if self.canvas_filter is None:
+                self.canvas_filter = AssignmentModeEventFilter(self, self.canvas)
+                self.canvas.viewport().installEventFilter(self.canvas_filter)
+            try:
+                self.canvas.mapToolSet.connect(self._on_map_tool_set)
+            except (TypeError, RuntimeError):
+                pass
+            self.action_toggle.blockSignals(True)
+            self.action_toggle.setChecked(True)
+            self.action_toggle.blockSignals(False)
+        else:
+            if self.canvas_filter is not None:
+                try:
+                    self.canvas.viewport().removeEventFilter(self.canvas_filter)
+                except (RuntimeError, TypeError):
+                    pass
+                self.canvas_filter = None
+            try:
+                self.canvas.mapToolSet.disconnect(self._on_map_tool_set)
+            except (TypeError, RuntimeError):
+                pass
+            self.action_toggle.blockSignals(True)
+            self.action_toggle.setChecked(False)
+            self.action_toggle.blockSignals(False)
+
+    def _on_map_tool_set(self, new_tool, old_tool=None):
+        """当 QGIS 地图工具发生切换时触发"""
+        if not self.is_assignment_mode:
+            return
+        if self._is_selection_tool(new_tool):
+            # 处于选择工具家族内部切换（如从矩形框选切换到多边形圈选），保持高亮就绪
+            self.action_toggle.blockSignals(True)
+            self.action_toggle.setChecked(True)
+            self.action_toggle.blockSignals(False)
+        else:
+            # 用户切换到了平移、测距、画图斑、格式刷等非选择工具，自动休眠退出模式
+            self._enable_assignment_mode(False)
+
     def _toggle_map_tool(self, checked):
         if checked:
             layer = self.iface.activeLayer()
@@ -206,21 +268,16 @@ class QuickFieldBrushPlugin:
             self.config = ConfigManager.get_config()
             by_layer = self.config.get("single_rank_by_layer", {})
             current_field = by_layer.get(layer.id()) or self.config.get("single_rank", {}).get("field_name", "")
-            current_idx = 0
-            if current_field in valid_names:
-                current_idx = valid_names.index(current_field)
 
-            item, ok = QInputDialog.getItem(
+            item = TargetFieldDialog.select_field(
                 self.iface.mainWindow(),
-                tr("Specify Target Field"),
-                tr("Please select the target field for rapid assignment in layer [{0}]:").format(layer.name()),
+                layer,
                 valid_names,
-                current_idx,
-                False
+                current_field=current_field
             )
 
-            if not ok or not item:
-                # 用户取消，不激活工具
+            if not item:
+                # 用户取消，不激活模式
                 self.action_toggle.setChecked(False)
                 return
 
@@ -232,22 +289,28 @@ class QuickFieldBrushPlugin:
 
             if self.action_painter and self.action_painter.isChecked():
                 self.action_painter.setChecked(False)
+                if self.painter_dialog and self.painter_dialog.isVisible():
+                    self.painter_dialog.close()
 
-            self.canvas.setMapTool(self.map_tool)
+            # 联动激活 QGIS 原生选择工具（若当前不是选择工具）
+            current_tool = self.canvas.mapTool()
+            if not self._is_selection_tool(current_tool):
+                self.iface.actionSelect().trigger()
+
+            self._enable_assignment_mode(True)
             self.iface.messageBar().pushInfo(
                 "QuickFieldBrush",
-                tr("Interactive assignment tool activated: box-select features, then right-click to assign values.") +
-                tr(" | Target: [{0}]").format(item))
+                tr("Linked with QGIS native selection tools, right-click selected features to rapidly assign values.")
+            )
         else:
-            if self.canvas.mapTool() == self.map_tool:
-                self.canvas.unsetMapTool(self.map_tool)
+            self._enable_assignment_mode(False)
 
     def _toggle_painter_tool(self, checked):
         """激活格式刷工具"""
         if checked:
             # 取消常规框选工具的状态
             if self.action_toggle and self.action_toggle.isChecked():
-                self.action_toggle.setChecked(False)
+                self._enable_assignment_mode(False)
 
             # 打开常驻/置顶控制面板 (支持浮动与侧边停靠)
             if self.painter_dialog is None:
@@ -293,7 +356,7 @@ class QuickFieldBrushPlugin:
         """响应右键快速分级菜单呼出请求"""
         self.config = ConfigManager.get_config()
         menu = RankContextMenu(self.iface.mainWindow(), layer, self.config, self.iface, spawn_pos=global_pos)
-        safe_exec(menu, global_pos)
+        menu.show_at(global_pos)
 
     def _on_selection_changed(self, layer, count):
         """当要素选择发生改变时触发"""

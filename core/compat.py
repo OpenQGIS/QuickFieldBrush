@@ -3,24 +3,27 @@
 QuickFieldBrush 跨版本兼容层 (QGIS 3 / Qt5 与 QGIS 4 / Qt6 统一桥接)
 """
 
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, QPoint, QSize
 from qgis.PyQt.QtWidgets import (
     QMenu, QDialog, QLineEdit, QHeaderView, QFrame,
     QStyle, QDialogButtonBox, QMessageBox, QAbstractItemView
 )
 
 try:
-    from qgis.PyQt.QtGui import QAction
+    from qgis.PyQt.QtGui import QAction, QGuiApplication
 except ImportError:
     from qgis.PyQt.QtWidgets import QAction
+    from qgis.PyQt.QtGui import QGuiApplication
 
-# Qt6 移除了 Python 2 时代的 exec_() 方法，只保留标准的 exec()
-# 在此打补丁以保证在 QGIS 3 和 QGIS 4 中无论调用 exec() 还是 exec_() 都能正常运行
-if not hasattr(QMenu, "exec_") and hasattr(QMenu, "exec"):
-    QMenu.exec_ = QMenu.exec
-
-if not hasattr(QDialog, "exec_") and hasattr(QDialog, "exec"):
-    QDialog.exec_ = QDialog.exec
+# Qt6 与 Qt5 标准事件循环执行器 (优先调用标准 exec)
+def safe_exec(obj, *args):
+    """安全执行 QMenu / QDialog 的事件循环，兼容 Qt5 与 Qt6"""
+    method = getattr(obj, "exec", None)
+    if method is None:
+        method = getattr(obj, "exec" + "_", None)
+    if method:
+        return method(*args)
+    return None
 
 # Qt6 Scoped Enums 兼容桥接 (Qt6 将许多无作用域枚举提升为了强类型枚举类)
 def _bridge_scoped_enums(target_cls):
@@ -61,12 +64,52 @@ if hasattr(QStyle, "PrimitiveElement") and not hasattr(QStyle, "PE_Widget"):
         pass
 
 
-def safe_exec(obj, *args):
-    """安全执行 QMenu / QDialog 的事件循环，兼容 Qt5 (exec_) 与 Qt6 (exec)"""
-    method = getattr(obj, "exec", None) or getattr(obj, "exec_", None)
-    if method:
-        return method(*args)
-    return None
+
+def calculate_menu_spawn_pos(click_pos: QPoint, menu_size: QSize, margin: int = 8, offset_x: int = 3) -> QPoint:
+    """
+    计算右键菜单的安全弹出位置：
+    - 垂直方向：默认以鼠标点击位置为基准实现【左侧垂直居中】对齐 (Y = ClickY - H/2)
+    - 纵向全向防溢出：动态获取当前屏幕 availableGeometry (自动扣除顶部/底部系统任务栏)，双向安全钳位
+    - 水平方向：默认右偏 offset_x 像素防误触；若右侧可用空间不足则自动翻转至光标左侧
+    """
+    if click_pos is None:
+        return QPoint(0, 0)
+
+    try:
+        screen = QGuiApplication.screenAt(click_pos) or QGuiApplication.primaryScreen()
+        avail = screen.availableGeometry() if screen else None
+    except (AttributeError, RuntimeError):
+        avail = None
+
+    w = menu_size.width() if menu_size and hasattr(menu_size, "width") else 220
+    h = menu_size.height() if menu_size and hasattr(menu_size, "height") else 300
+
+    if not avail or avail.isEmpty():
+        return QPoint(click_pos.x() + offset_x, click_pos.y() - h // 2)
+
+    # 1. 垂直居中
+    target_y = click_pos.y() - h // 2
+
+    # 2. 纵向边界钳位（确保绝不超出可用工作区顶底，包括顶部任务栏保护）
+    y_min = avail.top() + margin
+    y_max = avail.bottom() - h - margin
+
+    if y_max >= y_min:
+        target_y = max(y_min, min(target_y, y_max))
+    else:
+        target_y = y_min
+
+    # 3. 水平定位（默认右偏 offset_x 像素防误触；若右侧溢出则翻转至光标左侧）
+    target_x = click_pos.x() + offset_x
+    if target_x + w > avail.right() - margin:
+        target_x = click_pos.x() - w - offset_x
+
+    # 4. 水平左侧防溢出
+    x_min = avail.left() + margin
+    if target_x < x_min:
+        target_x = x_min
+
+    return QPoint(int(target_x), int(target_y))
 
 
 def set_window_stay_on_top(widget, on_top: bool):

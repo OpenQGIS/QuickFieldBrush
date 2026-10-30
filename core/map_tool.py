@@ -21,9 +21,54 @@ from qgis.core import (
     QgsVectorLayer,
     QgsFeatureRequest
 )
-from qgis.PyQt.QtCore import Qt, QRect, QPoint
+from qgis.PyQt.QtCore import Qt, QRect, QPoint, QObject, QEvent
 from qgis.PyQt.QtGui import QColor, QCursor
 from ..i18n_helper import tr
+
+
+class AssignmentModeEventFilter(QObject):
+    """
+    交互赋值模式事件过滤器：
+    - 仅在赋值作业模式开启时介入
+    - 监听地图画布上的右键点击：当矢量图层有选区且未在进行多边形画线时，安全唤起快速赋值菜单
+    - 监听 Esc 键：一键退出赋值模式或取消选择
+    """
+    def __init__(self, plugin, canvas):
+        super().__init__(canvas)
+        self.plugin = plugin
+        self.canvas = canvas
+
+    def eventFilter(self, watched, event):
+        if not getattr(self.plugin, "is_assignment_mode", False):
+            return False
+
+        if event.type() == QEvent.MouseButtonPress and event.button() == Qt.RightButton:
+            layer = self.canvas.currentLayer()
+            if isinstance(layer, QgsVectorLayer) and layer.selectedFeatureCount() > 0:
+                # 检查是否有正在绘制的多边形未闭合（橡皮筋节点 > 0）
+                rbs = self.canvas.findChildren(QgsRubberBand)
+                drawing_in_progress = any(
+                    rb.numberOfVertices() > 0
+                    for rb in rbs
+                    if rb != getattr(getattr(self.plugin, "painter_tool", None), "flash_band", None)
+                    and rb != getattr(getattr(self.plugin, "painter_tool", None), "absorb_band", None)
+                )
+                if not drawing_in_progress:
+                    self.plugin._show_rank_menu(QCursor.pos(), layer)
+                    return True
+        elif event.type() == QEvent.ContextMenu:
+            layer = self.canvas.currentLayer()
+            if isinstance(layer, QgsVectorLayer) and layer.selectedFeatureCount() > 0:
+                return True
+        elif event.type() == QEvent.KeyPress and event.key() == Qt.Key_Escape:
+            layer = self.canvas.currentLayer()
+            if isinstance(layer, QgsVectorLayer) and layer.selectedFeatureCount() > 0:
+                layer.removeSelection()
+            else:
+                self.plugin._enable_assignment_mode(False)
+            return True
+
+        return False
 
 
 class QuickFieldBrushMapTool(QgsMapToolIdentify):
