@@ -10,7 +10,7 @@
 
 from qgis.PyQt.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
-    QComboBox, QPushButton, QLabel, QToolButton, QFrame,
+    QComboBox, QPushButton, QLabel, QToolButton,
     QInputDialog
 )
 from qgis.gui import QgsDockWidget

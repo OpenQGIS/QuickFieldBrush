@@ -14,9 +14,6 @@ from qgis.gui import QgsMapToolIdentify, QgsRubberBand
 from qgis.core import (
     QgsWkbTypes,
     QgsRectangle,
-    QgsCoordinateTransform,
-    QgsCsException,
-    QgsProject,
     QgsVectorLayer,
     QgsFeatureRequest,
     QgsGeometry
@@ -232,6 +229,7 @@ class FormatPainterTool(QgsMapToolIdentify):
         layer.beginEditCommand(
             tr("QuickFieldBrush format painter: set {1}={2} on feature {0}")
             .format(fid, self.target_field, display_val))
+        AttributeEngine._in_internal_edit = True
         try:
             fld_obj = layer.fields().at(field_idx)
             val_to_write = None if self.is_target_null else AttributeEngine.convert_value_for_field(fld_obj, self.target_value)
@@ -244,7 +242,9 @@ class FormatPainterTool(QgsMapToolIdentify):
 
             layer.endEditCommand()
             layer.triggerRepaint()
-            AttributeEngine.invalidate_cache(layer)
+
+            changes = [{"fid": fid, "old_val": old_val, "new_val": val_to_write}]
+            AttributeEngine.update_cache_after_edit(layer, self.target_field, changes)
 
             # 写入历史记录
             HistoryManager.instance().add_step(
@@ -252,13 +252,15 @@ class FormatPainterTool(QgsMapToolIdentify):
                 layer=layer,
                 field_name=self.target_field,
                 target_value=val_to_write,
-                changes=[{"fid": fid, "old_val": old_val, "new_val": val_to_write}]
+                changes=changes
             )
         except Exception as e:
             layer.destroyEditCommand()
             self.iface.messageBar().pushWarning(
                 "QuickFieldBrush", tr("Format painter assignment failed: {0}").format(str(e)))
             return
+        finally:
+            AttributeEngine._in_internal_edit = False
 
         # 5. 绿色瞬时高亮反馈（180ms 自动消失，几何类型自适应，独立于事务避免 UI 反馈异常误触发回滚）
         try:

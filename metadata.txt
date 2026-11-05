@@ -4,7 +4,7 @@ qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
 icon=icon/icon.svg
 description=矢量要素右键快速赋值、属性值格式刷与要素修改历史面板。 / Rapid attribute assignment via right-click, format painter, and edit history panel for QGIS.
-version=0.5.0
+version=0.5.1
 author=OpenQGIS
 email=OpenQGIS@outlook.com
 about=
@@ -25,6 +25,9 @@ homepage=https://github.com/OpenQGIS/QuickFieldBrush
 tracker=https://github.com/OpenQGIS/QuickFieldBrush/issues
 repository=https://github.com/OpenQGIS/QuickFieldBrush
 changelog=
+  Version 0.5.1:
+  - 大图层右键性能优化：优化唯一值与频次统计缓存机制，支持编辑后增量更新与本地 GPKG/SQLite 快速聚合，大幅降低全国铁路等数十万级要素图层的右键菜单延迟。 / Improved right-click performance on large vector layers via incremental frequency cache updates and faster GPKG/SQLite value aggregation.
+  - 右键菜单原生 UI 风格对齐：统一菜单底色与悬停高亮样式，消除滚动区域分段色差与双重高亮，适配 QGIS 原生浅色与暗色主题。 / Aligned the right-click assignment menu with QGIS native menu styling, fixing background color splits and hover states.
   Version 0.5.0:
   - 🔄 原生选择工具伴随工作流：激活“交互赋值”自动联动 QGIS 原生选择工具（支持矩形、多边形、手绘、圆选等），切换平移等非选择工具或按 Esc 自动休眠。 / Selection Companion Workflow: Linked with QGIS native selection tools (box, polygon, freehand, radius) with auto-sleep on non-selection tools or Esc.
   - 📏 310px 紧凑字段选择弹窗：重构 TargetFieldDialog，消除长文本撑爆窗口问题，集成矢量几何类型图标与 14 种原生字段类型图标。 / Rebuilt compact 310px TargetFieldDialog with native layer geometry and field type icons.

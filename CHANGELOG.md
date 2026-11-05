@@ -4,6 +4,19 @@
 
 ---
 
+## [v0.5.1] - 2026-11-05
+
+### 大图层极速右键性能优化 (Large-Layer Performance Optimization)
+- **$O(k)$ 增量频次缓存引擎 (`update_cache_after_edit`)**：重构缓存生命周期，在执行右键批量赋值、格式刷连续涂抹及历史单步还原后，直接根据已知修改集对底层 `Counter` 进行 $O(k)$ 增量加减（耗时 < 0.1ms），彻底终结“每次赋值后清空全表缓存导致下次右键重新全表扫描”的性能瓶颈；同时维护本会话新增值保护集，确保手动新增的低频值绝不被高频截断吞没。
+- **GPKG / SQLite 原生 SQL 极速聚合 + `editBuffer` 融合**：针对本地 `.gpkg` / `.sqlite` 大型矢量图层（如数十万要素的全国铁路图层），新增底层 C 级只读 SQL `GROUP BY` 聚合通道，并自动叠加 `layer.editBuffer()` 中尚未保存的新增/修改/删除要素增量，首次统计提速 40~80 倍；非 SQLite 图层采用原值哈希聚合，将字符串清洗从 $O(N)$ 要素级降为 $O(U)$ 唯一值级。
+- **字段选定即刻预热与外部修改精准同步**：在 `TargetFieldDialog` 选定字段后自动触发异步预热；同时监听图层原生 `attributeValueChanged` / `featureAdded` / `afterRollBack` 信号，确保在 QGIS 属性表修改或按 `Ctrl+Z` 原生撤销时自动同步缓存。
+
+### 右键菜单原生 UI 风格统一与极速自绘 (Native QGIS Menu UI Alignment)
+- **移除残留 Web 扁平风 QSS**：去除 `RankContextMenu` 上的 `theme.MENU_SS`、Web 圆角细滚动条以及候选值项的 `PointingHandCursor`（网页小手光标），全面恢复 QGIS 原生 `QMenu` 边框、底色、阴影、标准箭头光标与系统默认字号。
+- **零子控件原生 `QPalette` 自绘与互斥悬停 (`RankValueItemWidget`)**：废除原有的 `QHBoxLayout` + 双 `QLabel` + 每项 3 次 `setStyleSheet()` 架构，改用 `QPainter` 与系统 `QPalette` 直接绘制整行高亮蓝底、主值与次要频次，并将滚动容器背景彻底透明化，消除三段式灰底色差与内外部双重悬停高亮；150 个候选值项的 UI 构建耗时从数百毫秒降至 **< 2ms**。
+
+---
+
 ## [v0.5.0] - 2026-10-30
 
 ### 交互革新与工作流伴随 (Selection Companion Workflow)

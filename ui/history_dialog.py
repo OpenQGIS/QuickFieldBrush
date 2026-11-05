@@ -18,7 +18,7 @@ from qgis.PyQt.QtWidgets import (
     QTreeWidget, QTreeWidgetItem, QHeaderView, QAbstractItemView,
     QMessageBox
 )
-from qgis.PyQt.QtGui import QIcon, QColor, QFont, QPalette
+from qgis.PyQt.QtGui import QIcon, QColor, QPalette
 from qgis.PyQt.QtCore import Qt, QTimer, QSize
 from qgis.core import (
     QgsProject, QgsVectorLayer, QgsWkbTypes,
@@ -26,7 +26,7 @@ from qgis.core import (
 )
 
 from ..core.compat import safe_exec, set_window_stay_on_top
-from ..core.history_manager import HistoryManager, HistoryStep
+from ..core.history_manager import HistoryManager
 from ..core.attribute_engine import AttributeEngine
 from ..i18n_helper import tr
 

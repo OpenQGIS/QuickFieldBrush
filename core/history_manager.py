@@ -142,6 +142,8 @@ class HistoryManager(QObject):
             tr("QuickFieldBrush: revert history #{0} ({1})").format(step.id, step.field_name)
         )
         reverted_count = 0
+        revert_changes = []
+        AttributeEngine._in_internal_edit = True
         try:
             field_obj = layer.fields().at(field_idx)
             for item in step.changes:
@@ -150,6 +152,11 @@ class HistoryManager(QObject):
                 conv_val = AttributeEngine.convert_value_for_field(field_obj, old_val)
                 if layer.changeAttributeValue(fid, field_idx, conv_val):
                     reverted_count += 1
+                    revert_changes.append({
+                        "fid": fid,
+                        "old_val": item.get("new_val"),
+                        "new_val": conv_val
+                    })
 
             if reverted_count == 0:
                 layer.destroyEditCommand()
@@ -157,7 +164,7 @@ class HistoryManager(QObject):
 
             layer.endEditCommand()
             layer.triggerRepaint()
-            AttributeEngine.invalidate_cache(layer)
+            AttributeEngine.update_cache_after_edit(layer, step.field_name, revert_changes)
 
             step.is_reverted = True
             self.history_changed.emit()
@@ -165,6 +172,8 @@ class HistoryManager(QObject):
         except Exception as e:
             layer.destroyEditCommand()
             return False, tr("Revert failed: {0}").format(str(e))
+        finally:
+            AttributeEngine._in_internal_edit = False
 
     def clear(self):
         """清空所有历史记录"""

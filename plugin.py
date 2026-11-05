@@ -7,12 +7,12 @@ QuickFieldBrush 插件主控制器：
 """
 
 import os
-from qgis.PyQt.QtWidgets import QToolBar, QInputDialog
+from qgis.PyQt.QtWidgets import QToolBar
 from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, QTimer
 from qgis.core import QgsVectorLayer
 
-from .core.compat import safe_exec, QAction, format_tooltip
+from .core.compat import QAction, format_tooltip
 
 from .core.config_manager import ConfigManager
 from .core.attribute_engine import AttributeEngine
@@ -255,7 +255,7 @@ class QuickFieldBrushPlugin:
                 self.action_toggle.setChecked(False)
                 return
 
-            fields = AttributeEngine.get_editable_fields(layer)
+            fields = AttributeEngine.get_editable_fields(layer, include_icons=False)
             if not fields:
                 self.iface.messageBar().pushWarning(
                     "QuickFieldBrush", tr("Layer: {0} (no editable fields)").format(layer.name()))
@@ -286,6 +286,12 @@ class QuickFieldBrushPlugin:
             by_layer[layer.id()] = item
             self.config.setdefault("single_rank", {})["field_name"] = item
             ConfigManager.save_config(self.config)
+
+            # 选定字段后立即异步预热该字段频次缓存，用户框选完右键时直接 0ms 秒开
+            QTimer.singleShot(
+                10,
+                lambda lyr=layer, fld=item: AttributeEngine.extract_unique_values_with_counts(lyr, fld)
+            )
 
             if self.action_painter and self.action_painter.isChecked():
                 self.action_painter.setChecked(False)
@@ -368,21 +374,52 @@ class QuickFieldBrushPlugin:
 
     def _bind_layer_selection_signal(self, layer):
         self._unbind_layer_selection_signal()
-        if layer and hasattr(layer, "selectionChanged"):
+        if layer and isinstance(layer, QgsVectorLayer) and hasattr(layer, "selectionChanged"):
             try:
                 layer.selectionChanged.connect(self._on_layer_selection_changed_internal)
+                layer.attributeValueChanged.connect(self._on_external_attribute_changed)
+                layer.featureAdded.connect(self._on_external_layer_modified)
+                layer.featureDeleted.connect(self._on_external_layer_modified)
+                layer.afterRollBack.connect(self._on_external_layer_modified)
                 self._connected_layer = layer
             except (TypeError, RuntimeError, AttributeError):
                 pass
 
     def _unbind_layer_selection_signal(self):
-        try:
-            if self._connected_layer and hasattr(self._connected_layer, "selectionChanged"):
-                self._connected_layer.selectionChanged.disconnect(self._on_layer_selection_changed_internal)
-        except (RuntimeError, ReferenceError, TypeError, AttributeError):
-            pass
-        finally:
+        if self._connected_layer is not None:
+            for sig_name, slot in (
+                ("selectionChanged", self._on_layer_selection_changed_internal),
+                ("attributeValueChanged", self._on_external_attribute_changed),
+                ("featureAdded", self._on_external_layer_modified),
+                ("featureDeleted", self._on_external_layer_modified),
+                ("afterRollBack", self._on_external_layer_modified),
+            ):
+                try:
+                    sig = getattr(self._connected_layer, sig_name, None)
+                    if sig is not None:
+                        sig.disconnect(slot)
+                except (RuntimeError, ReferenceError, TypeError, AttributeError):
+                    pass
             self._connected_layer = None
+
+    def _on_external_attribute_changed(self, fid, field_idx, new_val):
+        """当外部（属性表/字段计算器/Ctrl+Z 原生撤销）修改属性时，精准失效对应字段缓存"""
+        if getattr(AttributeEngine, "_in_internal_edit", False):
+            return
+        layer = self._connected_layer
+        if layer and hasattr(layer, "isValid") and layer.isValid():
+            fields = layer.fields()
+            if 0 <= field_idx < fields.count():
+                fname = fields.at(field_idx).name()
+                AttributeEngine.invalidate_cache(layer, fname)
+
+    def _on_external_layer_modified(self, *args):
+        """当外部新增/删除要素或回滚编辑缓冲区时，失效图层缓存"""
+        if getattr(AttributeEngine, "_in_internal_edit", False):
+            return
+        layer = self._connected_layer
+        if layer and hasattr(layer, "isValid") and layer.isValid():
+            AttributeEngine.invalidate_cache(layer)
 
     def _on_layer_selection_changed_internal(self):
         if self._connected_layer:

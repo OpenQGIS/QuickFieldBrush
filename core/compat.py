@@ -5,15 +5,17 @@ QuickFieldBrush 跨版本兼容层 (QGIS 3 / Qt5 与 QGIS 4 / Qt6 统一桥接)
 
 from qgis.PyQt.QtCore import Qt, QPoint, QSize
 from qgis.PyQt.QtWidgets import (
-    QMenu, QDialog, QLineEdit, QHeaderView, QFrame,
+    QDialog, QLineEdit, QHeaderView, QFrame,
     QStyle, QDialogButtonBox, QMessageBox, QAbstractItemView
 )
 
 try:
-    from qgis.PyQt.QtGui import QAction, QGuiApplication
+    from qgis.PyQt.QtGui import QAction as _QAction, QGuiApplication
 except ImportError:
-    from qgis.PyQt.QtWidgets import QAction
+    from qgis.PyQt.QtWidgets import QAction as _QAction
     from qgis.PyQt.QtGui import QGuiApplication
+
+QAction = _QAction
 
 # Qt6 与 Qt5 标准事件循环执行器 (优先调用标准 exec)
 def safe_exec(obj, *args):

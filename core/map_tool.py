@@ -21,7 +21,7 @@ from qgis.core import (
     QgsVectorLayer,
     QgsFeatureRequest
 )
-from qgis.PyQt.QtCore import Qt, QRect, QPoint, QObject, QEvent
+from qgis.PyQt.QtCore import Qt, QPoint, QObject, QEvent
 from qgis.PyQt.QtGui import QColor, QCursor
 from ..i18n_helper import tr
 
