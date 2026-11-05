@@ -39,7 +39,7 @@ class HistoryDockWidget(QgsDockWidget):
     def __init__(self, iface, parent=None):
         super().__init__(tr("QuickFieldBrush History"), parent or iface.mainWindow())
         self.setObjectName("QuickFieldBrushHistoryDock")
-        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea)
+        self.setAllowedAreas(Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea | Qt.DockWidgetArea.BottomDockWidgetArea)
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.mgr = HistoryManager.instance()
@@ -51,7 +51,7 @@ class HistoryDockWidget(QgsDockWidget):
         self.setMinimumSize(280, 260)
 
         # 地图瞬时高亮橡皮筋
-        self._flash_band = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self._flash_band = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
         self._flash_band.setColor(QColor(76, 175, 80, 130))
         self._flash_band.setStrokeColor(QColor(46, 125, 50, 255))
         self._flash_band.setWidth(3)
@@ -167,7 +167,7 @@ class HistoryDockWidget(QgsDockWidget):
 
         self.tree.itemClicked.connect(self._on_tree_item_clicked)
         self.tree.itemDoubleClicked.connect(self._on_tree_item_double_clicked)
-        self.tree.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.tree.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.tree.customContextMenuRequested.connect(self._show_context_menu)
         main_layout.addWidget(self.tree, 1)
 
@@ -523,7 +523,7 @@ class HistoryDockWidget(QgsDockWidget):
             self,
             tr("Export History to CSV"),
             "QuickFieldBrush_History.csv",
-            "CSV Files (*.csv)"
+            tr("CSV Files (*.csv)")
         )
         if filepath:
             ok, msg = self.mgr.export_csv(filepath)
@@ -538,10 +538,10 @@ class HistoryDockWidget(QgsDockWidget):
             self,
             tr("Clear all history entries"),
             tr("Are you sure you want to clear all history records? This cannot be undone."),
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No
         )
-        if ret == QMessageBox.Yes:
+        if ret == QMessageBox.StandardButton.Yes:
             self.mgr.clear_history()
             self.iface.messageBar().pushInfo("QuickFieldBrush", tr("History log cleared!"))
 

@@ -80,7 +80,7 @@ class RankValueItemWidget(QWidget):
         self._is_hovered = False
 
         self.setFixedHeight(item_height)
-        self.setAttribute(Qt.WA_Hover, True)
+        self.setAttribute(Qt.WidgetAttribute.WA_Hover, True)
         self.setMouseTracking(True)
         self.setAutoFillBackground(False)
 
@@ -177,7 +177,7 @@ class RankValueItemWidget(QWidget):
         super().leaveEvent(e)
 
     def mouseReleaseEvent(self, e):
-        if e.button() == Qt.LeftButton:
+        if e.button() == Qt.MouseButton.LeftButton:
             self.clicked.emit()
             e.accept()
         else:
@@ -683,7 +683,7 @@ class RankContextMenu(QMenu):
         new_val, ok = QInputDialog.getText(
             self.parent(), tr("Enter a new value"),
             tr("Assign a new value to field [{0}] in batch:").format(field_name),
-            QLineEdit.Normal, ""
+            QLineEdit.EchoMode.Normal, ""
         )
         if ok:
             clean_val = new_val.strip()

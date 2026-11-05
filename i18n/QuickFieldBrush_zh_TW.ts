@@ -129,6 +129,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>浏览、高亮定位、单步撤销、导出台账</translation>
     </message>
     <message>
+      <source>CSV Files (*.csv)</source>
+      <translation>CSV 表格檔案 (*.csv)</translation>
+    </message>
+    <message>
       <source>Cancel</source>
       <translation>取消</translation>
     </message>

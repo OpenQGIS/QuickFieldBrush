@@ -30,7 +30,7 @@ class FormatPainterDockWidget(QgsDockWidget):
     def __init__(self, iface, painter_tool, parent=None):
         super().__init__(tr("Attribute Format Painter (console)"), parent or iface.mainWindow())
         self.setObjectName("QuickFieldBrushPainterDock")
-        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea | Qt.BottomDockWidgetArea)
+        self.setAllowedAreas(Qt.DockWidgetArea.LeftDockWidgetArea | Qt.DockWidgetArea.RightDockWidgetArea | Qt.DockWidgetArea.BottomDockWidgetArea)
         self.iface = iface
         self.painter_tool = painter_tool
         self.layer = iface.activeLayer()
@@ -229,7 +229,7 @@ class FormatPainterDockWidget(QgsDockWidget):
 
     def keyPressEvent(self, event):
         """Esc 键退出格式刷"""
-        if event.key() == Qt.Key_Escape:
+        if event.key() == Qt.Key.Key_Escape:
             self.close()
             event.accept()
         else:

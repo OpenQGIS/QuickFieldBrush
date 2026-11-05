@@ -29,7 +29,7 @@ class TargetFieldDialog(QDialog):
         self.current_field = current_field or ""
 
         self.setWindowTitle(tr("Specify Target Field"))
-        self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
+        self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowTitleHint | Qt.WindowType.WindowCloseButtonHint)
         self.setFixedWidth(310)
 
         self._init_ui()
@@ -62,7 +62,7 @@ class TargetFieldDialog(QDialog):
 
             lbl_layer = QLabel()
             fm = QFontMetrics(lbl_layer.font())
-            elided_name = fm.elidedText(self.layer.name(), Qt.ElideMiddle, 190)
+            elided_name = fm.elidedText(self.layer.name(), Qt.TextElideMode.ElideMiddle, 190)
             lbl_layer.setText(elided_name)
             lbl_layer.setToolTip(self.layer.name())
             lbl_layer.setStyleSheet("font-weight: 500; color: #222222;")
@@ -93,11 +93,11 @@ class TargetFieldDialog(QDialog):
         lay.addRow(tr("Target Field:"), self.cb_field)
 
         # 3. 按钮栏
-        btn_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-        btn_ok = btn_box.button(QDialogButtonBox.Ok)
+        btn_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        btn_ok = btn_box.button(QDialogButtonBox.StandardButton.Ok)
         if btn_ok:
             btn_ok.setText(tr("OK"))
-        btn_cancel = btn_box.button(QDialogButtonBox.Cancel)
+        btn_cancel = btn_box.button(QDialogButtonBox.StandardButton.Cancel)
         if btn_cancel:
             btn_cancel.setText(tr("Cancel"))
 
@@ -115,6 +115,6 @@ class TargetFieldDialog(QDialog):
     def select_field(cls, parent, layer, valid_names, current_field=None):
         """便捷静态调用方法：成功返回选中的字段名，取消返回 None"""
         dlg = cls(parent, layer, valid_names, current_field)
-        if safe_exec(dlg) == QDialog.Accepted:
+        if safe_exec(dlg) == QDialog.DialogCode.Accepted:
             return dlg.get_selected_field()
         return None

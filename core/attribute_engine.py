@@ -325,7 +325,7 @@ class AttributeEngine:
             AttributeEngine._unique_cache[key] = result
             return list(result[:limit])
         except Exception as e:
-            QgsMessageLog.logMessage(f"提取唯一值失败: {str(e)}", "QuickFieldBrush", Qgis.Warning)
+            QgsMessageLog.logMessage(f"提取唯一值失败: {str(e)}", "QuickFieldBrush", Qgis.MessageLevel.Warning)
             return []
 
     @staticmethod
@@ -479,7 +479,7 @@ class AttributeEngine:
             req = (
                 QgsFeatureRequest()
                 .setFilterFids(list(sample_fids))
-                .setFlags(QgsFeatureRequest.NoGeometry)
+                .setFlags(QgsFeatureRequest.Flag.NoGeometry)
                 .setSubsetOfAttributes([field_idx])
             )
             for feat in layer.getFeatures(req):
@@ -518,7 +518,7 @@ class AttributeEngine:
             # 2. 兜底：轻量原值哈希聚合（循环内仅对原始值计数，循环外对唯一键做一次清洗，避免百万次正则/字符串操作）
             if counter is None:
                 raw_counter = Counter()
-                req = QgsFeatureRequest().setSubsetOfAttributes([field_idx]).setFlags(QgsFeatureRequest.NoGeometry)
+                req = QgsFeatureRequest().setSubsetOfAttributes([field_idx]).setFlags(QgsFeatureRequest.Flag.NoGeometry)
                 for feat in layer.getFeatures(req):
                     v = feat.attribute(field_idx)
                     try:
@@ -541,7 +541,7 @@ class AttributeEngine:
             AttributeEngine._freq_cache[key] = result
             return list(result)
         except Exception as e:
-            QgsMessageLog.logMessage(f"提取字段频次失败: {str(e)}", "QuickFieldBrush", Qgis.Warning)
+            QgsMessageLog.logMessage(f"提取字段频次失败: {str(e)}", "QuickFieldBrush", Qgis.MessageLevel.Warning)
             uniques = AttributeEngine.extract_unique_values(layer, field_name, limit=limit)
             return [(u, 0) for u in uniques]
 
@@ -635,7 +635,7 @@ class AttributeEngine:
         try:
             req = (QgsFeatureRequest()
                    .setFilterFids(list(selected_fids))
-                   .setFlags(QgsFeatureRequest.NoGeometry)
+                   .setFlags(QgsFeatureRequest.Flag.NoGeometry)
                    .setSubsetOfAttributes([field_name], layer.fields()))
             for feat in layer.getFeatures(req):
                 old_values[feat.id()] = feat.attribute(field_name)
@@ -644,7 +644,7 @@ class AttributeEngine:
             try:
                 req = (QgsFeatureRequest()
                        .setFilterFids(list(selected_fids))
-                       .setFlags(QgsFeatureRequest.NoGeometry))
+                       .setFlags(QgsFeatureRequest.Flag.NoGeometry))
                 for feat in layer.getFeatures(req):
                     old_values[feat.id()] = feat.attribute(field_name)
             except (AttributeError, KeyError, RuntimeError, TypeError):
@@ -688,7 +688,7 @@ class AttributeEngine:
                     changes=changes
                 )
             except (AttributeError, KeyError, RuntimeError) as hist_err:
-                QgsMessageLog.logMessage(f"History record error: {hist_err}", "QuickFieldBrush", Qgis.Info)
+                QgsMessageLog.logMessage(f"History record error: {hist_err}", "QuickFieldBrush", Qgis.MessageLevel.Info)
 
             return len(updated_fids), tr("Successfully set {1}={2} on {0} features").format(
                 len(updated_fids), field_name, val_display)

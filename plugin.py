@@ -321,7 +321,7 @@ class QuickFieldBrushPlugin:
             # 打开常驻/置顶控制面板 (支持浮动与侧边停靠)
             if self.painter_dialog is None:
                 self.painter_dialog = FormatPainterDialog(self.iface, self.painter_tool, self.iface.mainWindow())
-                self.iface.addDockWidget(Qt.RightDockWidgetArea, self.painter_dialog)
+                self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.painter_dialog)
                 self.painter_dialog.visibilityChanged.connect(self._on_painter_visibility_changed)
             else:
                 self.painter_dialog.refresh_state()
@@ -349,7 +349,7 @@ class QuickFieldBrushPlugin:
         """切换历史记录面板的显示/隐藏 (支持侧边停靠与独立置顶悬浮)"""
         if self.history_dialog is None:
             self.history_dialog = HistoryDialog(self.iface, self.iface.mainWindow())
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.history_dialog)
+            self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.history_dialog)
 
         if self.history_dialog.isVisible():
             self.history_dialog.hide()

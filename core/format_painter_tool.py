@@ -40,13 +40,13 @@ class FormatPainterTool(QgsMapToolIdentify):
         self.on_feature_picked = None  # 回调通知面板: fn(field_name, val_str, feat_id)
 
         # 瞬时高亮橡皮筋（点击要素后闪烁一下绿色表示刷入成功，几何类型动态自适应）
-        self.flash_band = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.flash_band = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
         self.flash_band.setColor(QColor(76, 175, 80, 120))
         self.flash_band.setStrokeColor(QColor(56, 142, 60, 255))
         self.flash_band.setWidth(2)
 
         # 瞬时吸取高亮橡皮筋（吸取要素后闪烁一下优雅蓝色）
-        self.absorb_band = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.absorb_band = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
         self.absorb_band.setColor(QColor(37, 99, 235, 120))
         self.absorb_band.setStrokeColor(QColor(29, 78, 216, 255))
         self.absorb_band.setWidth(2)
@@ -89,7 +89,7 @@ class FormatPainterTool(QgsMapToolIdentify):
         map_pt = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(event.pos())
         click_layer_pt = self.toLayerCoordinates(layer, map_pt)
         click_geom = QgsGeometry.fromPointXY(click_layer_pt)
-        is_polygon = (layer.geometryType() == QgsWkbTypes.PolygonGeometry)
+        is_polygon = (layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry)
 
         if results:
             if len(results) == 1:
@@ -144,7 +144,7 @@ class FormatPainterTool(QgsMapToolIdentify):
         return best_feat
 
     def canvasReleaseEvent(self, event):
-        if event.button() not in (Qt.LeftButton, Qt.RightButton):
+        if event.button() not in (Qt.MouseButton.LeftButton, Qt.MouseButton.RightButton):
             return
 
         if not self.target_field:
@@ -163,8 +163,8 @@ class FormatPainterTool(QgsMapToolIdentify):
         # 3. 或按住了 Alt / Ctrl 键单击
         is_absorb = (
             self.is_picking_mode or
-            event.button() == Qt.RightButton or
-            bool(event.modifiers() & (Qt.AltModifier | Qt.ControlModifier))
+            event.button() == Qt.MouseButton.RightButton or
+            bool(event.modifiers() & (Qt.KeyboardModifier.AltModifier | Qt.KeyboardModifier.ControlModifier))
         )
 
         hit_feature = self._find_target_feature(layer, event)
@@ -273,7 +273,7 @@ class FormatPainterTool(QgsMapToolIdentify):
             pass
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Escape:
+        if event.key() == Qt.Key.Key_Escape:
             # 按 ESC 退出格式刷
             self.canvas.unsetMapTool(self)
 

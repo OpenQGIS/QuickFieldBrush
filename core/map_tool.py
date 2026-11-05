@@ -42,7 +42,7 @@ class AssignmentModeEventFilter(QObject):
         if not getattr(self.plugin, "is_assignment_mode", False):
             return False
 
-        if event.type() == QEvent.MouseButtonPress and event.button() == Qt.RightButton:
+        if event.type() == QEvent.Type.MouseButtonPress and event.button() == Qt.MouseButton.RightButton:
             layer = self.canvas.currentLayer()
             if isinstance(layer, QgsVectorLayer) and layer.selectedFeatureCount() > 0:
                 # 检查是否有正在绘制的多边形未闭合（橡皮筋节点 > 0）
@@ -56,11 +56,11 @@ class AssignmentModeEventFilter(QObject):
                 if not drawing_in_progress:
                     self.plugin._show_rank_menu(QCursor.pos(), layer)
                     return True
-        elif event.type() == QEvent.ContextMenu:
+        elif event.type() == QEvent.Type.ContextMenu:
             layer = self.canvas.currentLayer()
             if isinstance(layer, QgsVectorLayer) and layer.selectedFeatureCount() > 0:
                 return True
-        elif event.type() == QEvent.KeyPress and event.key() == Qt.Key_Escape:
+        elif event.type() == QEvent.Type.KeyPress and event.key() == Qt.Key.Key_Escape:
             layer = self.canvas.currentLayer()
             if isinstance(layer, QgsVectorLayer) and layer.selectedFeatureCount() > 0:
                 layer.removeSelection()
@@ -84,7 +84,7 @@ class QuickFieldBrushMapTool(QgsMapToolIdentify):
         self.end_point = None
 
         # 框选橡皮筋矩形框（半透明蓝色，与 QGIS 原生保持一致）
-        self.rubber_band = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.rubber_band = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
         self.rubber_band.setColor(QColor(0, 120, 215, 65))
         self.rubber_band.setStrokeColor(QColor(0, 120, 215, 200))
         self.rubber_band.setWidth(1)
@@ -94,13 +94,13 @@ class QuickFieldBrushMapTool(QgsMapToolIdentify):
     def canvasPressEvent(self, event):
         layer = self.canvas.currentLayer()
 
-        if event.button() == Qt.LeftButton:
+        if event.button() == Qt.MouseButton.LeftButton:
             self.start_pos = event.pos()
             self.start_point = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(event.pos())
             self.end_point = self.start_point
             self.is_dragging = True
-            self.rubber_band.reset(QgsWkbTypes.PolygonGeometry)
-        elif event.button() == Qt.RightButton:
+            self.rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
+        elif event.button() == Qt.MouseButton.RightButton:
             # 鼠标右键：如果当前已有选中的要素，直接在光标位置弹出快速分级菜单
             if isinstance(layer, QgsVectorLayer) and layer.selectedFeatureCount() > 0:
                 self.plugin._show_rank_menu(QCursor.pos(), layer)
@@ -118,7 +118,7 @@ class QuickFieldBrushMapTool(QgsMapToolIdentify):
         map_pt = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(event.pos())
         click_layer_pt = self.toLayerCoordinates(layer, map_pt)
         click_geom = QgsGeometry.fromPointXY(click_layer_pt)
-        is_polygon = (layer.geometryType() == QgsWkbTypes.PolygonGeometry)
+        is_polygon = (layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry)
 
         if results:
             if len(results) == 1:
@@ -173,9 +173,9 @@ class QuickFieldBrushMapTool(QgsMapToolIdentify):
         return best_feat
 
     def canvasReleaseEvent(self, event):
-        if event.button() == Qt.LeftButton and self.is_dragging:
+        if event.button() == Qt.MouseButton.LeftButton and self.is_dragging:
             self.is_dragging = False
-            self.rubber_band.reset(QgsWkbTypes.PolygonGeometry)
+            self.rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
 
             layer = self.canvas.currentLayer()
             if not isinstance(layer, QgsVectorLayer) or not layer.isValid():
@@ -192,8 +192,8 @@ class QuickFieldBrushMapTool(QgsMapToolIdentify):
 
             # 是否按下了 Shift（加选）或 Ctrl（切换选）
             modifiers = event.modifiers()
-            is_shift = bool(modifiers & Qt.ShiftModifier)
-            is_ctrl = bool(modifiers & Qt.ControlModifier)
+            is_shift = bool(modifiers & Qt.KeyboardModifier.ShiftModifier)
+            is_ctrl = bool(modifiers & Qt.KeyboardModifier.ControlModifier)
 
             if is_click:
                 clicked_feat = self._find_clicked_feature(layer, event)
@@ -243,7 +243,7 @@ class QuickFieldBrushMapTool(QgsMapToolIdentify):
 
     def _update_rubber_band(self):
         """绘制蓝色半透明框选框"""
-        self.rubber_band.reset(QgsWkbTypes.PolygonGeometry)
+        self.rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         p1 = QgsPointXY(self.start_point.x(), self.start_point.y())
         p2 = QgsPointXY(self.end_point.x(), self.start_point.y())
         p3 = QgsPointXY(self.end_point.x(), self.end_point.y())
@@ -257,7 +257,7 @@ class QuickFieldBrushMapTool(QgsMapToolIdentify):
 
     def deactivate(self):
         if self.rubber_band:
-            self.rubber_band.reset(QgsWkbTypes.PolygonGeometry)
+            self.rubber_band.reset(QgsWkbTypes.GeometryType.PolygonGeometry)
         # 工具被切走时取消工具条图标的 Checked 状态
         if self.plugin.action_toggle and self.plugin.action_toggle.isChecked():
             self.plugin.action_toggle.setChecked(False)

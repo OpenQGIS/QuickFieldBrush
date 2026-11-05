@@ -143,7 +143,7 @@ def set_window_stay_on_top(widget, on_top: bool):
         except (AttributeError, OSError, ValueError, RuntimeError):
             pass
 
-    widget.setWindowFlag(Qt.WindowStaysOnTopHint, on_top)
+    widget.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, on_top)
     widget.show()
     return True
 

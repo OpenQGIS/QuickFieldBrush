@@ -177,6 +177,7 @@ _zh_translations = {
     "No pending modifications to undo!": "没有可撤销的修改步骤！",
     "History is empty, nothing to export!": "历史记录为空，无内容可导出！",
     "Export History to CSV": "导出操作历史到 CSV 文件",
+    "CSV Files (*.csv)": "CSV 表格文件 (*.csv)",
     "History log cleared!": "历史记录已清空！",
     "Field ➔ Value": "字段 ➔ 新值",
     "Layer · Feature": "图层 · 要素",

@@ -39,6 +39,10 @@
       <translation>Absorb value from currently selected features</translation>
     </message>
     <message>
+      <source>Absorbed FID {0}: [{1} = NULL] (ready to paint)</source>
+      <translation>Absorbed FID {0}: [{1} = NULL] (ready to paint)</translation>
+    </message>
+    <message>
       <source>Absorbed FID {0}: [{1} = {2}] (ready to paint)</source>
       <translation>Absorbed FID {0}: [{1} = {2}] (ready to paint)</translation>
     </message>
@@ -49,6 +53,10 @@
     <message>
       <source>Activate QuickFieldBrush interactive ranking tool (box select + right click)</source>
       <translation>Activate QuickFieldBrush interactive ranking tool (box select + right click)</translation>
+    </message>
+    <message>
+      <source>Activate to enter rapid assignment mode, automatically linking with QGIS native selection tools (supports box, polygon, freehand, radius, etc.). Box-select features or right-click any selected features on the canvas to rapidly assign values. Press Esc or switch to non-selection tools to exit.</source>
+      <translation>Activate to enter rapid assignment mode, automatically linking with QGIS native selection tools (supports box, polygon, freehand, radius, etc.). Box-select features or right-click any selected features on the canvas to rapidly assign values. Press Esc or switch to non-selection tools to exit.</translation>
     </message>
     <message>
       <source>Add New Attribute Value</source>
@@ -101,6 +109,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>Attribute format painter (pick field/value, then click features to assign)</translation>
     </message>
     <message>
+      <source>Attribute update failed: field [{0}] may be read-only</source>
+      <translation>Attribute update failed: field [{0}] may be read-only</translation>
+    </message>
+    <message>
       <source>Attribute update failed: {0}</source>
       <translation>Attribute update failed: {0}</translation>
     </message>
@@ -117,8 +129,24 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>Navegar, destacar localização, desfazer por etapas e exportar registros</translation>
     </message>
     <message>
+      <source>CSV Files (*.csv)</source>
+      <translation>Arquivos CSV (*.csv)</translation>
+    </message>
+    <message>
+      <source>Cancel</source>
+      <translation>Cancel</translation>
+    </message>
+    <message>
       <source>Cancel selection</source>
       <translation>Cancelar seleção</translation>
+    </message>
+    <message>
+      <source>Cannot convert '{0}' to float for field [{1}]</source>
+      <translation>Cannot convert '{0}' to float for field [{1}]</translation>
+    </message>
+    <message>
+      <source>Cannot convert '{0}' to integer for field [{1}]</source>
+      <translation>Cannot convert '{0}' to integer for field [{1}]</translation>
     </message>
     <message>
       <source>Clear</source>
@@ -285,6 +313,10 @@ Select target field after activation, click or box-select features, then right-c
 Select target field after activation, click or box-select features, then right-click to rapidly modify attribute values.</translation>
     </message>
     <message>
+      <source>Interactive assignment mode active: Linked with QGIS native selection tools (supports box, polygon, freehand, etc.). Right-click on map to assign values. (Press Esc to exit)</source>
+      <translation>Interactive assignment mode active: Linked with QGIS native selection tools (supports box, polygon, freehand, etc.). Right-click on map to assign values. (Press Esc to exit)</translation>
+    </message>
+    <message>
       <source>Interactive assignment tool activated: box-select features, then right-click to assign values.</source>
       <translation>Interactive assignment tool activated: box-select features, then right-click to assign values.</translation>
     </message>
@@ -317,8 +349,16 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Layer · Feature</translation>
     </message>
     <message>
+      <source>Layer:</source>
+      <translation>Layer:</translation>
+    </message>
+    <message>
       <source>Layer: {0} (no editable fields)</source>
       <translation>Layer: {0} (no editable fields)</translation>
+    </message>
+    <message>
+      <source>Linked with QGIS native selection tools, right-click selected features to rapidly assign values.</source>
+      <translation>Linked with QGIS native selection tools, right-click selected features to rapidly assign values.</translation>
     </message>
     <message>
       <source>Modification History</source>
@@ -381,8 +421,16 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Numeric Descending (9 -&gt; 1)</translation>
     </message>
     <message>
+      <source>OK</source>
+      <translation>OK</translation>
+    </message>
+    <message>
       <source>Old Value</source>
       <translation>Valor anterior</translation>
+    </message>
+    <message>
+      <source>Painting: [{0} = NULL] (clear field)</source>
+      <translation>Painting: [{0} = NULL] (clear field)</translation>
     </message>
     <message>
       <source>Painting: [{0} = {1}]</source>
@@ -453,6 +501,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>QuickFieldBrush: set {0}={1}</translation>
     </message>
     <message>
+      <source>Revert failed: target feature(s) no longer exist or field is read-only!</source>
+      <translation>Revert failed: target feature(s) no longer exist or field is read-only!</translation>
+    </message>
+    <message>
       <source>Revert failed: {0}</source>
       <translation>Revert failed: {0}</translation>
     </message>
@@ -497,6 +549,18 @@ Select target field after activation, click or box-select features, then right-c
       <translation>Selected {0} features on layer [{1}]</translation>
     </message>
     <message>
+      <source>Set painter value to NULL, or batch clear selected features</source>
+      <translation>Set painter value to NULL, or batch clear selected features</translation>
+    </message>
+    <message>
+      <source>Set to NULL</source>
+      <translation>Set to NULL</translation>
+    </message>
+    <message>
+      <source>Set to NULL (Clear field)</source>
+      <translation>Set to NULL (Clear field)</translation>
+    </message>
+    <message>
       <source>Sort:</source>
       <translation>Ordenar:</translation>
     </message>
@@ -539,6 +603,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Switch target field... (current: [{0}])</source>
       <translation>Switch target field... (current: [{0}])</translation>
+    </message>
+    <message>
+      <source>Target Field:</source>
+      <translation>Target Field:</translation>
     </message>
     <message>
       <source>Target Value</source>
