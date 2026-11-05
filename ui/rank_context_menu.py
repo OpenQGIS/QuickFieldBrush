@@ -15,8 +15,8 @@ from qgis.PyQt.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QToolButton, QLabel,
     QStyle, QScrollArea, QFrame
 )
-from qgis.PyQt.QtGui import QIcon, QCursor, QPainter, QFontMetrics, QPalette, QColor, QPen, QFont
-from qgis.PyQt.QtCore import QTimer, QSize, Qt, QRect, QPointF, pyqtSignal
+from qgis.PyQt.QtGui import QIcon, QCursor, QPainter, QFontMetrics, QPalette, QColor, QFont
+from qgis.PyQt.QtCore import QTimer, QSize, Qt, QRect, pyqtSignal
 from qgis.core import QgsApplication
 from ..core.compat import safe_exec, calculate_menu_spawn_pos
 from ..core.attribute_engine import AttributeEngine
@@ -58,13 +58,14 @@ class RankValueItemWidget(QWidget):
 
     def __init__(self, val, count, font_metrics: QFontMetrics, left_padding: int = 28,
                  item_height: int = 24, active_count: int = 0, total_selected: int = 0,
-                 menu_ref=None, parent=None):
+                 current_icon: QIcon = None, menu_ref=None, parent=None):
         super().__init__(parent)
         self.val = val
         self.count = count
         self.active_count = active_count
         self.total_selected = total_selected
         self.is_current = active_count > 0
+        self._current_icon = current_icon
         self.val_text = str(val)
         if count > 0:
             if self.is_current and total_selected > 1 and active_count < total_selected:
@@ -124,28 +125,16 @@ class RankValueItemWidget(QWidget):
                 val_color = QColor("#FFFFFF")
             cnt_color = QColor(val_color)
             cnt_color.setAlpha(195)
-            check_color = val_color
         else:
             val_color = pal.color(cg_active, cr_text)
             cnt_color = pal.color(cg_disabled, cr_text)
-            check_color = hl_bg
 
-        # 2. 若该候选值是当前已选要素正在使用的值，在左侧图标槽绘制抗锯齿勾选标记 ✓
-        if self.is_current:
-            aa_hint = getattr(QPainter.RenderHint, "Antialiasing", getattr(QPainter, "Antialiasing", 0x01))
-            p.save()
-            p.setRenderHint(aa_hint, True)
-            pen = QPen(check_color, 1.8)
-            cap_round = getattr(Qt.PenCapStyle, "RoundCap", getattr(Qt, "RoundCap", 0x20))
-            join_round = getattr(Qt.PenJoinStyle, "RoundJoin", getattr(Qt, "RoundJoin", 0x80))
-            pen.setCapStyle(cap_round)
-            pen.setJoinStyle(join_round)
-            p.setPen(pen)
-            cx = self._left_pad / 2.0
-            cy = rect.height() / 2.0
-            p.drawLine(QPointF(cx - 4.5, cy + 0.2), QPointF(cx - 1.2, cy + 3.5))
-            p.drawLine(QPointF(cx - 1.2, cy + 3.5), QPointF(cx + 4.8, cy - 3.2))
-            p.restore()
+        # 2. 若该候选值是当前已选要素正在使用的值，在左侧图标槽居中绘制 current_val.svg 矢量图标
+        if self.is_current and self._current_icon is not None and not self._current_icon.isNull():
+            ic_sz = 15
+            ix = int((self._left_pad - ic_sz) / 2)
+            iy = int((rect.height() - ic_sz) / 2)
+            self._current_icon.paint(p, QRect(ix, iy, ic_sz, ic_sz))
 
         align_vcenter = getattr(Qt.AlignmentFlag, "AlignVCenter", getattr(Qt, "AlignVCenter", 0x0080))
         align_left = getattr(Qt.AlignmentFlag, "AlignLeft", getattr(Qt, "AlignLeft", 0x0001))
@@ -280,6 +269,7 @@ class RankContextMenu(QMenu):
         self._icon_alpha_desc = self._get_cached_icon("sort_za", os.path.join(icons_dir, "sort-reverse-ZA.svg"))
         self._icon_freq_desc = self._get_cached_icon("sort_desc", os.path.join(icons_dir, "sort-dscend.svg"))
         self._icon_freq_asc = self._get_cached_icon("sort_asc", os.path.join(icons_dir, "sort-ascend.svg"))
+        self._icon_current_val = self._get_cached_icon("current_val", os.path.join(icons_dir, "current_val.svg"))
 
         self._build_menu()
 
@@ -540,6 +530,7 @@ class RankContextMenu(QMenu):
                     item_height=item_h,
                     active_count=act_cnt,
                     total_selected=sampled_total,
+                    current_icon=self._icon_current_val,
                     menu_ref=self,
                     parent=self._values_container
                 )
@@ -627,11 +618,10 @@ class RankContextMenu(QMenu):
             lambda checked, fn=self.target_field: self._on_custom_input(fn, auto_edit)
         )
 
-        # 4.1 设置为 NULL / 清空字段值（若当前已选要素包含空值，直观显示 ✓ 标记）
-        ic_null = self._get_cached_icon("clear", os.path.join(icons_dir, "clear.svg"), "mIconClearText.svg")
+        # 4.1 设置为 NULL / 清空字段值（若当前已选要素包含空值，直观显示绿色星标与加粗）
         null_count = self._active_sample.get("null_count", 0) if self._active_sample else 0
-        null_label = tr("Set to NULL (Clear field)  ✓") if null_count > 0 else tr("Set to NULL (Clear field)")
-        null_act = self.addAction(ic_null, null_label)
+        ic_null = self._icon_current_val if (null_count > 0 and not self._icon_current_val.isNull()) else self._get_cached_icon("clear", os.path.join(icons_dir, "clear.svg"), "mIconClearText.svg")
+        null_act = self.addAction(ic_null, tr("Set to NULL (Clear field)"))
         if null_count > 0:
             f_null = QFont(null_act.font())
             f_null.setBold(True)
