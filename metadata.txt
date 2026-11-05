@@ -14,11 +14,11 @@ about=
   2. 属性格式刷：支持从要素吸取值或手动选值，在地图上连续点击要素写入，支持停靠与悬浮。
   3. 历史面板：记录修改历史，支持地图单击居中高亮、双击选中要素、单步还原与导出 CSV。
   /
-  QuickFieldBrush helps edit and assign vector attributes in QGIS.
-  Modules:
-  1. Interactive assignment: Box-select features and right-click to assign values. Remembers the target field per layer, with frequency and alphabetical sorting.
-  2. Format painter: Pick an attribute value or absorb it from an existing feature, then click features on the canvas to write values continuously. Supports docked and floating modes with High-DPI hit testing.
-  3. History panel: Logs edits, centers the canvas on selected records, reverts individual changes, and exports records to CSV.
+  QuickFieldBrush is used to rapidly fill in or batch modify vector feature attributes in QGIS.
+  Includes three functional modules:
+  1. Interactive Assignment: Box-select features and right-click to select an attribute value to assign. Remembers the target field per layer and supports frequency and alphabetical sorting.
+  2. Attribute Format Painter: Absorb a value from a feature or select one manually, then click features on the map continuously to write values. Supports docked and floating modes.
+  3. History Panel: Logs modification history, supporting single-click to center and highlight on map, double-click to select features, single-step revert, and CSV export.
 category=Vector
 tags=vector, attributes, assignment, format painter, brush, tagging, history, undo, osm, fast edit
 homepage=https://github.com/OpenQGIS/QuickFieldBrush
@@ -26,11 +26,11 @@ tracker=https://github.com/OpenQGIS/QuickFieldBrush/issues
 repository=https://github.com/OpenQGIS/QuickFieldBrush
 changelog=
   Version 0.5.2:
-  - ✨ 右键菜单当前属性值预览：在候选值列表左侧及空值操作项中自动显示绿色星标并加粗标示已选要素当前的属性值，支持多值占比显示与自动滚动定位。 / Added green star indicators and auto-scrolling in the right-click menu to preview current attribute values of selected features.
-  - 🐛 排序栏与悬停提示样式修复：修复右键菜单顶部排序按钮及悬停提示框在 Windows 主题下背景显示为黑色的问题。 / Fixed black background rendering on sort buttons and tooltips in the right-click menu.
+  - ✨ 右键菜单当前属性值预览：在候选值列表左侧及空值操作项中自动显示绿色星标标示当前的属性值。 / Current attribute value preview in right-click menu: Automatically displays a green star indicator beside candidate values and the null action item to mark current attribute values.
+  - 🐛 排序栏与悬停提示样式修复。 / Fixed sort bar and tooltip styling.
   Version 0.5.1:
-  - 🚀 大图层右键响应提速：优化数十万级要素图层（如全国路网、铁路）的唯一值与频次统计速度，连续赋值后右键菜单即时弹出。 / Improved right-click menu responsiveness on large vector layers during continuous assignment.
-  - 🧭 右键菜单原生风格统一：统一菜单底色与悬停高亮样式，消除滚动区域色差与双重高亮，适配 QGIS 原生浅色与暗色主题。 / Unified right-click menu background and hover highlight styles with QGIS native themes.
+  - 🚀 大图层右键响应提速：优化数要素图层的唯一值与频次统计速度，连续赋值后右键菜单即时弹出。 / Faster right-click response on large layers: Optimized unique value and frequency calculation speed for instant menu popup during continuous assignment.
+  - 🧭 右键菜单原生风格统一：统一菜单底色与悬停高亮样式，消除滚动区域色差与双重高亮，适配 QGIS 原生浅色与暗色主题。 / Unified native right-click menu style: Standardized menu background and hover highlight styles, eliminating scroll area color differences and double highlights across QGIS light and dark themes.
   Version 0.5.0:
   - 🔄 原生选择工具伴随工作流：激活“交互赋值”自动联动 QGIS 原生选择工具（支持矩形、多边形、手绘、圆选等），切换平移等非选择工具或按 Esc 自动休眠。 / Selection Companion Workflow: Linked with QGIS native selection tools (box, polygon, freehand, radius) with auto-sleep on non-selection tools or Esc.
   - ⚙️ 紧凑字段选择弹窗：目标字段选择窗口宽度收窄至 310px，集成图层几何类型图标与 14 种原生字段类型图标。 / Compacted target field selection dialog to 310px width with layer geometry and field type icons.
