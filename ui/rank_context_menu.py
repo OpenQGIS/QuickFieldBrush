@@ -49,9 +49,9 @@ QToolButton:checked:hover {
 
 class RankValueItemWidget(QWidget):
     """
-    右键分级菜单专属候选值项（QGIS 原生菜单渲染风格 + 零子控件极速自绘 + 当前值勾选标识）：
+    右键分级菜单专属候选值项（QGIS 原生菜单渲染风格 + 零子控件极速自绘 + 当前值星标标识）：
     - 悬停时直接用系统 QPalette.Highlight 绘制整行高亮，未悬停时透明透出 QMenu 底色
-    - 当该项属于当前已选要素的属性值时，在左侧图标槽绘制原生 ✓ 标记并加粗文本
+    - 当该项属于当前已选要素的属性值时，在左侧图标槽绘制 current_val.svg 绿色星标并加粗文本
     - 移除内部 QHBoxLayout、双 QLabel 与数百次 setStyleSheet 解析，150 项构建耗时 < 2ms
     """
     clicked = pyqtSignal()

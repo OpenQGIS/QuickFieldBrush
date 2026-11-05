@@ -26,7 +26,7 @@ tracker=https://github.com/OpenQGIS/QuickFieldBrush/issues
 repository=https://github.com/OpenQGIS/QuickFieldBrush
 changelog=
   Version 0.5.2:
-  - 右键菜单当前属性值预览标识：在候选值列表左侧及空值操作项中自动勾选（✓）并加粗标示已选要素当前的属性值，支持多值占比显示与自动滚动定位，告别盲选。 / Added current value checkmark indicators and auto-scrolling in the right-click menu to preview existing values of selected features.
+  - 右键菜单当前属性值预览标识：在候选值列表左侧及空值操作项中自动显示绿色星标（current_val.svg）并加粗标示已选要素当前的属性值，支持多值占比显示与自动滚动定位，告别盲选。 / Added current value green star icon indicators and auto-scrolling in the right-click menu to preview existing values of selected features.
   - 排序栏与悬停提示样式修复：修复右键菜单顶部排序按钮及悬停提示框（Tooltip）在 Windows 原生主题下背景变黑的问题。 / Fixed black background rendering on sort buttons and tooltips in the right-click menu.
   Version 0.5.1:
   - 大图层右键性能优化：优化唯一值与频次统计缓存机制，支持编辑后增量更新与本地 GPKG/SQLite 快速聚合，大幅降低全国铁路等数十万级要素图层的右键菜单延迟。 / Improved right-click performance on large vector layers via incremental frequency cache updates and faster GPKG/SQLite value aggregation.
