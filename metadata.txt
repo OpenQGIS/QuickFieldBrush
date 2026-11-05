@@ -4,7 +4,7 @@ qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
 icon=icon/icon.svg
 description=矢量要素右键快速赋值、属性值格式刷与要素修改历史面板。 / Rapid attribute assignment via right-click, format painter, and edit history panel for QGIS.
-version=0.5.1
+version=0.5.2
 author=OpenQGIS
 email=OpenQGIS@outlook.com
 about=
@@ -25,6 +25,9 @@ homepage=https://github.com/OpenQGIS/QuickFieldBrush
 tracker=https://github.com/OpenQGIS/QuickFieldBrush/issues
 repository=https://github.com/OpenQGIS/QuickFieldBrush
 changelog=
+  Version 0.5.2:
+  - 右键菜单当前属性值预览标识：在候选值列表左侧及空值操作项中自动勾选（✓）并加粗标示已选要素当前的属性值，支持多值占比显示与自动滚动定位，告别盲选。 / Added current value checkmark indicators and auto-scrolling in the right-click menu to preview existing values of selected features.
+  - 排序栏与悬停提示样式修复：修复右键菜单顶部排序按钮及悬停提示框（Tooltip）在 Windows 原生主题下背景变黑的问题。 / Fixed black background rendering on sort buttons and tooltips in the right-click menu.
   Version 0.5.1:
   - 大图层右键性能优化：优化唯一值与频次统计缓存机制，支持编辑后增量更新与本地 GPKG/SQLite 快速聚合，大幅降低全国铁路等数十万级要素图层的右键菜单延迟。 / Improved right-click performance on large vector layers via incremental frequency cache updates and faster GPKG/SQLite value aggregation.
   - 右键菜单原生 UI 风格对齐：统一菜单底色与悬停高亮样式，消除滚动区域分段色差与双重高亮，适配 QGIS 原生浅色与暗色主题。 / Aligned the right-click assignment menu with QGIS native menu styling, fixing background color splits and hover states.

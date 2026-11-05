@@ -15,8 +15,8 @@ from qgis.PyQt.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QToolButton, QLabel,
     QStyle, QScrollArea, QFrame
 )
-from qgis.PyQt.QtGui import QIcon, QCursor, QPainter, QFontMetrics, QPalette, QColor
-from qgis.PyQt.QtCore import QTimer, QSize, Qt, QRect, pyqtSignal
+from qgis.PyQt.QtGui import QIcon, QCursor, QPainter, QFontMetrics, QPalette, QColor, QPen, QFont
+from qgis.PyQt.QtCore import QTimer, QSize, Qt, QRect, QPointF, pyqtSignal
 from qgis.core import QgsApplication
 from ..core.compat import safe_exec, calculate_menu_spawn_pos
 from ..core.attribute_engine import AttributeEngine
@@ -25,21 +25,55 @@ from ..i18n_helper import tr
 from .target_field_dialog import TargetFieldDialog
 
 
+_SORT_BTN_SS = """
+QToolButton {
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background-color: transparent;
+    padding: 2px;
+}
+QToolButton:hover {
+    background-color: rgba(148, 163, 184, 0.22);
+    border: 1px solid rgba(148, 163, 184, 0.45);
+}
+QToolButton:checked {
+    background-color: rgba(37, 99, 235, 0.14);
+    border: 1px solid #2563EB;
+}
+QToolButton:checked:hover {
+    background-color: rgba(37, 99, 235, 0.22);
+    border: 1px solid #1D4ED8;
+}
+"""
+
+
 class RankValueItemWidget(QWidget):
     """
-    右键分级菜单专属候选值项（100% QGIS 原生菜单渲染风格 + 零子控件极速自绘）：
-    - 直接复用 QStyle.CE_MenuItem 渲染原生菜单背景、图标槽与悬停高亮框（自动适配浅色/暗色主题）
+    右键分级菜单专属候选值项（QGIS 原生菜单渲染风格 + 零子控件极速自绘 + 当前值勾选标识）：
+    - 悬停时直接用系统 QPalette.Highlight 绘制整行高亮，未悬停时透明透出 QMenu 底色
+    - 当该项属于当前已选要素的属性值时，在左侧图标槽绘制原生 ✓ 标记并加粗文本
     - 移除内部 QHBoxLayout、双 QLabel 与数百次 setStyleSheet 解析，150 项构建耗时 < 2ms
-    - 属性值使用原生主文本色，频次统计使用原生次要/禁用文本色，视觉清爽克制
     """
     clicked = pyqtSignal()
 
-    def __init__(self, val, count, font_metrics: QFontMetrics, left_padding: int = 28, item_height: int = 24, menu_ref=None, parent=None):
+    def __init__(self, val, count, font_metrics: QFontMetrics, left_padding: int = 28,
+                 item_height: int = 24, active_count: int = 0, total_selected: int = 0,
+                 menu_ref=None, parent=None):
         super().__init__(parent)
         self.val = val
         self.count = count
+        self.active_count = active_count
+        self.total_selected = total_selected
+        self.is_current = active_count > 0
         self.val_text = str(val)
-        self.cnt_text = f"({count:,})" if count > 0 else ""
+        if count > 0:
+            if self.is_current and total_selected > 1 and active_count < total_selected:
+                self.cnt_text = f"({count:,} · {active_count}/{total_selected})"
+            else:
+                self.cnt_text = f"({count:,})"
+        else:
+            self.cnt_text = f"({active_count}/{total_selected})" if (self.is_current and total_selected > 1) else ""
+
         self._left_pad = left_padding
         self._menu_ref = menu_ref
         self._is_hovered = False
@@ -49,7 +83,9 @@ class RankValueItemWidget(QWidget):
         self.setMouseTracking(True)
         self.setAutoFillBackground(False)
 
-        self._val_w = font_metrics.horizontalAdvance(self.val_text) if hasattr(font_metrics, "horizontalAdvance") else font_metrics.width(self.val_text)
+        # 计算文本宽度（若为当前值则按加粗后略宽 4px 预算）
+        raw_val_w = font_metrics.horizontalAdvance(self.val_text) if hasattr(font_metrics, "horizontalAdvance") else font_metrics.width(self.val_text)
+        self._val_w = raw_val_w + (6 if self.is_current else 0)
         if self.cnt_text:
             cnt_w = font_metrics.horizontalAdvance(self.cnt_text) if hasattr(font_metrics, "horizontalAdvance") else font_metrics.width(self.cnt_text)
             self.preferred_width = self._left_pad + self._val_w + 6 + cnt_w + 18
@@ -75,11 +111,12 @@ class RankValueItemWidget(QWidget):
         cr_highlight = getattr(QPalette.ColorRole, "Highlight", getattr(QPalette, "Highlight", 12))
         cr_hl_text = getattr(QPalette.ColorRole, "HighlightedText", getattr(QPalette, "HighlightedText", 13))
 
+        hl_bg = pal.color(cg_active, cr_highlight)
+        if not hl_bg.isValid() or hl_bg.alpha() == 0:
+            hl_bg = QColor("#0078D7")
+
         # 1. 悬停时直接用系统 QPalette.Highlight 填充整行高亮蓝底，未悬停时保持完全透明透出 QMenu 底色
         if self._is_hovered:
-            hl_bg = pal.color(cg_active, cr_highlight)
-            if not hl_bg.isValid() or hl_bg.alpha() == 0:
-                hl_bg = QColor("#0078D7")
             p.fillRect(rect, hl_bg)
 
             val_color = pal.color(cg_active, cr_hl_text)
@@ -87,21 +124,46 @@ class RankValueItemWidget(QWidget):
                 val_color = QColor("#FFFFFF")
             cnt_color = QColor(val_color)
             cnt_color.setAlpha(195)
+            check_color = val_color
         else:
             val_color = pal.color(cg_active, cr_text)
             cnt_color = pal.color(cg_disabled, cr_text)
+            check_color = hl_bg
+
+        # 2. 若该候选值是当前已选要素正在使用的值，在左侧图标槽绘制抗锯齿勾选标记 ✓
+        if self.is_current:
+            aa_hint = getattr(QPainter.RenderHint, "Antialiasing", getattr(QPainter, "Antialiasing", 0x01))
+            p.save()
+            p.setRenderHint(aa_hint, True)
+            pen = QPen(check_color, 1.8)
+            cap_round = getattr(Qt.PenCapStyle, "RoundCap", getattr(Qt, "RoundCap", 0x20))
+            join_round = getattr(Qt.PenJoinStyle, "RoundJoin", getattr(Qt, "RoundJoin", 0x80))
+            pen.setCapStyle(cap_round)
+            pen.setJoinStyle(join_round)
+            p.setPen(pen)
+            cx = self._left_pad / 2.0
+            cy = rect.height() / 2.0
+            p.drawLine(QPointF(cx - 4.5, cy + 0.2), QPointF(cx - 1.2, cy + 3.5))
+            p.drawLine(QPointF(cx - 1.2, cy + 3.5), QPointF(cx + 4.8, cy - 3.2))
+            p.restore()
 
         align_vcenter = getattr(Qt.AlignmentFlag, "AlignVCenter", getattr(Qt, "AlignVCenter", 0x0080))
         align_left = getattr(Qt.AlignmentFlag, "AlignLeft", getattr(Qt, "AlignLeft", 0x0001))
         flags = align_left | align_vcenter
 
-        # 2. 绘制主属性值文本
+        # 3. 绘制主属性值文本（当前值微加粗以便一眼识别）
+        if self.is_current:
+            bold_font = QFont(self.font())
+            bold_font.setBold(True)
+            p.setFont(bold_font)
         p.setPen(val_color)
         val_rect = QRect(self._left_pad, 0, self._val_w + 4, rect.height())
         p.drawText(val_rect, flags, self.val_text)
 
-        # 3. 绘制频次统计副文本
+        # 4. 绘制频次统计副文本（恢复常规字重）
         if self.cnt_text:
+            if self.is_current:
+                p.setFont(self.font())
             p.setPen(cnt_color)
             cnt_x = self._left_pad + self._val_w + 6
             cnt_rect = QRect(cnt_x, 0, max(0, rect.width() - cnt_x - 6), rect.height())
@@ -163,17 +225,24 @@ class RankContextMenu(QMenu):
         self.is_reopen = is_reopen
         self.target_field = None
         self._hovered_value_widget = None
+        self._active_sample = None
         self.setMouseTracking(True)
 
-        # 候选分类值平滑滚动区域（完全透明视口与无轨道微细滚动条，彻底消除中间灰底三段式割裂感）
+        # 候选分类值平滑滚动区域（仅对 #RankScrollArea 与垂直滚动条精确着色，绝不使用无选择器样式污染子控件或 Tooltip）
         self._scroll = QScrollArea(self)
+        self._scroll.setObjectName("RankScrollArea")
         self._scroll.setWidgetResizable(True)
         no_frame = getattr(QFrame.Shape, "NoFrame", getattr(QFrame, "NoFrame", 0))
         self._scroll.setFrameShape(no_frame)
         sb_off = getattr(Qt.ScrollBarPolicy, "ScrollBarAlwaysOff", getattr(Qt, "ScrollBarAlwaysOff", 1))
         self._scroll.setHorizontalScrollBarPolicy(sb_off)
+        self._scroll.viewport().setObjectName("RankScrollViewport")
+        self._scroll.viewport().setAutoFillBackground(False)
         self._scroll.setStyleSheet("""
-            QScrollArea { border: none; background: transparent; }
+            QScrollArea#RankScrollArea, QWidget#RankScrollViewport, QWidget#RankValuesContainer {
+                border: none;
+                background: transparent;
+            }
             QScrollBar:vertical {
                 border: none;
                 background: transparent;
@@ -194,10 +263,10 @@ class RankContextMenu(QMenu):
                 height: 0px;
             }
         """)
-        self._scroll.viewport().setStyleSheet("background: transparent;")
 
         self._values_container = QWidget()
-        self._values_container.setStyleSheet("background: transparent;")
+        self._values_container.setObjectName("RankValuesContainer")
+        self._values_container.setAutoFillBackground(False)
         self._values_layout = QVBoxLayout(self._values_container)
         self._values_layout.setContentsMargins(0, 0, 0, 0)
         self._values_layout.setSpacing(0)
@@ -315,7 +384,6 @@ class RankContextMenu(QMenu):
 
         bar = _SortBarWidget(self)
         bar.setAutoFillBackground(False)
-        bar.setStyleSheet("background: transparent;")
         bar_layout = QHBoxLayout(bar)
         left_pad = self._get_menu_left_padding()
         bar_layout.setContentsMargins(left_pad, 2, 8, 2)
@@ -336,7 +404,7 @@ class RankContextMenu(QMenu):
         self.btn_sort_alpha = QToolButton()
         self.btn_sort_alpha.setFixedSize(22, 22)
         self.btn_sort_alpha.setCheckable(True)
-        self.btn_sort_alpha.setAutoRaise(True)
+        self.btn_sort_alpha.setStyleSheet(_SORT_BTN_SS)
         is_alpha = current_mode in ("alpha_asc", "alpha_desc")
         self.btn_sort_alpha.setChecked(is_alpha)
         if current_mode == "alpha_desc":
@@ -353,7 +421,7 @@ class RankContextMenu(QMenu):
         self.btn_sort_freq = QToolButton()
         self.btn_sort_freq.setFixedSize(22, 22)
         self.btn_sort_freq.setCheckable(True)
-        self.btn_sort_freq.setAutoRaise(True)
+        self.btn_sort_freq.setStyleSheet(_SORT_BTN_SS)
         is_freq = not is_alpha
         self.btn_sort_freq.setChecked(is_freq)
         if current_mode == "freq_asc":
@@ -441,7 +509,18 @@ class RankContextMenu(QMenu):
                 w.setParent(None)
                 w.deleteLater()
 
+        if self._active_sample is None:
+            self._active_sample = AttributeEngine.sample_selected_value_counts(self.layer, self.target_field)
+        active_counts = self._active_sample.get("counts", {})
+        sampled_total = self._active_sample.get("sampled_total", 0)
+
         val_counts = AttributeEngine.extract_unique_values_with_counts(self.layer, self.target_field)
+        # 确保当前选中要素的非空值即使不在前 150 高频截断内，也必定出现在候选列表中
+        existing_vals = {v for v, _ in val_counts}
+        for act_val, act_cnt in active_counts.items():
+            if act_val not in existing_vals:
+                val_counts.append((act_val, act_cnt))
+
         sorted_val_counts = self._sort_val_counts(val_counts, sort_mode)
 
         fm = QFontMetrics(self.font())
@@ -450,11 +529,17 @@ class RankContextMenu(QMenu):
 
         if sorted_val_counts:
             max_w = 160
-            for val, cnt in sorted_val_counts:
+            first_active_idx = -1
+            for idx, (val, cnt) in enumerate(sorted_val_counts):
+                act_cnt = active_counts.get(str(val).strip(), 0)
+                if act_cnt > 0 and first_active_idx == -1:
+                    first_active_idx = idx
                 w = RankValueItemWidget(
                     val, cnt, fm,
                     left_padding=left_pad,
                     item_height=item_h,
+                    active_count=act_cnt,
+                    total_selected=sampled_total,
                     menu_ref=self,
                     parent=self._values_container
                 )
@@ -470,6 +555,13 @@ class RankContextMenu(QMenu):
             target_h = visible_items * item_h
             self._scroll.setFixedHeight(target_h)
             self._scroll.setMinimumWidth(max(max_w + 16, 200))
+
+            # 若当前值排在可视区下方（第 11 项以后），自动滚动使首个当前值居中可见
+            if first_active_idx >= visible_items:
+                scroll_y = max(0, (first_active_idx - visible_items // 2) * item_h)
+                QTimer.singleShot(0, lambda y=scroll_y: self._scroll.verticalScrollBar().setValue(y))
+            else:
+                self._scroll.verticalScrollBar().setValue(0)
         else:
             lbl_empty = QLabel(tr("(this field currently contains only empty values in the layer)"), self._values_container)
             lbl_empty.setContentsMargins(left_pad, 6, 12, 6)
@@ -484,9 +576,7 @@ class RankContextMenu(QMenu):
             self._values_layout.addWidget(lbl_empty)
             self._scroll.setFixedHeight(max(30, item_h + 6))
             self._scroll.setMinimumWidth(230)
-
-        # 滚动条回到顶部
-        self._scroll.verticalScrollBar().setValue(0)
+            self._scroll.verticalScrollBar().setValue(0)
 
     def _build_menu(self):
         behavior = self.config.get("behavior", {})
@@ -537,9 +627,15 @@ class RankContextMenu(QMenu):
             lambda checked, fn=self.target_field: self._on_custom_input(fn, auto_edit)
         )
 
-        # 4.1 设置为 NULL / 清空字段值
+        # 4.1 设置为 NULL / 清空字段值（若当前已选要素包含空值，直观显示 ✓ 标记）
         ic_null = self._get_cached_icon("clear", os.path.join(icons_dir, "clear.svg"), "mIconClearText.svg")
-        null_act = self.addAction(ic_null, tr("Set to NULL (Clear field)"))
+        null_count = self._active_sample.get("null_count", 0) if self._active_sample else 0
+        null_label = tr("Set to NULL (Clear field)  ✓") if null_count > 0 else tr("Set to NULL (Clear field)")
+        null_act = self.addAction(ic_null, null_label)
+        if null_count > 0:
+            f_null = QFont(null_act.font())
+            f_null.setBold(True)
+            null_act.setFont(f_null)
         null_act.triggered.connect(
             lambda checked, fn=self.target_field: (self._on_apply_value(fn, None, auto_edit), self.close())
         )

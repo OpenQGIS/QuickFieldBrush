@@ -62,6 +62,8 @@ _zh_translations = {
     "Enter a new value to assign...": "输入新值…",
     "Enter a new value...": "输入新值…",
     "Set to NULL (Clear field)": "设为 NULL / 清空字段",
+    "Set to NULL (Clear field)  ✓": "设为 NULL / 清空字段  ✓",
+    "Current value of selected feature(s)": "当前选中要素的属性值",
     "Switch field ( {0} )-[{1}]": "切换字段 ( {0} )-[{1}]",
     "Cancel selection": "取消选择",
     "Enter a new value": "输入新属性值",

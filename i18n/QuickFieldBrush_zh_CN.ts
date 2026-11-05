@@ -169,6 +169,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>复制要素 FID 到剪贴板</translation>
     </message>
     <message>
+      <source>Current value of selected feature(s)</source>
+      <translation>当前选中要素的属性值</translation>
+    </message>
+    <message>
       <source>Docked in main window (pin available when floating)</source>
       <translation>已停靠在主窗口（浮动时可置顶）</translation>
     </message>
@@ -555,6 +559,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Set to NULL (Clear field)</source>
       <translation>设为 NULL / 清空字段</translation>
+    </message>
+    <message>
+      <source>Set to NULL (Clear field)  ✓</source>
+      <translation>设为 NULL / 清空字段  ✓</translation>
     </message>
     <message>
       <source>Sort:</source>
