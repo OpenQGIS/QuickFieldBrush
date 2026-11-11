@@ -84,9 +84,10 @@ class FormatPainterTool(QgsMapToolIdentify):
            面要素按面积升序匹配（嵌套图斑优先选取最小图斑要素）；
         3. 若原生识别因容差微小未命中，使用屏幕 12 像素容差缓冲区进行备用容差补刀查找。
         """
-        results = self.identify(event.x(), event.y(), [layer], self.TopDownAll)
+        px_pt = event.pixelPoint() if hasattr(event, "pixelPoint") else event.pos()
+        results = self.identify(px_pt.x(), px_pt.y(), [layer], self.TopDownAll)
 
-        map_pt = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(event.pos())
+        map_pt = event.mapPoint() if hasattr(event, "mapPoint") else self.toMapCoordinates(px_pt)
         click_layer_pt = self.toLayerCoordinates(layer, map_pt)
         click_geom = QgsGeometry.fromPointXY(click_layer_pt)
         is_polygon = (layer.geometryType() == QgsWkbTypes.GeometryType.PolygonGeometry)
@@ -109,7 +110,7 @@ class FormatPainterTool(QgsMapToolIdentify):
             return best_res.mFeature
 
         # 备用容差查找（应对高分辨率微小细线或复杂坐标系单位转换）
-        p0 = event.pos()
+        p0 = px_pt
         p1 = p0 + QPoint(12, 0)
         pt0 = self.toLayerCoordinates(layer, p0)
         pt1 = self.toLayerCoordinates(layer, p1)
