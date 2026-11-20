@@ -202,7 +202,12 @@ class HistoryManager(QObject):
                     tr("Reverted")
                 ])
                 for s in self._records:
-                    action_label = tr("Format Painter") if s.tool_type == "painter" else tr("Batch Assignment")
+                    if s.tool_type == "painter":
+                        action_label = tr("Format Painter")
+                    elif s.tool_type == "table_assign":
+                        action_label = tr("Table Fast Assign")
+                    else:
+                        action_label = tr("Batch Assignment")
                     status_label = tr("Yes") if s.is_reverted else tr("No")
                     for c in s.changes:
                         writer.writerow([

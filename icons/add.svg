@@ -1,1 +1,144 @@
-<svg height="16" viewBox="0 0 4.2333333 4.2333335" width="16" xmlns="http://www.w3.org/2000/svg"><g stroke="#5a8c5a" stroke-width=".264583" transform="translate(0 -292.76665)"><path d="m1.4552083 293.16353v1.05833h-1.05833331v1.32292h1.05833331v1.05833h1.3229167v-1.05833h1.0583333v-1.32292h-1.0583333v-1.05833z" fill="#fff"/><g fill="#5a8c5a"><path d="m-295.01559.92604166h.26458335v2.3812499h-.26458335z" transform="rotate(-90)"/><path d="m1.984375 293.69269h.26458338v2.3812501h-.26458338z"/></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="0_icons_Component.svg"
+   inkscape:export-batch-name=""
+   inkscape:export-batch-path="c:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   inkscape:zoom="11.313708"
+   inkscape:cx="775.87292"
+   inkscape:cy="21.257398"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="41"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="g64">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <inkscape:page
+   x="0"
+   y="0"
+   width="32"
+   height="32"
+   id="page_add"
+   margin="0"
+   bleed="0"
+   inkscape:label="add" />
+    
+    
+    
+    
+    
+    
+    
+    
+  </sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="g64"
+   transform="translate(-462)">
+    <!-- Page: rank (x=0) -->
+    
+    <!-- Page: painter (x=42) -->
+    
+    <!-- Page: history (x=84) -->
+    
+    <!-- Page: absorb (x=126) -->
+    
+        <!-- Page: clear (x=168) -->
+    
+    <!-- Page: undo_latest (x=210) -->
+    
+    <!-- Page: export (x=252) -->
+    
+    <!-- Page: pin_green (x=294) -->
+    
+    <!-- Page: pin_grey (x=336) -->
+    
+        <!-- Page: settings (x=378) -->
+    
+    <!-- Page: search (x=420) -->
+    
+        <!-- Page: add (x=462) -->
+    <g
+   id="g_add"
+   inkscape:label="add"
+   transform="translate(462)">
+      <g
+   id="g_add_icon"
+   transform="matrix(5.66929,0,0,5.66929,4,4)">
+        <g
+   stroke="#5a8c5a"
+   stroke-width="0.264583"
+   transform="translate(0,-292.76665)"
+   id="g31">
+          <path
+   d="m 1.4552083,293.16353 v 1.05833 H 0.39687499 v 1.32292 H 1.4552083 v 1.05833 H 2.778125 v -1.05833 h 1.0583333 v -1.32292 H 2.778125 v -1.05833 z"
+   fill="#ffffff"
+   id="path28" />
+          <g
+   fill="#5a8c5a"
+   id="g30">
+            <path
+   d="m -295.01559,0.92604166 h 0.26458 V 3.3072916 h -0.26458 z"
+   transform="rotate(-90)"
+   id="path29" />
+            <path
+   d="m 1.984375,293.69269 h 0.2645834 v 2.38125 H 1.984375 Z"
+   id="path30" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <!-- Page: chevron_down (x=504) -->
+    
+    <!-- Page: sort-AZ (x=546) -->
+    
+    <!-- Page: sort-reverse-ZA (x=588) -->
+    
+    <!-- Page: sort-ascend (x=630) -->
+    
+    <!-- Page: sort-dscend (x=672) -->
+    
+    <!-- Page: deselect (x=714) -->
+    
+    <!-- Page: current_val (x=756) -->
+    
+    <!-- Page: table_assign (x=798) -->
+    
+  </g>
+</svg>

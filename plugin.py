@@ -18,6 +18,7 @@ from .core.config_manager import ConfigManager
 from .core.attribute_engine import AttributeEngine
 from .core.map_tool import QuickFieldBrushMapTool, AssignmentModeEventFilter
 from .core.format_painter_tool import FormatPainterTool
+from .core.table_fast_assign import AttributeTableManager
 from .ui.rank_context_menu import RankContextMenu
 from .ui.target_field_dialog import TargetFieldDialog
 from .ui.format_painter_dialog import FormatPainterDialog
@@ -39,6 +40,7 @@ class QuickFieldBrushPlugin:
         self.action_painter = None
         self.action_history = None
         self.toolbar = None
+        self.table_manager = None
         self._connected_layer = None
         self.translator = None
 
@@ -132,13 +134,20 @@ class QuickFieldBrushPlugin:
         self.map_tool = QuickFieldBrushMapTool(self.canvas, self.iface, self)
         self.painter_tool = FormatPainterTool(self.canvas, self.iface, self)
 
-        # 5. 安全监听图层切换信号
+        # 5. 启动属性表快速下拉赋值管理器
+        self.table_manager = AttributeTableManager(self.iface, self.config, self.iface.mainWindow())
+
+        # 6. 安全监听图层切换信号
         self.iface.currentLayerChanged.connect(self._on_current_layer_changed)
         self._bind_layer_selection_signal(self.iface.activeLayer())
 
     def unload(self):
         # 退出赋值模式并清理过滤器
         self._enable_assignment_mode(False)
+
+        if self.table_manager:
+            self.table_manager.cleanup()
+            self.table_manager = None
 
         # 卸载地图工具
         if self.canvas.mapTool() in [self.map_tool, self.painter_tool]:

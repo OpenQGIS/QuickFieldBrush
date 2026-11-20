@@ -10,7 +10,7 @@
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
    sodipodi:docname="0_icons_Component.svg"
    inkscape:export-batch-name=""
-   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   inkscape:export-batch-path="c:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,15 +26,15 @@
    inkscape:pagecheckerboard="true"
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="px"
-   inkscape:zoom="1.5"
-   inkscape:cx="130.33333"
-   inkscape:cy="47"
+   inkscape:zoom="11.313708"
+   inkscape:cx="775.87292"
+   inkscape:cy="21.257398"
    inkscape:window-width="1920"
    inkscape:window-height="1001"
    inkscape:window-x="-9"
    inkscape:window-y="41"
    inkscape:window-maximized="1"
-   inkscape:current-layer="layer1">
+   inkscape:current-layer="g64">
     
     
     
@@ -43,10 +43,12 @@
    y="0"
    width="32"
    height="32"
-   id="page4"
+   id="page_absorb"
    margin="0"
    bleed="0"
    inkscape:label="absorb" />
+    
+    
     
     
     
@@ -67,16 +69,32 @@
   <g
    inkscape:label="Icons"
    inkscape:groupmode="layer"
-   id="layer1"
+   id="g64"
+   transform="translate(-126)">
+    <!-- Page: rank (x=0) -->
+    
+    <!-- Page: painter (x=42) -->
+    
+    <!-- Page: history (x=84) -->
+    
+    <!-- Page: absorb (x=126) -->
+    <g
+   id="g_absorb"
+   inkscape:label="absorb"
+   transform="translate(126)">
+      <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="g5"
    style="display:inline"
    transform="translate(-169.16666)">
-    <!-- Icon: icon (Page 1) -->
     
-    <!-- Icon: rank (Page 2) -->
     
-    <!-- Icon: painter (Page 3) -->
     
-    <!-- Icon: absorb (Page 4) -->
+    
+    
+    
+    
     <g
    id="g85"
    transform="matrix(1.2408367,0,0,1.2408367,-48.83472,-7.2544799)"
@@ -93,33 +111,68 @@
    d="M 170.87273,0.41720381 V 12.440214 c 0,-0.317172 0.23123,-0.506014 0.53584,-0.571395 4.95283,-0.702774 5.07658,-0.936908 5.79219,-5.785081 0.0403,-0.3120378 0.24436,-0.538202 0.56665,-0.538202 0.3323,0 0.5235,0.2261642 0.57377,0.538202 0.71558,4.848173 0.84394,5.082307 5.7993,5.785081 0.30469,0.06539 0.53346,0.254223 0.53346,0.571395 0,0.317149 -0.22877,0.52084 -0.53346,0.573767 -4.95536,0.700189 -5.08372,0.949144 -5.7993,5.792194 -0.0502,0.289518 -0.24147,0.523976 -0.57377,0.523976 -0.32229,0 -0.5264,-0.234458 -0.56665,-0.523976 -0.7284,-4.840501 -0.84192,-5.04357 -5.79219,-5.792194 -0.30461,-0.05293 -0.53584,-0.256618 -0.53584,-0.573767 v 21.189044 h 29.67225 V 0.41720381 h -15.20006 c 0.19403,0.0182019 0.33917,0.17172436 0.36512,0.37460775 0.40374,3.21683334 0.53134,3.31967214 3.7935,3.78164104 0.21389,0.027689 0.36275,0.1842826 0.36275,0.4006879 0,0.2164055 -0.14886,0.3628055 -0.36275,0.403059 -3.26216,0.6253138 -3.37724,0.6143521 -3.7935,3.793496 -0.0276,0.2038413 -0.18916,0.3627531 -0.40305,0.3627531 -0.21378,0 -0.37539,-0.1574929 -0.40306,-0.3864629 -0.39124,-3.164018 -0.53568,-3.2575489 -3.75794,-3.7697862 -0.24897,-0.040254 -0.41017,-0.1740897 -0.41017,-0.403059 0,-0.2164053 0.1591,-0.3604344 0.36038,-0.4006879 3.25734,-0.6127497 3.41649,-0.6057717 3.80773,-3.76978638 0.0259,-0.2146633 0.16881,-0.36821448 0.36274,-0.38646241 z m 25.34056,6.45605549 c 1.19261,-0.00213 2.3483,0.4999714 3.06561,1.2328862 1.31552,1.2752576 1.9342,3.9971075 0.18493,5.7590015 -1.27789,1.267816 -3.16512,1.265407 -4.7964,2.705236 l 0.36513,0.393576 c 0.67773,0.642527 0.63488,1.398377 0.0403,2.050858 l -0.39596,0.388833 c -0.72045,0.763556 -1.3873,0.638556 -2.06745,-0.0166 l -0.54058,-0.542946 -7.82171,7.781408 c -3.96917,3.938923 -3.55828,1.871317 -6.49162,3.983171 l -1.12856,-1.21629 c 2.137,-2.983811 0.25307,-2.384533 4.14913,-6.280606 l 7.78616,-7.783779 -0.52398,-0.526348 c -0.66766,-0.692783 -0.80624,-1.357429 -0.0428,-2.103019 l 0.39121,-0.348527 c 0.66511,-0.592016 1.41953,-0.649195 2.07455,0.02846 l 0.38173,0.365123 c 1.38957,-1.643961 1.39428,-3.5574033 2.71235,-4.8201096 0.77968,-0.7410929 1.73023,-1.0486717 2.65781,-1.0503241 z"
    style="opacity:0;stroke-width:1"
    id="path59" />
-    <!-- Icon: history (Page 5) -->
     
-    <!-- Icon: clear (Page 6) -->
     
-    <!-- Icon: undo_latest (Page 7) -->
     
-    <!-- Icon: export (Page 8) -->
     
-    <!-- Icon: pin_green (Page 9) -->
     
-    <!-- Icon: pin_grey (Page 10) -->
     
-    <!-- Icon: settings (Page 11) -->
     
-    <!-- Icon: search (Page 12) -->
     
-    <!-- Icon: add (Page 13) -->
     
-    <!-- Icon: chevron_down (Page 14) -->
     
-    <!-- Icon: sort-AZ (Page 15) -->
     
-    <!-- Icon: sort-reverse-ZA (Page 16) -->
     
-    <!-- Icon: sort-ascend (Page 17) -->
     
-    <!-- Icon: sort-dscend (Page 18) -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </g>
+
+    </g>
+        <!-- Page: clear (x=168) -->
+    
+    <!-- Page: undo_latest (x=210) -->
+    
+    <!-- Page: export (x=252) -->
+    
+    <!-- Page: pin_green (x=294) -->
+    
+    <!-- Page: pin_grey (x=336) -->
+    
+        <!-- Page: settings (x=378) -->
+    
+    <!-- Page: search (x=420) -->
+    
+        <!-- Page: add (x=462) -->
+    
+    <!-- Page: chevron_down (x=504) -->
+    
+    <!-- Page: sort-AZ (x=546) -->
+    
+    <!-- Page: sort-reverse-ZA (x=588) -->
+    
+    <!-- Page: sort-ascend (x=630) -->
+    
+    <!-- Page: sort-dscend (x=672) -->
+    
+    <!-- Page: deselect (x=714) -->
+    
+    <!-- Page: current_val (x=756) -->
+    
+    <!-- Page: table_assign (x=798) -->
     
   </g>
 </svg>

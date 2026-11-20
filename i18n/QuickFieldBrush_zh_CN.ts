@@ -11,6 +11,10 @@
       <translation> | 当前目标: [{0}]</translation>
     </message>
     <message>
+      <source>(Custom combo)</source>
+      <translation>(自定义组合)</translation>
+    </message>
+    <message>
       <source>(no valid vector layer selected)</source>
       <translation>(未选择有效矢量图层)</translation>
     </message>
@@ -35,6 +39,10 @@
       <translation>吸取模式: 请在地图上单击要素吸取 [{0}] 属性</translation>
     </message>
     <message>
+      <source>Absorb mode: click any feature on map to pick combo fields</source>
+      <translation>吸取模式: 点击地图任意要素一次性吸取组合字段</translation>
+    </message>
+    <message>
       <source>Absorb value from currently selected features</source>
       <translation>从当前选中的要素直接吸取属性</translation>
     </message>
@@ -45,6 +53,10 @@
     <message>
       <source>Absorbed FID {0}: [{1} = {2}] (ready to paint)</source>
       <translation>已吸取要素 {0}: [{1} = {2}] (可左键刷入)</translation>
+    </message>
+    <message>
+      <source>Absorbed FID {0}: {1} fields (ready to paint)</source>
+      <translation>已吸取要素 {0}: {1} 个字段（可直接刷入）</translation>
     </message>
     <message>
       <source>Action Type</source>
@@ -77,6 +89,10 @@
     <message>
       <source>Always on top (click to disable)</source>
       <translation>置顶中（点击取消置顶）</translation>
+    </message>
+    <message>
+      <source>Apply combo to selected features</source>
+      <translation>刷入当前已选要素</translation>
     </message>
     <message>
       <source>Are you sure you want to clear all history records? This cannot be undone.</source>
@@ -165,12 +181,20 @@ Select or absorb attribute, then click features consecutively for rapid assignme
       <translation>单击定位 · 双击居中选中</translation>
     </message>
     <message>
+      <source>Combo ({0}): {1}</source>
+      <translation>组合刷 ({0} 字段): {1}</translation>
+    </message>
+    <message>
       <source>Copy Details</source>
       <translation>复制记录详情</translation>
     </message>
     <message>
       <source>Copy Feature ID(s) to Clipboard</source>
       <translation>复制要素 FID 到剪贴板</translation>
+    </message>
+    <message>
+      <source>Delete selected combo template</source>
+      <translation>删除当前选中的组合模板</translation>
     </message>
     <message>
       <source>Docked in main window (pin available when floating)</source>
@@ -185,6 +209,10 @@ Select or absorb attribute, then click features consecutively for rapid assignme
 Browse, flash-zoom, single-step revert, and export records</source>
       <translation>历史修改记录
 浏览、高亮定位、单步撤销、导出台账</translation>
+    </message>
+    <message>
+      <source>Enable/disable attribute table fast assign dropdown</source>
+      <translation>开启或关闭属性表单元格快速下拉赋值</translation>
     </message>
     <message>
       <source>Enter a new value</source>
@@ -361,8 +389,16 @@ Select target field after activation, click or box-select features, then right-c
       <translation>已自动联动 QGIS 原生选择工具，选中要素右键即可快速赋值</translation>
     </message>
     <message>
+      <source>Mapped Alias</source>
+      <translation>映射别名</translation>
+    </message>
+    <message>
       <source>Modification History</source>
       <translation>要素修改历史</translation>
+    </message>
+    <message>
+      <source>Multi-Field</source>
+      <translation>多字段</translation>
     </message>
     <message>
       <source>Multi-field update failed: {0}</source>
@@ -437,6 +473,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>当前刷入: [{0} = {1}]</translation>
     </message>
     <message>
+      <source>Please check at least one field first!</source>
+      <translation>请先勾选至少一个字段！</translation>
+    </message>
+    <message>
       <source>Please select a target field first!</source>
       <translation>请先选择目标字段！</translation>
     </message>
@@ -493,6 +533,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>QuickFieldBrush: 批量调整多字段属性</translation>
     </message>
     <message>
+      <source>QuickFieldBrush: multi-field paint on feature {0}</source>
+      <translation>QuickFieldBrush: 多字段组合刷入要素 {0}</translation>
+    </message>
+    <message>
       <source>QuickFieldBrush: revert history #{0} ({1})</source>
       <translation>QuickFieldBrush: 回滚历史 #{0} ({1})</translation>
     </message>
@@ -523,6 +567,14 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Reverted</source>
       <translation>已还原</translation>
+    </message>
+    <message>
+      <source>Save Combo Template</source>
+      <translation>保存组合模板</translation>
+    </message>
+    <message>
+      <source>Save current checked fields as a named combo template</source>
+      <translation>将当前勾选字段与属性值保存为命名组合模板</translation>
     </message>
     <message>
       <source>Search field, layer, or FID...</source>
@@ -561,12 +613,24 @@ Select target field after activation, click or box-select features, then right-c
       <translation>设为 NULL / 清空字段</translation>
     </message>
     <message>
+      <source>Single Field</source>
+      <translation>单字段</translation>
+    </message>
+    <message>
       <source>Sort:</source>
       <translation>排序:</translation>
     </message>
     <message>
       <source>Specify Target Field</source>
       <translation>指定赋值目标字段</translation>
+    </message>
+    <message>
+      <source>Status: check fields and set values first</source>
+      <translation>状态: 请先勾选字段并设置属性值</translation>
+    </message>
+    <message>
+      <source>Status: configure multi-field template first</source>
+      <translation>状态: 请先配置多字段组合模板</translation>
     </message>
     <message>
       <source>Status: pick a field and value first</source>
@@ -579,6 +643,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Step ID</source>
       <translation>步骤编号</translation>
+    </message>
+    <message>
+      <source>Stored Value</source>
+      <translation>存储真值</translation>
     </message>
     <message>
       <source>Successfully reverted {0} features to their previous values!</source>
@@ -605,6 +673,10 @@ Select target field after activation, click or box-select features, then right-c
       <translation>切换字段 ( {0} )</translation>
     </message>
     <message>
+      <source>Table Fast Assign</source>
+      <translation>属性表快速赋值</translation>
+    </message>
+    <message>
       <source>Target Field:</source>
       <translation>目标字段:</translation>
     </message>
@@ -623,6 +695,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Target field:</source>
       <translation>目标字段:</translation>
+    </message>
+    <message>
+      <source>Template name:</source>
+      <translation>模板名称:</translation>
     </message>
     <message>
       <source>The [{0}] value of the selected feature is empty and cannot be absorbed.</source>
@@ -651,6 +727,10 @@ Select target field after activation, click or box-select features, then right-c
     <message>
       <source>Unknown Layer</source>
       <translation>未知图层</translation>
+    </message>
+    <message>
+      <source>Value</source>
+      <translation>属性值</translation>
     </message>
     <message>
       <source>Value to paint:</source>

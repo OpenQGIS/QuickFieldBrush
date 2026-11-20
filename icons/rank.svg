@@ -10,7 +10,7 @@
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
    sodipodi:docname="0_icons_Component.svg"
    inkscape:export-batch-name=""
-   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   inkscape:export-batch-path="c:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,25 +26,27 @@
    inkscape:pagecheckerboard="true"
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="px"
-   inkscape:zoom="1.0606602"
-   inkscape:cx="243.71614"
-   inkscape:cy="-158.86332"
+   inkscape:zoom="11.313708"
+   inkscape:cx="775.87292"
+   inkscape:cy="21.257398"
    inkscape:window-width="1920"
    inkscape:window-height="1001"
    inkscape:window-x="-9"
    inkscape:window-y="41"
    inkscape:window-maximized="1"
-   inkscape:current-layer="layer1">
-    
+   inkscape:current-layer="g64">
     <inkscape:page
    x="0"
    y="0"
    width="32"
    height="32"
-   id="page2"
+   id="page_rank"
    margin="0"
    bleed="0"
    inkscape:label="rank" />
+    
+    
+    
     
     
     
@@ -65,6 +67,14 @@
   <defs
    id="defs1" />
   <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="g64">
+    <!-- Page: rank (x=0) -->
+    <g
+   id="g_rank"
+   inkscape:label="rank">
+      <g
    inkscape:groupmode="layer"
    id="layer2"
    inkscape:label="背景"><rect
@@ -74,15 +84,16 @@
      height="32"
      x="0"
      y="0"
-     ry="5.9549713" /></g><g
+     ry="5.9549713" /></g>
+      <g
    inkscape:label="Icons"
    inkscape:groupmode="layer"
    id="layer1"
    style="display:inline"
    transform="translate(-42)">
-    <!-- Icon: icon (Page 1) -->
     
-    <!-- Icon: rank (Page 2) -->
+    
+    
     <path
    d="m 58.210825,20.61837 c -0.883505,0.03166 -1.71655,0.362245 -2.328065,0.990618 -1.62427,1.629063 -0.540818,3.320518 -1.550533,4.320635 -0.826579,0.850626 -1.568403,0.542326 -2.035639,0.992884 -0.322842,0.303621 -0.342064,0.771001 0.11561,1.228638 2.335146,2.359217 6.617715,2.54658 8.935962,0.240287 1.983404,-1.968896 2.054307,-4.514998 0.174548,-6.397078 -0.95428,-0.96244 -2.175947,-1.416708 -3.311883,-1.375984 z"
    style="fill:#80cc28;fill-opacity:1;stroke-width:0.999997"
@@ -106,37 +117,78 @@
    d="M 41.237901,-0.94280904 V 33.532063 H 75.105263 V -0.94280904 Z m 16.767766,1.14865182 c 1.574867,-0.0424242 2.64225,0.84776772 3.126885,2.65210962 l 1.855711,6.9301995 c -1.289528,1.4906751 -2.601218,3.0908721 -3.803315,4.6328961 0.127686,-0.396517 0.202138,-0.820675 0.219521,-1.266069 0.04065,-0.566939 -0.450124,-0.746785 -0.913816,-0.41862 -0.951169,0.706909 -2.114553,1.229925 -3.862024,1.710216 -1.771882,0.464082 -3.037814,0.592957 -4.20917,0.456906 -0.572219,-0.04888 -0.902121,0.353696 -0.579431,0.804057 1.214172,1.943115 3.447249,2.609885 5.659025,2.031838 0.810676,-0.219038 1.539111,-0.58755 2.141597,-1.079733 -0.463693,0.906473 -0.745585,1.893665 -0.811714,2.991599 -0.916929,0.249489 -1.765346,0.720653 -2.473431,1.442197 -0.634138,0.635944 -1.026873,1.341625 -1.271173,2.011417 -3.69201,-0.445918 -6.611447,-3.169136 -7.764888,-7.438159 L 43.180399,7.6516598 C 42.581116,5.4472282 43.450205,3.9803059 45.684459,3.3837797 L 56.834041,0.38452204 C 57.250424,0.27521073 57.642235,0.21563312 58.005667,0.20584278 Z M 71.225373,4.8795798 c 1.453023,0.032795 2.621749,1.4831519 1.929735,3.4280878 -0.334047,0.9202481 -2.087328,6.5778194 -5.143407,11.5222554 -1.413033,-2.714061 -4.018734,-4.525803 -7.014435,-4.923888 3.398097,-4.516265 7.786757,-8.7465993 8.487262,-9.3576846 0.560613,-0.4768283 1.17227,-0.6816038 1.740845,-0.6687706 z"
    style="opacity:0;stroke-width:1"
    id="path43" />
-    <!-- Icon: painter (Page 3) -->
     
-    <!-- Icon: absorb (Page 4) -->
     
-    <!-- Icon: history (Page 5) -->
     
-    <!-- Icon: clear (Page 6) -->
     
-    <!-- Icon: undo_latest (Page 7) -->
     
-    <!-- Icon: export (Page 8) -->
     
-    <!-- Icon: pin_green (Page 9) -->
     
-    <!-- Icon: pin_grey (Page 10) -->
     
-    <!-- Icon: settings (Page 11) -->
     
-    <!-- Icon: search (Page 12) -->
     
-    <!-- Icon: add (Page 13) -->
     
-    <!-- Icon: chevron_down (Page 14) -->
     
-    <!-- Icon: sort-AZ (Page 15) -->
     
-    <!-- Icon: sort-reverse-ZA (Page 16) -->
     
-    <!-- Icon: sort-ascend (Page 17) -->
     
-    <!-- Icon: sort-dscend (Page 18) -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </g>
+
+    </g>
+    <!-- Page: painter (x=42) -->
+    
+    <!-- Page: history (x=84) -->
+    
+    <!-- Page: absorb (x=126) -->
+    
+        <!-- Page: clear (x=168) -->
+    
+    <!-- Page: undo_latest (x=210) -->
+    
+    <!-- Page: export (x=252) -->
+    
+    <!-- Page: pin_green (x=294) -->
+    
+    <!-- Page: pin_grey (x=336) -->
+    
+        <!-- Page: settings (x=378) -->
+    
+    <!-- Page: search (x=420) -->
+    
+        <!-- Page: add (x=462) -->
+    
+    <!-- Page: chevron_down (x=504) -->
+    
+    <!-- Page: sort-AZ (x=546) -->
+    
+    <!-- Page: sort-reverse-ZA (x=588) -->
+    
+    <!-- Page: sort-ascend (x=630) -->
+    
+    <!-- Page: sort-dscend (x=672) -->
+    
+    <!-- Page: deselect (x=714) -->
+    
+    <!-- Page: current_val (x=756) -->
+    
+    <!-- Page: table_assign (x=798) -->
     
   </g>
 </svg>

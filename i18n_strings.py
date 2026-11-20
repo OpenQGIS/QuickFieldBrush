@@ -186,5 +186,31 @@ _zh_translations = {
     "Revert selected or latest modification": "撤回操作 (选中项或最新一步)",
     "Export": "导出",
     "Copy Details": "复制记录详情",
-    "Are you sure you want to clear all history records? This cannot be undone.": "确定要清空全部操作历史记录吗？此操作无法撤销。"
+    "Are you sure you want to clear all history records? This cannot be undone.": "确定要清空全部操作历史记录吗？此操作无法撤销。",
+
+    # ---- core/table_fast_assign.py ----
+    "Table Fast Assign": "属性表快速赋值",
+    "Enable/disable attribute table fast assign dropdown": "开启或关闭属性表单元格快速下拉赋值",
+
+    # ---- ValueMap display ----
+    "Mapped Alias": "映射别名",
+    "Stored Value": "存储真值",
+
+    # ---- Multi-field combo painter ----
+    "Single Field": "单字段",
+    "Multi-Field": "多字段",
+    "Save current checked fields as a named combo template": "将当前勾选字段与属性值保存为命名组合模板",
+    "Delete selected combo template": "删除当前选中的组合模板",
+    "Value": "属性值",
+    "Apply combo to selected features": "刷入当前已选要素",
+    "(Custom combo)": "(自定义组合)",
+    "Please check at least one field first!": "请先勾选至少一个字段！",
+    "Save Combo Template": "保存组合模板",
+    "Template name:": "模板名称:",
+    "Absorbed FID {0}: {1} fields (ready to paint)": "已吸取要素 {0}: {1} 个字段（可直接刷入）",
+    "Combo ({0}): {1}": "组合刷 ({0} 字段): {1}",
+    "Status: check fields and set values first": "状态: 请先勾选字段并设置属性值",
+    "Status: configure multi-field template first": "状态: 请先配置多字段组合模板",
+    "Absorb mode: click any feature on map to pick combo fields": "吸取模式: 点击地图任意要素一次性吸取组合字段",
+    "QuickFieldBrush: multi-field paint on feature {0}": "QuickFieldBrush: 多字段组合刷入要素 {0}"
 }

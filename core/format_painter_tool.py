@@ -36,8 +36,11 @@ class FormatPainterTool(QgsMapToolIdentify):
         self.target_field = None
         self.target_value = None
         self.is_target_null = False
+        self.multi_mode = False
+        self.multi_targets = {}  # {field_name: raw_val_or_None}
         self.is_picking_mode = False
         self.on_feature_picked = None  # 回调通知面板: fn(field_name, val_str, feat_id)
+        self.on_multi_feature_picked = None  # 多字段吸取回调: fn(attrs_dict, feat_id)
 
         # 瞬时高亮橡皮筋（点击要素后闪烁一下绿色表示刷入成功，几何类型动态自适应）
         self.flash_band = QgsRubberBand(self.canvas, QgsWkbTypes.GeometryType.PolygonGeometry)
@@ -64,10 +67,16 @@ class FormatPainterTool(QgsMapToolIdentify):
         self.setCursor(QCursor(cross_cursor) if cross_cursor is not None else QCursor())
 
     def set_target(self, field_name, value, is_null: bool = False):
-        """设定当前画笔持有的字段与属性值（状态由常驻控制台面板自行展示，不再弹消息条）"""
+        """设定当前画笔持有的单字段与属性值"""
+        self.multi_mode = False
         self.target_field = field_name
         self.target_value = value
         self.is_target_null = is_null or (value is not None and str(value).strip().upper() == "NULL")
+
+    def set_multi_targets(self, field_values_dict: dict):
+        """设定当前画笔持有的多字段组合包 {field_name: value_or_None}"""
+        self.multi_mode = True
+        self.multi_targets = dict(field_values_dict or {})
 
     def set_picking_mode(self, enabled):
         """切换是否处于吸管吸取模式"""
@@ -147,7 +156,7 @@ class FormatPainterTool(QgsMapToolIdentify):
         if event.button() not in (Qt.MouseButton.LeftButton, Qt.MouseButton.RightButton):
             return
 
-        if not self.target_field:
+        if not self.multi_mode and not self.target_field:
             return
 
         layer = self.canvas.currentLayer()
@@ -169,6 +178,10 @@ class FormatPainterTool(QgsMapToolIdentify):
 
         hit_feature = self._find_target_feature(layer, event)
         if hit_feature is None:
+            return
+
+        if self.multi_mode:
+            self._handle_multi_field_release(layer, hit_feature, is_absorb)
             return
 
         fid = hit_feature.id()
@@ -263,14 +276,98 @@ class FormatPainterTool(QgsMapToolIdentify):
             AttributeEngine._in_internal_edit = False
 
         # 5. 绿色瞬时高亮反馈（180ms 自动消失，几何类型自适应，独立于事务避免 UI 反馈异常误触发回滚）
+        self._trigger_band(self.flash_band, self._flash_timer, hit_feature, layer, 180)
+
+    def _trigger_band(self, band, timer, feature, layer, duration_ms):
         try:
-            self._flash_timer.stop()
-            self.flash_band.reset(layer.geometryType())
-            self.flash_band.setToGeometry(hit_feature.geometry(), layer)
-            self.flash_band.show()
-            self._flash_timer.start(180)
+            timer.stop()
+            band.reset(layer.geometryType())
+            band.setToGeometry(feature.geometry(), layer)
+            band.show()
+            timer.start(duration_ms)
         except (RuntimeError, TypeError, AttributeError):
-            pass
+            return
+
+    def _handle_multi_field_release(self, layer: QgsVectorLayer, hit_feature, is_absorb: bool):
+        """处理多字段组合快刷的吸取与单点写入"""
+        fid = hit_feature.id()
+        if is_absorb:
+            target_fields = list(self.multi_targets.keys()) if self.multi_targets else [
+                f["name"] for f in AttributeEngine.get_editable_fields(layer, include_icons=False)
+            ]
+            absorbed = {}
+            for fname in target_fields:
+                fidx = layer.fields().indexOf(fname)
+                if fidx != -1:
+                    raw_val = hit_feature.attribute(fidx)
+                    absorbed[fname] = "" if AttributeEngine.is_null_value(raw_val) else str(raw_val).strip()
+
+            self._trigger_band(self.absorb_band, self._absorb_timer, hit_feature, layer, 250)
+            self.set_picking_mode(False)
+            if callable(self.on_multi_feature_picked):
+                self.on_multi_feature_picked(absorbed, fid)
+            return
+
+        if not self.multi_targets:
+            self.iface.messageBar().pushInfo(
+                tr("QuickFieldBrush Format Painter"),
+                tr("Status: configure multi-field template first"))
+            return
+
+        auto_edit = ConfigManager.get_config().get("behavior", {}).get("auto_start_editing", True)
+        if not layer.isEditable():
+            if auto_edit:
+                if not layer.startEditing():
+                    self.iface.messageBar().pushWarning(
+                        tr("QuickFieldBrush Format Painter"),
+                        tr("Layer [{0}] cannot start editing!").format(layer.name()))
+                    return
+            else:
+                self.iface.messageBar().pushWarning(
+                    tr("QuickFieldBrush Format Painter"),
+                    tr("Layer is not in edit mode"))
+                return
+
+        layer.beginEditCommand(tr("QuickFieldBrush: multi-field paint on feature {0}").format(fid))
+        AttributeEngine._in_internal_edit = True
+        try:
+            written = []
+            for fname, raw_val in self.multi_targets.items():
+                fidx = layer.fields().indexOf(fname)
+                if fidx == -1:
+                    continue
+                fld_obj = layer.fields().at(fidx)
+                old_val = hit_feature.attribute(fidx)
+                val_to_write = None if AttributeEngine.is_empty_or_null(raw_val) else AttributeEngine.convert_value_for_field(fld_obj, raw_val)
+                if layer.changeAttributeValue(fid, fidx, val_to_write):
+                    written.append((fname, old_val, val_to_write))
+
+            if not written:
+                layer.destroyEditCommand()
+                return
+
+            layer.endEditCommand()
+            layer.triggerRepaint()
+
+            for fname, old_val, val_to_write in written:
+                changes = [{"fid": fid, "old_val": old_val, "new_val": val_to_write}]
+                AttributeEngine.update_cache_after_edit(layer, fname, changes)
+                HistoryManager.instance().add_step(
+                    tool_type="painter",
+                    layer=layer,
+                    field_name=fname,
+                    target_value=val_to_write,
+                    changes=changes,
+                )
+        except (ValueError, RuntimeError, TypeError, AttributeError) as err:
+            layer.destroyEditCommand()
+            self.iface.messageBar().pushWarning(
+                "QuickFieldBrush", tr("Format painter assignment failed: {0}").format(str(err)))
+            return
+        finally:
+            AttributeEngine._in_internal_edit = False
+
+        self._trigger_band(self.flash_band, self._flash_timer, hit_feature, layer, 180)
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_Escape:

@@ -267,27 +267,70 @@ class AttributeEngine:
         return fields
 
     @staticmethod
-    def _extract_valuemap_values(layer, field_idx: int) -> list:
-        """从图层属性表单 ValueMap 配置中提取预设值列表"""
+    def get_value_map(layer, field_name_or_idx) -> dict:
+        """
+        从图层属性表单 ValueMap 配置中提取 {底层存储值: 显示别名} 映射字典。
+        保留 QGIS ValueMap 配置中的原始顺序；若字段未配置 ValueMap 则返回空字典。
+        """
+        if not layer or not isinstance(layer, QgsVectorLayer) or not layer.isValid():
+            return {}
+
+        if isinstance(field_name_or_idx, int):
+            field_idx = field_name_or_idx
+        else:
+            field_idx = layer.fields().indexOf(str(field_name_or_idx))
+
+        if field_idx < 0 or field_idx >= layer.fields().count():
+            return {}
+
         try:
             editor_widget_setup = layer.editorWidgetSetup(field_idx)
-            if editor_widget_setup and editor_widget_setup.type() == "ValueMap":
-                config_map = editor_widget_setup.config() or {}
-                raw_map = config_map.get("map")
-                values = []
-                if isinstance(raw_map, list):
-                    for item in raw_map:
-                        if isinstance(item, dict):
-                            values.extend(list(item.values()))
-                elif isinstance(raw_map, dict):
-                    values.extend(list(raw_map.values()))
-                return [
-                    str(v) for v in values
-                    if not AttributeEngine.is_empty_or_null(v)
-                ]
+            if not editor_widget_setup or editor_widget_setup.type() != "ValueMap":
+                return {}
+
+            config_map = editor_widget_setup.config() or {}
+            raw_map = config_map.get("map")
+            entries = []
+            if isinstance(raw_map, list):
+                for item in raw_map:
+                    if isinstance(item, dict):
+                        entries.extend(item.items())
+            elif isinstance(raw_map, dict):
+                entries.extend(raw_map.items())
+
+            result = {}
+            for alias, raw_val in entries:
+                if AttributeEngine.is_empty_or_null(raw_val):
+                    continue
+                raw_str = str(raw_val).strip()
+                # 过滤 QGIS ValueMap 内置的 NULL 占位符（形如 {28399234-...}）
+                if not raw_str or raw_str.startswith("{28399234"):
+                    continue
+                alias_str = str(alias).strip() if alias is not None else raw_str
+                if raw_str not in result:
+                    result[raw_str] = alias_str or raw_str
+            return result
         except (AttributeError, RuntimeError, TypeError, KeyError):
-            pass
-        return []
+            return {}
+
+    @staticmethod
+    def get_value_display_parts(value_map: dict, raw_val) -> tuple:
+        """
+        返回 (正体真值, 斜体映射别名)。
+        当存在 ValueMap 且别名与底层值不同时，返回 (底层真值, 映射别名)；否则返回 (底层真值, "")。
+        """
+        raw_str = "" if raw_val is None else str(raw_val).strip()
+        if not value_map or not raw_str:
+            return raw_str, ""
+        alias = value_map.get(raw_str)
+        if alias and alias != raw_str:
+            return raw_str, alias
+        return raw_str, ""
+
+    @staticmethod
+    def _extract_valuemap_values(layer, field_idx: int) -> list:
+        """从图层属性表单 ValueMap 配置中提取预设值列表"""
+        return list(AttributeEngine.get_value_map(layer, field_idx).keys())
 
     @staticmethod
     def extract_unique_values(layer, field_name: str, limit: int = 150):

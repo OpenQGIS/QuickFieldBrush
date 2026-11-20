@@ -4,6 +4,20 @@
 
 ---
 
+## [v0.6.0] - 2026-11-16
+
+### 原生属性表快速下拉赋值 (Attribute Table Fast Assign)
+- **原生属性表工具栏集成开关 (`AttributeTableManager`)**：自动在打开的 QGIS 原生属性表顶部工具栏注入【属性表快速赋值】开关按钮（`icons/table_assign.svg`），支持毫秒级实时启闭并持久化配置。
+- **可编辑单元格智能下拉委托 (`FastAssignTableDelegate`)**：在图层编辑模式下为可编辑字段单元格提供带唯一值候选与模糊联想补全（`QCompleter`）的下拉框，支持强类型转换、首位 `NULL` 置空、$O(k)$ 增量缓存更新与操作历史台账记录。
+
+### ValueMap 值映射展示与穿透写入 (ValueMap Display & Passthrough)
+- **正斜体区分真值与映射别名**：在右键交互赋值菜单（`RankContextMenu`）、格式刷下拉（`FormatPainterDialog`）与属性表下拉中，统一采用**正常字体显示存储真值、斜体淡灰显示映射别名**（`ValueMapComboDelegate`），悬停 Tooltip 同步提示真值与别名，点击后精准写入底层真实存储值。
+
+### 多字段组合快刷配置模板 (Multi-Field Combo Brush)
+- **单字段 / 多字段双模切换 (`FormatPainterDockWidget`)**：格式刷控制台顶部新增【单字段 | 多字段】切换（独立高度记忆与自适应展开），支持勾选关联字段、保存/删除命名组合模板、一次性整包吸取要素属性、单点连续写入及批量刷入已选要素。
+
+---
+
 ## [v0.5.2] - 2026-11-05
 
 ### 右键菜单当前属性值预览与样式修复 (Current Value Preview & Tooltip Fix)

@@ -10,7 +10,7 @@
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
    sodipodi:docname="0_icons_Component.svg"
    inkscape:export-batch-name=""
-   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   inkscape:export-batch-path="c:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,16 +26,15 @@
    inkscape:pagecheckerboard="true"
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="px"
-   inkscape:zoom="4.2426407"
-   inkscape:cx="620.7219"
-   inkscape:cy="-1.2963624"
+   inkscape:zoom="11.313708"
+   inkscape:cx="775.87292"
+   inkscape:cy="21.257398"
    inkscape:window-width="1920"
    inkscape:window-height="1001"
    inkscape:window-x="-9"
    inkscape:window-y="41"
    inkscape:window-maximized="1"
-   inkscape:current-layer="layer1">
-    
+   inkscape:current-layer="g64">
     
     
     
@@ -57,54 +56,99 @@
    y="0"
    width="32"
    height="32"
-   id="page18"
+   id="page_sort-dscend"
    margin="0"
    bleed="0"
    inkscape:label="sort-dscend" />
+    
+    
+    
   </sodipodi:namedview>
   <defs
    id="defs1" />
   <g
    inkscape:label="Icons"
    inkscape:groupmode="layer"
-   id="layer1"
+   id="g64"
+   transform="translate(-672)">
+    <!-- Page: rank (x=0) -->
+    
+    <!-- Page: painter (x=42) -->
+    
+    <!-- Page: history (x=84) -->
+    
+    <!-- Page: absorb (x=126) -->
+    
+        <!-- Page: clear (x=168) -->
+    
+    <!-- Page: undo_latest (x=210) -->
+    
+    <!-- Page: export (x=252) -->
+    
+    <!-- Page: pin_green (x=294) -->
+    
+    <!-- Page: pin_grey (x=336) -->
+    
+        <!-- Page: settings (x=378) -->
+    
+    <!-- Page: search (x=420) -->
+    
+        <!-- Page: add (x=462) -->
+    
+    <!-- Page: chevron_down (x=504) -->
+    
+    <!-- Page: sort-AZ (x=546) -->
+    
+    <!-- Page: sort-reverse-ZA (x=588) -->
+    
+    <!-- Page: sort-ascend (x=630) -->
+    
+    <!-- Page: sort-dscend (x=672) -->
+    <g
+   id="g_sort-dscend"
+   inkscape:label="sort-dscend"
+   transform="translate(672)">
+      <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="g39"
    style="display:inline"
    transform="translate(-714)">
-    <!-- Icon: icon (Page 1) -->
     
-    <!-- Icon: rank (Page 2) -->
     
-    <!-- Icon: painter (Page 3) -->
     
-    <!-- Icon: absorb (Page 4) -->
     
-    <!-- Icon: history (Page 5) -->
     
-    <!-- Icon: clear (Page 6) -->
     
-    <!-- Icon: undo_latest (Page 7) -->
     
-    <!-- Icon: export (Page 8) -->
     
-    <!-- Icon: pin_green (Page 9) -->
     
-    <!-- Icon: pin_grey (Page 10) -->
     
-    <!-- Icon: settings (Page 11) -->
     
-    <!-- Icon: search (Page 12) -->
     
-    <!-- Icon: add (Page 13) -->
     
-    <!-- Icon: chevron_down (Page 14) -->
     
-    <!-- Icon: sort-AZ (Page 15) -->
     
-    <!-- Icon: sort-reverse-ZA (Page 16) -->
     
-    <!-- Icon: sort-ascend (Page 17) -->
     
-    <!-- Icon: sort-dscend (Page 18) -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <path
    d="m 728.80469,24.021484 a 1.1463318,1.1463318 0 0 0 -1.14649,1.144532 V 26.3125 a 1.1463318,1.1463318 0 0 0 1.14649,1.146484 h 6.8789 a 1.1463318,1.1463318 0 0 0 1.14649,-1.146484 v -1.146484 a 1.1463318,1.1463318 0 0 0 -1.14649,-1.144532 z"
    style="fill:#333333;stroke-width:0.025391"
@@ -118,5 +162,14 @@
    d="m 721.92969,2.2402344 a 1.1463318,1.1463318 0 0 0 -1.14844,1.1445312 l -0.0215,20.5546874 -3.76954,-3.693359 a 1.1463318,1.1463318 0 0 0 -1.62109,0.01563 l -0.80273,0.818359 a 1.1463318,1.1463318 0 0 0 0.0156,1.623047 l 6.68945,6.558594 0.11524,0.103515 c 1.09704,0.907894 2.80759,0.141472 2.80859,-1.328125 l 0.0234,-24.646484 a 1.1463318,1.1463318 0 0 0 -1.14258,-1.1503906 z"
    style="fill:#333333;stroke-width:0.025391"
    id="path78" />
+  </g>
+
+    </g>
+    <!-- Page: deselect (x=714) -->
+    
+    <!-- Page: current_val (x=756) -->
+    
+    <!-- Page: table_assign (x=798) -->
+    
   </g>
 </svg>

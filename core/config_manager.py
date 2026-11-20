@@ -31,9 +31,16 @@ DEFAULT_CONFIG = {
         "value": ""
     },
 
+    # 功能2b：多字段组合快刷配置模板（按图层存储模板列表与当前激活模板）
+    "multi_painter": {
+        "templates_by_layer": {},
+        "active_template_by_layer": {}
+    },
+
     # 交互行为设置
     "behavior": {
-        "auto_start_editing": True     # 赋值时若图层未开启编辑，是否自动开启编辑模式
+        "auto_start_editing": True,    # 赋值时若图层未开启编辑，是否自动开启编辑模式
+        "table_fast_assign": True      # 属性表单元格快速下拉赋值开关
     }
 }
 

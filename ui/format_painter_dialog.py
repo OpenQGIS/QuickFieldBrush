@@ -11,17 +11,19 @@
 from qgis.PyQt.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout,
     QComboBox, QPushButton, QLabel, QToolButton,
-    QInputDialog
+    QInputDialog, QStackedWidget, QTableWidget,
+    QTableWidgetItem, QHeaderView, QAbstractItemView, QSizePolicy
 )
 from qgis.gui import QgsDockWidget
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtCore import Qt, pyqtSignal, QSize
+from qgis.PyQt.QtGui import QIcon, QGuiApplication
+from qgis.PyQt.QtCore import Qt, pyqtSignal, QSize, QTimer
 from qgis.core import QgsVectorLayer, QgsApplication
 from ..core.compat import set_window_stay_on_top
 from ..core.attribute_engine import AttributeEngine
 from ..core.config_manager import ConfigManager
 from ..i18n_helper import tr
 from . import theme
+from .valuemap_delegate import ValueMapComboDelegate, ROLE_RAW_HINT
 
 
 class FormatPainterDockWidget(QgsDockWidget):
@@ -41,10 +43,14 @@ class FormatPainterDockWidget(QgsDockWidget):
         self.sort_alpha_dir = "asc"      # "asc" 或 "desc"
         self.sort_freq_dir = "desc"      # "desc" 或 "asc"
         self._cached_val_counts = []
+        self._multi_mode = False
+        self._multi_loading = False
+        self._single_height = 200
+        self._multi_height = 380
 
         self.setWindowTitle(tr("Attribute Format Painter (console)"))
         self.setFloating(True)
-        self.resize(310, 150)
+        self.resize(310, self._single_height)
 
         self._init_ui()
         self._load_fields()
@@ -52,6 +58,8 @@ class FormatPainterDockWidget(QgsDockWidget):
         # 绑定地图工具的吸取回调
         if hasattr(self.painter_tool, "on_feature_picked"):
             self.painter_tool.on_feature_picked = self._on_feature_absorbed_from_map
+        if hasattr(self.painter_tool, "on_multi_feature_picked"):
+            self.painter_tool.on_multi_feature_picked = self._on_multi_feature_absorbed_from_map
 
         # 监听激活图层切换信号，动态同步当前可用字段，避免悬浮窗引用失效 C++ 对象
         self.iface.currentLayerChanged.connect(self._on_layer_changed)
@@ -109,7 +117,32 @@ class FormatPainterDockWidget(QgsDockWidget):
 
         layout.addWidget(self.top_bar_widget)
 
-        # 2. 表单区域：目标字段（通栏） + 属性值（含排序按钮）
+        # 1b. 模式切换栏：单字段 vs 多字段组合模板
+        mode_bar = QHBoxLayout()
+        mode_bar.setSpacing(4)
+        mode_bar.setContentsMargins(0, 0, 0, 0)
+
+        self.btn_mode_single = QPushButton(tr("Single Field"))
+        self.btn_mode_single.setCheckable(True)
+        self.btn_mode_single.setChecked(True)
+        self.btn_mode_single.clicked.connect(lambda: self._switch_mode(False))
+        mode_bar.addWidget(self.btn_mode_single, 1)
+
+        self.btn_mode_multi = QPushButton(tr("Multi-Field"))
+        self.btn_mode_multi.setCheckable(True)
+        self.btn_mode_multi.setChecked(False)
+        self.btn_mode_multi.clicked.connect(lambda: self._switch_mode(True))
+        mode_bar.addWidget(self.btn_mode_multi, 1)
+
+        layout.addLayout(mode_bar)
+
+        self.mode_stack = QStackedWidget()
+
+        # ---- Page 0: 单字段模式 ----
+        self._page_single = QWidget()
+        single_layout = QVBoxLayout(self._page_single)
+        single_layout.setContentsMargins(0, 0, 0, 0)
+        single_layout.setSpacing(0)
         form = QFormLayout()
         form.setSpacing(6)
         form.setContentsMargins(0, 0, 0, 0)
@@ -126,6 +159,7 @@ class FormatPainterDockWidget(QgsDockWidget):
 
         self.combo_val = QComboBox()
         self.combo_val.setEditable(True)
+        self.combo_val.setItemDelegate(ValueMapComboDelegate(self.combo_val))
         self.combo_val.lineEdit().setPlaceholderText(tr("Select or type the value to paint"))
         self.combo_val.currentIndexChanged.connect(self._on_val_index_changed)
         self.combo_val.lineEdit().textChanged.connect(self._on_value_changed)
@@ -160,8 +194,58 @@ class FormatPainterDockWidget(QgsDockWidget):
         val_box.addWidget(self.btn_sort_freq)
 
         form.addRow(tr("Attribute value"), val_box)
+        single_layout.addLayout(form)
+        single_layout.addStretch(1)
 
-        layout.addLayout(form)
+        self.mode_stack.addWidget(self._page_single)
+
+        # ---- Page 1: 多字段组合模板模式 ----
+        self._page_multi = QWidget()
+        sp_ignored = getattr(QSizePolicy.Policy, "Ignored", getattr(QSizePolicy, "Ignored", 13))
+        sp_pref = getattr(QSizePolicy.Policy, "Preferred", getattr(QSizePolicy, "Preferred", 5))
+        self._page_multi.setSizePolicy(sp_pref, sp_ignored)
+        multi_layout = QVBoxLayout(self._page_multi)
+        multi_layout.setContentsMargins(0, 0, 0, 0)
+        multi_layout.setSpacing(6)
+
+        tpl_bar = QHBoxLayout()
+        tpl_bar.setSpacing(4)
+        self.combo_tpl = QComboBox()
+        self.combo_tpl.currentIndexChanged.connect(self._on_template_selected)
+        tpl_bar.addWidget(self.combo_tpl, 1)
+
+        self.btn_save_tpl = QToolButton()
+        self.btn_save_tpl.setText("+")
+        self.btn_save_tpl.setFixedSize(24, 24)
+        self.btn_save_tpl.setToolTip(tr("Save current checked fields as a named combo template"))
+        self.btn_save_tpl.clicked.connect(self._on_save_template_clicked)
+        tpl_bar.addWidget(self.btn_save_tpl)
+
+        self.btn_del_tpl = QToolButton()
+        self.btn_del_tpl.setText("×")
+        self.btn_del_tpl.setFixedSize(24, 24)
+        self.btn_del_tpl.setToolTip(tr("Delete selected combo template"))
+        self.btn_del_tpl.clicked.connect(self._on_delete_template_clicked)
+        tpl_bar.addWidget(self.btn_del_tpl)
+
+        multi_layout.addLayout(tpl_bar)
+
+        self.multi_table = QTableWidget(0, 2)
+        self.multi_table.setHorizontalHeaderLabels([tr("Field"), tr("Value")])
+        self.multi_table.verticalHeader().setVisible(False)
+        self.multi_table.setSelectionMode(QAbstractItemView.NoSelection)
+        self.multi_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        self.multi_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch)
+        self.multi_table.setMinimumHeight(0)
+        self.multi_table.itemChanged.connect(self._on_multi_table_item_changed)
+        multi_layout.addWidget(self.multi_table, 1)
+
+        self.btn_apply_multi = QPushButton(tr("Apply combo to selected features"))
+        self.btn_apply_multi.clicked.connect(self._on_apply_multi_to_selected)
+        multi_layout.addWidget(self.btn_apply_multi)
+
+        self.mode_stack.addWidget(self._page_multi)
+        layout.addWidget(self.mode_stack, 1)
 
         # 3. 第三行：当前刷入状态提示
         self.lbl_status = QLabel(tr("Status: pick a field and value first"))
@@ -196,8 +280,6 @@ class FormatPainterDockWidget(QgsDockWidget):
         self.btn_close = QPushButton(tr("Exit format painter (Esc)"))
         self.btn_close.clicked.connect(self.close)
         layout.addWidget(self.btn_close)
-
-        layout.addStretch(1)
 
         self.setWidget(container)
 
@@ -273,6 +355,8 @@ class FormatPainterDockWidget(QgsDockWidget):
 
         self.combo_field.blockSignals(False)
         self._on_field_changed()
+        self._load_multi_fields()
+        self._load_multi_templates()
 
     def _on_sort_alpha_clicked(self):
         """点击首字母排序按钮：在 A->Z 与 Z->A 间翻转，并互斥取消频次排序"""
@@ -322,13 +406,20 @@ class FormatPainterDockWidget(QgsDockWidget):
             return ""
         if txt == null_label or txt.upper() == "NULL" or self.combo_val.currentData() == "__set_null_value__":
             return "__NULL__"
+        cur_idx = self.combo_val.currentIndex()
+        if cur_idx >= 0 and self.combo_val.itemText(cur_idx).strip() == txt:
+            data = self.combo_val.itemData(cur_idx)
+            if data not in (None, "", "__custom_add_value__", "__set_null_value__"):
+                return str(data)
         return txt
 
     def _on_field_changed(self):
         fname = self.combo_field.currentData()
         self._cached_val_counts = []
+        self._current_value_map = {}
         if self.layer and isinstance(self.layer, QgsVectorLayer) and self.layer.isValid() and fname:
             self._cached_val_counts = AttributeEngine.extract_unique_values_with_counts(self.layer, fname)
+            self._current_value_map = AttributeEngine.get_value_map(self.layer, fname)
         self._populate_val_combo(initial_load=True)
 
     def _populate_val_combo(self, initial_load=False):
@@ -355,12 +446,15 @@ class FormatPainterDockWidget(QgsDockWidget):
             rev = (self.sort_alpha_dir == "desc")
             val_counts_sorted = sorted(val_counts, key=lambda x: AttributeEngine.natural_sort_key(x[0]), reverse=rev)
 
+        value_map = getattr(self, "_current_value_map", {})
         has_values = False
         for val, cnt in val_counts_sorted:
             if AttributeEngine.is_empty_or_null(val):
                 continue
-            display_str = str(val)
-            self.combo_val.addItem(display_str, userData=str(val))
+            display_label, raw_hint = AttributeEngine.get_value_display_parts(value_map, val)
+            self.combo_val.addItem(display_label, userData=str(val))
+            if raw_hint:
+                self.combo_val.setItemData(self.combo_val.count() - 1, raw_hint, ROLE_RAW_HINT)
             has_values = True
 
         if not has_values:
@@ -484,8 +578,286 @@ class FormatPainterDockWidget(QgsDockWidget):
     def _on_value_changed(self, text):
         self._sync_target_to_tool()
 
+    def _switch_mode(self, multi: bool):
+        target_multi = bool(multi)
+        if target_multi == self._multi_mode:
+            return
+
+        if self.isFloating():
+            if self._multi_mode:
+                self._multi_height = max(280, self.height())
+            else:
+                self._single_height = max(160, self.height())
+
+        self._multi_mode = target_multi
+        self.btn_mode_single.setChecked(not self._multi_mode)
+        self.btn_mode_multi.setChecked(self._multi_mode)
+
+        sp_ignored = getattr(QSizePolicy.Policy, "Ignored", getattr(QSizePolicy, "Ignored", 13))
+        sp_pref = getattr(QSizePolicy.Policy, "Preferred", getattr(QSizePolicy, "Preferred", 5))
+        sp_exp = getattr(QSizePolicy.Policy, "Expanding", getattr(QSizePolicy, "Expanding", 7))
+
+        if self._multi_mode:
+            self._page_single.setSizePolicy(sp_pref, sp_ignored)
+            self._page_multi.setSizePolicy(sp_pref, sp_exp)
+            self.multi_table.setMinimumHeight(140)
+            self.mode_stack.setCurrentIndex(1)
+        else:
+            self._page_multi.setSizePolicy(sp_pref, sp_ignored)
+            self._page_single.setSizePolicy(sp_pref, sp_pref)
+            self.multi_table.setMinimumHeight(0)
+            self.mode_stack.setCurrentIndex(0)
+
+        self.btn_clear_null.setVisible(not self._multi_mode)
+        self.mode_stack.updateGeometry()
+        if self.widget() and self.widget().layout():
+            self.widget().layout().activate()
+
+        if self.isFloating():
+            if self._multi_mode:
+                QTimer.singleShot(0, self._fit_multi_height)
+            else:
+                QTimer.singleShot(0, lambda h=self._single_height: self.resize(self.width(), h))
+
+        self._sync_target_to_tool()
+
+    def _fit_multi_height(self):
+        """切换到多字段时自动展开全部字段高度，并做屏幕可用工作区防溢出钳位"""
+        if not self.isFloating() or not self._multi_mode:
+            return
+
+        rows = self.multi_table.rowCount()
+        header_h = self.multi_table.horizontalHeader().height() or 24
+        rows_h = sum(self.multi_table.rowHeight(r) for r in range(rows))
+        ideal_table_h = max(140, header_h + rows_h + 6)
+        chrome_h = max(180, self.height() - self.multi_table.height())
+        ideal_h = chrome_h + ideal_table_h
+
+        screen = QGuiApplication.screenAt(self.frameGeometry().center()) or QGuiApplication.primaryScreen()
+        avail = screen.availableGeometry() if screen else None
+        if avail and not avail.isEmpty():
+            max_h = max(240, avail.height() - 48)
+            target_h = min(ideal_h, max_h)
+            if self.y() + target_h > avail.bottom() - 8:
+                new_y = max(avail.top() + 8, avail.bottom() - target_h - 8)
+                self.move(self.x(), new_y)
+        else:
+            target_h = ideal_h
+
+        self._multi_height = target_h
+        self.resize(self.width(), target_h)
+
+    def _load_multi_fields(self):
+        self._multi_loading = True
+        self.multi_table.setRowCount(0)
+        if not self.layer or not isinstance(self.layer, QgsVectorLayer) or not self.layer.isValid():
+            self._multi_loading = False
+            return
+
+        pk_indices = set(self.layer.primaryKeyAttributes()) if hasattr(self.layer, "primaryKeyAttributes") else set()
+        fields = [
+            f for f in AttributeEngine.get_editable_fields(self.layer)
+            if f["name"].lower() not in ("fid", "ogc_fid")
+            and self.layer.fields().indexOf(f["name"]) not in pk_indices
+        ]
+        self.multi_table.setRowCount(len(fields))
+        check_role = getattr(Qt.ItemDataRole, "CheckStateRole", getattr(Qt, "CheckStateRole", 10))
+        unchecked = getattr(Qt.CheckState, "Unchecked", getattr(Qt, "Unchecked", 0))
+        item_checkable = getattr(Qt.ItemFlag, "ItemIsUserCheckable", getattr(Qt, "ItemIsUserCheckable", 16))
+        item_enabled = getattr(Qt.ItemFlag, "ItemIsEnabled", getattr(Qt, "ItemIsEnabled", 32))
+
+        for row, f in enumerate(fields):
+            fname = f["name"]
+            item = QTableWidgetItem(f.get("icon", QIcon()), fname)
+            item.setFlags(item_checkable | item_enabled)
+            item.setData(check_role, unchecked)
+            self.multi_table.setItem(row, 0, item)
+
+            cb = QComboBox()
+            cb.setEditable(True)
+            cb.setItemDelegate(ValueMapComboDelegate(cb))
+            cb.addItem("NULL", userData="__NULL__")
+            vmap = AttributeEngine.get_value_map(self.layer, fname)
+            for u in AttributeEngine.extract_unique_values(self.layer, fname, limit=100):
+                if AttributeEngine.is_empty_or_null(u):
+                    continue
+                lbl, hint = AttributeEngine.get_value_display_parts(vmap, u)
+                cb.addItem(lbl, userData=str(u))
+                if hint:
+                    cb.setItemData(cb.count() - 1, hint, ROLE_RAW_HINT)
+            cb.setCurrentIndex(-1)
+            cb.setEditText("")
+            cb.currentIndexChanged.connect(lambda _idx, r=row: self._on_multi_combo_changed(r))
+            cb.lineEdit().textChanged.connect(lambda _txt, r=row: self._on_multi_combo_changed(r))
+            self.multi_table.setCellWidget(row, 1, cb)
+
+        self._multi_loading = False
+
+    def _on_multi_combo_changed(self, row: int):
+        if self._multi_loading:
+            return
+        item = self.multi_table.item(row, 0)
+        cb = self.multi_table.cellWidget(row, 1)
+        if item and cb:
+            txt = cb.currentText().strip()
+            checked = getattr(Qt.CheckState, "Checked", getattr(Qt, "Checked", 2))
+            if txt and item.checkState() != checked:
+                self._multi_loading = True
+                item.setCheckState(checked)
+                self._multi_loading = False
+        if self._multi_mode:
+            self._sync_target_to_tool()
+
+    def _on_multi_table_item_changed(self, item):
+        if not self._multi_loading and self._multi_mode:
+            self._sync_target_to_tool()
+
+    def _extract_multi_targets(self) -> dict:
+        targets = {}
+        checked = getattr(Qt.CheckState, "Checked", getattr(Qt, "Checked", 2))
+        for row in range(self.multi_table.rowCount()):
+            item = self.multi_table.item(row, 0)
+            cb = self.multi_table.cellWidget(row, 1)
+            if not item or not cb or item.checkState() != checked:
+                continue
+            fname = item.text()
+            txt = cb.currentText().strip()
+            cur_idx = cb.currentIndex()
+            if cur_idx >= 0 and cb.itemText(cur_idx).strip() == txt:
+                data = cb.itemData(cur_idx)
+                val = None if data == "__NULL__" else data
+            elif not txt or txt.upper() == "NULL":
+                val = None
+            else:
+                val = txt
+            targets[fname] = val
+        return targets
+
+    def _apply_multi_values_to_table(self, values_dict: dict, check_matched: bool = True):
+        self._multi_loading = True
+        checked = getattr(Qt.CheckState, "Checked", getattr(Qt, "Checked", 2))
+        unchecked = getattr(Qt.CheckState, "Unchecked", getattr(Qt, "Unchecked", 0))
+        for row in range(self.multi_table.rowCount()):
+            item = self.multi_table.item(row, 0)
+            cb = self.multi_table.cellWidget(row, 1)
+            if not item or not cb:
+                continue
+            fname = item.text()
+            if fname in values_dict:
+                raw_val = values_dict[fname]
+                if check_matched:
+                    item.setCheckState(checked)
+                if raw_val is None or AttributeEngine.is_empty_or_null(raw_val):
+                    cb.setCurrentIndex(0)
+                    cb.setEditText("NULL")
+                else:
+                    s = str(raw_val).strip()
+                    idx = cb.findData(s)
+                    if idx >= 0:
+                        cb.setCurrentIndex(idx)
+                    else:
+                        cb.setEditText(s)
+            elif check_matched:
+                item.setCheckState(unchecked)
+        self._multi_loading = False
+        if self._multi_mode:
+            self._sync_target_to_tool()
+
+    def _load_multi_templates(self):
+        self.combo_tpl.blockSignals(True)
+        self.combo_tpl.clear()
+        self.combo_tpl.addItem(tr("(Custom combo)"), userData=None)
+        if self.layer and isinstance(self.layer, QgsVectorLayer) and self.layer.isValid():
+            mp_cfg = self.config.get("multi_painter", {})
+            tpls = mp_cfg.get("templates_by_layer", {}).get(self.layer.id(), [])
+            for tpl in tpls:
+                if isinstance(tpl, dict) and tpl.get("name"):
+                    self.combo_tpl.addItem(tpl["name"], userData=tpl.get("values", {}))
+            active_name = mp_cfg.get("active_template_by_layer", {}).get(self.layer.id(), "")
+            if active_name:
+                idx = self.combo_tpl.findText(active_name)
+                if idx > 0:
+                    self.combo_tpl.setCurrentIndex(idx)
+                    self._apply_multi_values_to_table(self.combo_tpl.itemData(idx) or {})
+        self.combo_tpl.blockSignals(False)
+
+    def _on_template_selected(self, idx):
+        if idx <= 0:
+            return
+        vals = self.combo_tpl.itemData(idx)
+        if isinstance(vals, dict):
+            self._apply_multi_values_to_table(vals, check_matched=True)
+            if self.layer and self.layer.isValid():
+                mp = self.config.setdefault("multi_painter", {})
+                mp.setdefault("active_template_by_layer", {})[self.layer.id()] = self.combo_tpl.itemText(idx)
+                ConfigManager.update_section("multi_painter", mp)
+
+    def _on_save_template_clicked(self):
+        if not self.layer or not self.layer.isValid():
+            return
+        targets = self._extract_multi_targets()
+        if not targets:
+            self.iface.messageBar().pushWarning("QuickFieldBrush", tr("Please check at least one field first!"))
+            return
+        default_name = self.combo_tpl.currentText() if self.combo_tpl.currentIndex() > 0 else ""
+        name, ok = QInputDialog.getText(self, tr("Save Combo Template"), tr("Template name:"), text=default_name)
+        if not ok or not name.strip():
+            return
+        name = name.strip()
+        mp = self.config.setdefault("multi_painter", {})
+        by_layer = mp.setdefault("templates_by_layer", {})
+        tpl_list = [t for t in by_layer.get(self.layer.id(), []) if t.get("name") != name]
+        tpl_list.append({"name": name, "values": targets})
+        by_layer[self.layer.id()] = tpl_list
+        mp.setdefault("active_template_by_layer", {})[self.layer.id()] = name
+        ConfigManager.update_section("multi_painter", mp)
+        self._load_multi_templates()
+
+    def _on_delete_template_clicked(self):
+        idx = self.combo_tpl.currentIndex()
+        if idx <= 0 or not self.layer or not self.layer.isValid():
+            return
+        name = self.combo_tpl.itemText(idx)
+        mp = self.config.setdefault("multi_painter", {})
+        by_layer = mp.setdefault("templates_by_layer", {})
+        by_layer[self.layer.id()] = [t for t in by_layer.get(self.layer.id(), []) if t.get("name") != name]
+        if mp.get("active_template_by_layer", {}).get(self.layer.id()) == name:
+            mp["active_template_by_layer"].pop(self.layer.id(), None)
+        ConfigManager.update_section("multi_painter", mp)
+        self._load_multi_templates()
+
+    def _on_apply_multi_to_selected(self):
+        if not self.layer or not self.layer.isValid():
+            return
+        targets = self._extract_multi_targets()
+        if not targets:
+            self.iface.messageBar().pushWarning("QuickFieldBrush", tr("Please check at least one field first!"))
+            return
+        auto_edit = ConfigManager.get_config().get("behavior", {}).get("auto_start_editing", True)
+        cnt, msg = AttributeEngine.batch_update_multi_fields(self.layer, targets, auto_start_editing=auto_edit)
+        if cnt > 0:
+            self.iface.messageBar().pushInfo("QuickFieldBrush", msg)
+        else:
+            self.iface.messageBar().pushWarning("QuickFieldBrush", msg)
+
+    def _on_multi_feature_absorbed_from_map(self, attrs_dict: dict, feat_id):
+        self._reset_absorb_btn_text()
+        self._apply_multi_values_to_table(attrs_dict, check_matched=False)
+        self.lbl_status.setText(tr("Absorbed FID {0}: {1} fields (ready to paint)").format(feat_id, len(attrs_dict)))
+
     def _sync_target_to_tool(self):
         """毫秒级即时同步当前选中的字段与值给画笔地图工具（即使值为空也同步字段，确保吸管可用且不残留旧字段）"""
+        if getattr(self, "_multi_mode", False):
+            targets = self._extract_multi_targets()
+            self.painter_tool.set_multi_targets(targets)
+            if targets:
+                preview = ", ".join(f"{k}={'NULL' if v is None else v}" for k, v in list(targets.items())[:3])
+                if len(targets) > 3:
+                    preview += " ..."
+                self.lbl_status.setText(tr("Combo ({0}): {1}").format(len(targets), preview))
+            else:
+                self.lbl_status.setText(tr("Status: check fields and set values first"))
+            return
         fname = self.combo_field.currentData()
         if not fname:
             self.painter_tool.set_target(None, None, is_null=False)
@@ -501,7 +873,10 @@ class FormatPainterDockWidget(QgsDockWidget):
             self.lbl_status.setText(tr("Painting: [{0} = NULL] (clear field)").format(fname))
         elif val != "":
             self.painter_tool.set_target(fname, val, is_null=False)
-            self.lbl_status.setText(tr("Painting: [{0} = {1}]").format(fname, val))
+            value_map = getattr(self, "_current_value_map", {})
+            display_label, raw_hint = AttributeEngine.get_value_display_parts(value_map, val)
+            status_val = f"{display_label} ({raw_hint})" if raw_hint else display_label
+            self.lbl_status.setText(tr("Painting: [{0} = {1}]").format(fname, status_val))
         else:
             self.painter_tool.set_target(None, None, is_null=False)
             self.lbl_status.setText(tr("Status: pick a field and value first"))
@@ -545,6 +920,19 @@ class FormatPainterDockWidget(QgsDockWidget):
         if self.layer.selectedFeatureCount() == 1:
             feat = next(self.layer.getSelectedFeatures(), None)
             if feat:
+                if self._multi_mode:
+                    targets = self._extract_multi_targets()
+                    fnames = list(targets.keys()) if targets else [
+                        f["name"] for f in AttributeEngine.get_editable_fields(self.layer, include_icons=False)
+                    ]
+                    absorbed = {}
+                    for fname in fnames:
+                        fidx = feat.fields().indexOf(fname)
+                        if fidx != -1:
+                            rv = feat.attribute(fidx)
+                            absorbed[fname] = "" if AttributeEngine.is_null_value(rv) else str(rv).strip()
+                    self._on_multi_feature_absorbed_from_map(absorbed, feat.id())
+                    return
                 fname = self.combo_field.currentData()
                 if fname:
                     fidx = feat.fields().indexOf(fname)
@@ -561,8 +949,11 @@ class FormatPainterDockWidget(QgsDockWidget):
         else:
             self.painter_tool.set_picking_mode(True)
             self.btn_pick_from_selected.setText(tr("🔍 Click any feature on map to absorb value..."))
-            fname = self.combo_field.currentData() or ""
-            self.lbl_status.setText(tr("Absorb mode: click any feature on map to pick [{0}]").format(fname))
+            if self._multi_mode:
+                self.lbl_status.setText(tr("Absorb mode: click any feature on map to pick combo fields"))
+            else:
+                fname = self.combo_field.currentData() or ""
+                self.lbl_status.setText(tr("Absorb mode: click any feature on map to pick [{0}]").format(fname))
 
     def _reset_absorb_btn_text(self):
         self.btn_pick_from_selected.setText(tr("Absorb attribute from feature"))
@@ -589,16 +980,21 @@ class FormatPainterDockWidget(QgsDockWidget):
                 if self.combo_val.itemData(i) == val_str or self.combo_val.itemText(i) == val_str:
                     found_idx = i
                     break
+            value_map = getattr(self, "_current_value_map", {})
+            display_label, raw_hint = AttributeEngine.get_value_display_parts(value_map, val_str)
             if found_idx != -1:
                 self.combo_val.setCurrentIndex(found_idx)
             else:
                 insert_pos = max(0, self.combo_val.count() - 2)
-                self.combo_val.insertItem(insert_pos, val_str, userData=val_str)
+                self.combo_val.insertItem(insert_pos, display_label, userData=val_str)
+                if raw_hint:
+                    self.combo_val.setItemData(insert_pos, raw_hint, ROLE_RAW_HINT)
                 self.combo_val.setCurrentIndex(insert_pos)
             self._prev_val_idx = self.combo_val.currentIndex()
             self.combo_val.blockSignals(False)
             self._sync_target_to_tool()
-            self.lbl_status.setText(tr("Absorbed FID {0}: [{1} = {2}] (ready to paint)").format(feat_id, field_name, val_str))
+            status_val = f"{display_label} ({raw_hint})" if raw_hint else display_label
+            self.lbl_status.setText(tr("Absorbed FID {0}: [{1} = {2}] (ready to paint)").format(feat_id, field_name, status_val))
 
     def closeEvent(self, event):
         """窗口关闭时：持久化本次配置并退出格式刷模式"""

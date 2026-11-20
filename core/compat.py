@@ -6,8 +6,15 @@ QuickFieldBrush 跨版本兼容层 (QGIS 3 / Qt5 与 QGIS 4 / Qt6 统一桥接)
 from qgis.PyQt.QtCore import Qt, QPoint, QSize
 from qgis.PyQt.QtWidgets import (
     QDialog, QLineEdit, QHeaderView, QFrame,
-    QStyle, QDialogButtonBox, QMessageBox, QAbstractItemView
+    QStyle, QDialogButtonBox, QMessageBox, QAbstractItemView,
+    QComboBox, QAbstractItemDelegate
 )
+from qgis.PyQt.QtGui import QPalette
+
+try:
+    from qgis.PyQt import sip
+except ImportError:
+    import sip
 
 try:
     from qgis.PyQt.QtGui import QAction as _QAction, QGuiApplication
@@ -39,7 +46,7 @@ def _bridge_scoped_enums(target_cls):
                     except (AttributeError, TypeError):
                         pass
 
-for _cls in (Qt, QLineEdit, QHeaderView, QFrame, QDialog, QStyle, QDialogButtonBox, QMessageBox, QAbstractItemView):
+for _cls in (Qt, QLineEdit, QHeaderView, QFrame, QDialog, QStyle, QDialogButtonBox, QMessageBox, QAbstractItemView, QComboBox, QAbstractItemDelegate, QPalette):
     _bridge_scoped_enums(_cls)
 
 # 特殊枚举组合补丁 (如 Qt.AlignCenter 在 Qt6 为 AlignmentFlag 的复合位运算结果)

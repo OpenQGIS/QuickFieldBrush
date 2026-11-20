@@ -58,7 +58,8 @@ class RankValueItemWidget(QWidget):
 
     def __init__(self, val, count, font_metrics: QFontMetrics, left_padding: int = 28,
                  item_height: int = 24, active_count: int = 0, total_selected: int = 0,
-                 current_icon: QIcon = None, menu_ref=None, parent=None):
+                 current_icon: QIcon = None, menu_ref=None, display_label: str = None,
+                 raw_hint: str = "", parent=None):
         super().__init__(parent)
         self.val = val
         self.count = count
@@ -66,7 +67,8 @@ class RankValueItemWidget(QWidget):
         self.total_selected = total_selected
         self.is_current = active_count > 0
         self._current_icon = current_icon
-        self.val_text = str(val)
+        self.val_text = display_label if display_label is not None else str(val)
+        self.raw_hint = str(raw_hint or "").strip()
         if count > 0:
             if self.is_current and total_selected > 1 and active_count < total_selected:
                 self.cnt_text = f"({count:,} · {active_count}/{total_selected})"
@@ -84,14 +86,27 @@ class RankValueItemWidget(QWidget):
         self.setMouseTracking(True)
         self.setAutoFillBackground(False)
 
-        # 计算文本宽度（若为当前值则按加粗后略宽 4px 预算）
-        raw_val_w = font_metrics.horizontalAdvance(self.val_text) if hasattr(font_metrics, "horizontalAdvance") else font_metrics.width(self.val_text)
+        if self.raw_hint:
+            self.setToolTip(f"{tr('Stored Value')}: {self.val_text}\n{tr('Mapped Alias')}: {self.raw_hint}")
+
+        # 计算文本宽度（若为当前值则按加粗后略宽 6px 预算；斜体真值单独预算）
+        adv = font_metrics.horizontalAdvance if hasattr(font_metrics, "horizontalAdvance") else font_metrics.width
+        raw_val_w = adv(self.val_text)
         self._val_w = raw_val_w + (6 if self.is_current else 0)
+        self._hint_w = 0
+        if self.raw_hint:
+            italic_font = QFont(self.font())
+            italic_font.setItalic(True)
+            ifm = QFontMetrics(italic_font)
+            iadv = ifm.horizontalAdvance if hasattr(ifm, "horizontalAdvance") else ifm.width
+            self._hint_w = iadv(self.raw_hint) + 4
+
+        extra_w = (6 + self._hint_w) if self._hint_w else 0
         if self.cnt_text:
-            cnt_w = font_metrics.horizontalAdvance(self.cnt_text) if hasattr(font_metrics, "horizontalAdvance") else font_metrics.width(self.cnt_text)
-            self.preferred_width = self._left_pad + self._val_w + 6 + cnt_w + 18
+            cnt_w = adv(self.cnt_text)
+            self.preferred_width = self._left_pad + self._val_w + extra_w + 6 + cnt_w + 18
         else:
-            self.preferred_width = self._left_pad + self._val_w + 18
+            self.preferred_width = self._left_pad + self._val_w + extra_w + 18
 
     def set_hovered(self, hovered: bool):
         if self._is_hovered != hovered:
@@ -140,7 +155,7 @@ class RankValueItemWidget(QWidget):
         align_left = getattr(Qt.AlignmentFlag, "AlignLeft", getattr(Qt, "AlignLeft", 0x0001))
         flags = align_left | align_vcenter
 
-        # 3. 绘制主属性值文本（当前值微加粗以便一眼识别）
+        # 3. 绘制主属性值文本（存储真值；当前值微加粗以便一眼识别）
         if self.is_current:
             bold_font = QFont(self.font())
             bold_font.setBold(True)
@@ -149,13 +164,23 @@ class RankValueItemWidget(QWidget):
         val_rect = QRect(self._left_pad, 0, self._val_w + 4, rect.height())
         p.drawText(val_rect, flags, self.val_text)
 
-        # 4. 绘制频次统计副文本（恢复常规字重）
-        if self.cnt_text:
-            if self.is_current:
-                p.setFont(self.font())
+        cursor_x = self._left_pad + self._val_w + 6
+
+        # 4. 若存在 ValueMap 映射，用斜体淡灰绘制映射别名，与正体的真值区分真假感
+        if self.raw_hint:
+            italic_font = QFont(self.font())
+            italic_font.setItalic(True)
+            p.setFont(italic_font)
             p.setPen(cnt_color)
-            cnt_x = self._left_pad + self._val_w + 6
-            cnt_rect = QRect(cnt_x, 0, max(0, rect.width() - cnt_x - 6), rect.height())
+            hint_rect = QRect(cursor_x, 0, self._hint_w, rect.height())
+            p.drawText(hint_rect, flags, self.raw_hint)
+            cursor_x += self._hint_w + 6
+
+        # 5. 绘制频次统计副文本（恢复常规字重）
+        if self.cnt_text:
+            p.setFont(self.font())
+            p.setPen(cnt_color)
+            cnt_rect = QRect(cursor_x, 0, max(0, rect.width() - cursor_x - 6), rect.height())
             p.drawText(cnt_rect, flags, self.cnt_text)
 
     def enterEvent(self, e):
@@ -517,6 +542,8 @@ class RankContextMenu(QMenu):
         item_h = max(23, fm.height() + 7)
         left_pad = self._get_menu_left_padding()
 
+        value_map = AttributeEngine.get_value_map(self.layer, self.target_field)
+
         if sorted_val_counts:
             max_w = 160
             first_active_idx = -1
@@ -524,6 +551,7 @@ class RankContextMenu(QMenu):
                 act_cnt = active_counts.get(str(val).strip(), 0)
                 if act_cnt > 0 and first_active_idx == -1:
                     first_active_idx = idx
+                display_label, raw_hint = AttributeEngine.get_value_display_parts(value_map, val)
                 w = RankValueItemWidget(
                     val, cnt, fm,
                     left_padding=left_pad,
@@ -532,6 +560,8 @@ class RankContextMenu(QMenu):
                     total_selected=sampled_total,
                     current_icon=self._icon_current_val,
                     menu_ref=self,
+                    display_label=display_label,
+                    raw_hint=raw_hint,
                     parent=self._values_container
                 )
                 w.clicked.connect(

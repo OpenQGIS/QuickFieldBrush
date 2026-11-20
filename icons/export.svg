@@ -10,7 +10,7 @@
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
    sodipodi:docname="0_icons_Component.svg"
    inkscape:export-batch-name=""
-   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   inkscape:export-batch-path="c:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,16 +26,15 @@
    inkscape:pagecheckerboard="true"
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="px"
-   inkscape:zoom="1.0606602"
-   inkscape:cx="243.71614"
-   inkscape:cy="-158.86332"
+   inkscape:zoom="11.313708"
+   inkscape:cx="775.87292"
+   inkscape:cy="21.257398"
    inkscape:window-width="1920"
    inkscape:window-height="1001"
    inkscape:window-x="-9"
    inkscape:window-y="41"
    inkscape:window-maximized="1"
-   inkscape:current-layer="layer1">
-    
+   inkscape:current-layer="g64">
     
     
     
@@ -47,10 +46,13 @@
    y="0"
    width="32"
    height="32"
-   id="page8"
+   id="page_export"
    margin="0"
    bleed="0"
    inkscape:label="export" />
+    
+    
+    
     
     
     
@@ -67,44 +69,66 @@
   <g
    inkscape:label="Icons"
    inkscape:groupmode="layer"
-   id="layer1"
+   id="g64"
+   transform="translate(-252)">
+    <!-- Page: rank (x=0) -->
+    
+    <!-- Page: painter (x=42) -->
+    
+    <!-- Page: history (x=84) -->
+    
+    <!-- Page: absorb (x=126) -->
+    
+        <!-- Page: clear (x=168) -->
+    
+    <!-- Page: undo_latest (x=210) -->
+    
+    <!-- Page: export (x=252) -->
+    <g
+   id="g_export"
+   inkscape:label="export"
+   transform="translate(252)">
+      <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="g9"
    style="display:inline"
    transform="translate(-294)">
-    <!-- Icon: icon (Page 1) -->
     
-    <!-- Icon: rank (Page 2) -->
     
-    <!-- Icon: painter (Page 3) -->
     
-    <!-- Icon: absorb (Page 4) -->
     
-    <!-- Icon: history (Page 5) -->
     
-    <!-- Icon: clear (Page 6) -->
     
-    <!-- Icon: undo_latest (Page 7) -->
     
-    <!-- Icon: export (Page 8) -->
     
-    <!-- Icon: pin_green (Page 9) -->
     
-    <!-- Icon: pin_grey (Page 10) -->
     
-    <!-- Icon: settings (Page 11) -->
     
-    <!-- Icon: search (Page 12) -->
     
-    <!-- Icon: add (Page 13) -->
     
-    <!-- Icon: chevron_down (Page 14) -->
     
-    <!-- Icon: sort-AZ (Page 15) -->
     
-    <!-- Icon: sort-reverse-ZA (Page 16) -->
     
-    <!-- Icon: sort-ascend (Page 17) -->
     
-    <!-- Icon: sort-dscend (Page 18) -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
   <path
    d="m 325.1689,7.6088468 -5.65427,-5.6542803 -0.0226,-0.02261 a 2.2617127,2.2617127 0 0 0 -3.17545,3.2206696 l 1.79354,1.7935378 h -2.45622 q -5.15218,0 -8.79807,3.6413571 -3.64134,3.648143 -3.64134,8.798062 a 2.2617138,2.2617138 0 0 0 4.52342,0 q 0,-3.279484 2.31826,-5.597736 2.31825,-2.318258 5.59773,-2.318258 h 2.45622 l -1.79354,1.79354 a 2.262171,2.262171 0 1 0 3.20032,3.19806 l 5.65429,-5.654282 a 2.2617127,2.2617127 0 0 0 -0.002,-3.1980635 z M 300.95275,30.694151 h 21.48628 a 2.2617141,2.2617141 0 1 0 0,-4.523428 h -21.48628 q -0.93635,0 -1.59902,-0.662678 -0.66269,-0.662683 -0.66269,-1.599032 V 8.0770239 a 2.261715,2.261715 0 0 0 -4.52343,0 V 23.909013 q 0,2.811308 1.98804,4.797092 1.98579,1.988046 4.7971,1.988046 z"
@@ -112,4 +136,33 @@
    p-id="7002"
    id="path1"
    style="stroke-width:1" /></g>
+
+    </g>
+    <!-- Page: pin_green (x=294) -->
+    
+    <!-- Page: pin_grey (x=336) -->
+    
+        <!-- Page: settings (x=378) -->
+    
+    <!-- Page: search (x=420) -->
+    
+        <!-- Page: add (x=462) -->
+    
+    <!-- Page: chevron_down (x=504) -->
+    
+    <!-- Page: sort-AZ (x=546) -->
+    
+    <!-- Page: sort-reverse-ZA (x=588) -->
+    
+    <!-- Page: sort-ascend (x=630) -->
+    
+    <!-- Page: sort-dscend (x=672) -->
+    
+    <!-- Page: deselect (x=714) -->
+    
+    <!-- Page: current_val (x=756) -->
+    
+    <!-- Page: table_assign (x=798) -->
+    
+  </g>
 </svg>

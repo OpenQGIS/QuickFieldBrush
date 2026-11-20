@@ -4,7 +4,7 @@ qgisMinimumVersion=3.16
 qgisMaximumVersion=4.99
 icon=icon/icon.svg
 description=矢量要素右键快速赋值、属性值格式刷与要素修改历史面板。 / Rapid attribute assignment via right-click, format painter, and edit history panel for QGIS.
-version=0.5.2
+version=0.6.0
 author=OpenQGIS
 email=OpenQGIS@outlook.com
 about=
@@ -25,6 +25,10 @@ homepage=https://github.com/OpenQGIS/QuickFieldBrush
 tracker=https://github.com/OpenQGIS/QuickFieldBrush/issues
 repository=https://github.com/OpenQGIS/QuickFieldBrush
 changelog=
+  Version 0.6.0:
+  - ✨ 原生属性表快速下拉赋值：在 QGIS 原生属性表工具栏集成【属性表快速赋值】实时开关，编辑态下为可编辑单元格提供带唯一值候选与模糊补全的下拉框，支持一键置空与历史撤销。 / Attribute Table Fast Assign: Integrated a real-time toggle in the native QGIS Attribute Table toolbar, providing editable ComboBox dropdowns with unique value autocomplete, NULL clearing, and edit history support.
+  - 🏷️ ValueMap 值映射展示与穿透写入：在右键赋值菜单、格式刷下拉及属性表下拉中，以正体显示底层存储真值、斜体淡灰显示映射别名，点击后精准写入底层真实值。 / ValueMap Display & Passthrough: Displays stored raw values in regular font and mapped aliases in italic muted font across the context menu, format painter, and attribute table dropdowns while writing true underlying values.
+  - 🧩 多字段组合快刷配置模板：格式刷控制台新增【单字段 / 多字段】切换，支持保存命名组合模板、整包吸取要素属性、连续单点写入与批量刷入选区。 / Multi-Field Combo Brush: Added Single-Field / Multi-Field mode switching to the Format Painter console, supporting named combo templates, multi-field absorbing, continuous painting, and batch apply to selection.
   Version 0.5.2:
   - ✨ 右键菜单当前属性值预览：在候选值列表左侧及空值操作项中自动显示绿色星标标示当前的属性值。 / Current attribute value preview in right-click menu: Automatically displays a green star indicator beside candidate values and the null action item to mark current attribute values.
   - 🐛 排序栏与悬停提示样式修复。 / Fixed sort bar and tooltip styling.

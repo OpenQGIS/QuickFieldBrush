@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
+   sodipodi:docname="0_icons_Component.svg"
+   inkscape:export-batch-name=""
+   inkscape:export-batch-path="c:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   xml:space="preserve"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+   id="namedview1"
+   pagecolor="#ffffff"
+   bordercolor="#000000"
+   borderopacity="0.25"
+   inkscape:showpageshadow="2"
+   inkscape:pageopacity="0.0"
+   inkscape:pagecheckerboard="true"
+   inkscape:deskcolor="#d1d1d1"
+   inkscape:document-units="px"
+   inkscape:zoom="11.313708"
+   inkscape:cx="775.87292"
+   inkscape:cy="21.257398"
+   inkscape:window-width="1920"
+   inkscape:window-height="1001"
+   inkscape:window-x="-9"
+   inkscape:window-y="41"
+   inkscape:window-maximized="1"
+   inkscape:current-layer="g64">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <inkscape:page
+   x="0"
+   y="0"
+   width="32"
+   height="32"
+   id="page_table_assign"
+   margin="0"
+   bleed="0"
+   inkscape:label="table_assign" />
+  </sodipodi:namedview>
+  <defs
+   id="defs1" />
+  <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="g64"
+   transform="translate(-798)">
+    <!-- Page: rank (x=0) -->
+    
+    <!-- Page: painter (x=42) -->
+    
+    <!-- Page: history (x=84) -->
+    
+    <!-- Page: absorb (x=126) -->
+    
+        <!-- Page: clear (x=168) -->
+    
+    <!-- Page: undo_latest (x=210) -->
+    
+    <!-- Page: export (x=252) -->
+    
+    <!-- Page: pin_green (x=294) -->
+    
+    <!-- Page: pin_grey (x=336) -->
+    
+        <!-- Page: settings (x=378) -->
+    
+    <!-- Page: search (x=420) -->
+    
+        <!-- Page: add (x=462) -->
+    
+    <!-- Page: chevron_down (x=504) -->
+    
+    <!-- Page: sort-AZ (x=546) -->
+    
+    <!-- Page: sort-reverse-ZA (x=588) -->
+    
+    <!-- Page: sort-ascend (x=630) -->
+    
+    <!-- Page: sort-dscend (x=672) -->
+    
+    <!-- Page: deselect (x=714) -->
+    
+    <!-- Page: current_val (x=756) -->
+    
+    <!-- Page: table_assign (x=798) -->
+    
+  <g
+   id="g65"><rect
+     style="fill:#ffffff;fill-rule:evenodd;stroke-width:17;stroke-linecap:round;stroke-linejoin:round"
+     id="rect64"
+     width="25.819942"
+     height="17.275904"
+     x="800.18005"
+     y="10.012609" /><path
+     d="M 826.00008,3.7273262 H 798.33563 V 28.855933 h 29.50889 V 3.7304573 h -1.84444 z M 807.5572,27.288514 h -7.37714 v -4.711601 h 7.37714 z m 0,-6.285283 h -7.37714 v -4.70847 h 7.37714 z m 9.22159,6.285283 h -7.37744 v -4.711601 h 7.37744 z m 0,-6.285283 h -7.37744 v -4.70847 h 7.37744 z m 9.22129,6.285283 h -7.37715 v -4.711601 h 7.37715 z m 0,-6.285283 h -7.37715 v -4.70847 h 7.37715 z m 0,-6.282151 h -7.37715 v -4.708471 h -1.84414 v 4.711602 h -7.37744 v -4.711602 h -1.84415 v 4.711602 h -7.37714 v -4.711602 h 25.82002 z"
+     fill="#333333"
+     p-id="5035"
+     id="path1-8"
+     style="fill:#000000;fill-opacity:1;stroke-width:1" /><circle
+     style="fill:#80cc28;fill-opacity:1;fill-rule:evenodd;stroke-width:17;stroke-linecap:round;stroke-linejoin:round"
+     id="path68"
+     cx="822.19836"
+     cy="24.198977"
+     r="7.4137864" /><path
+     d="m 817.97281,22.947081 4.22556,4.128831 4.22555,-4.128831"
+     fill="none"
+     stroke="#ffffff"
+     stroke-width="2.00001"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path64-1"
+     style="fill:none;stroke-width:3;stroke-dasharray:none" /></g></g>
+</svg>

@@ -224,6 +224,7 @@ class HistoryDockWidget(QgsDockWidget):
         icons_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "icons")
         ic_painter = QIcon(os.path.join(icons_dir, "painter.svg"))
         ic_rank = QIcon(os.path.join(icons_dir, "rank.svg"))
+        ic_table = QIcon(os.path.join(icons_dir, "table_assign.svg"))
 
         role_user = getattr(Qt.ItemDataRole, "UserRole", getattr(Qt, "UserRole", 256))
         cg_dis = getattr(QPalette.ColorGroup, "Disabled", getattr(QPalette, "Disabled", 1))
@@ -238,6 +239,8 @@ class HistoryDockWidget(QgsDockWidget):
             # 图标
             if step.tool_type == "painter":
                 item.setIcon(0, ic_painter)
+            elif step.tool_type == "table_assign":
+                item.setIcon(0, ic_table)
             else:
                 item.setIcon(0, ic_rank)
 
@@ -248,7 +251,7 @@ class HistoryDockWidget(QgsDockWidget):
             item.setText(0, f"[{step.field_name}] ➔ \"{target_display}\"")
 
             # 第二列：图层 · 要素
-            if step.tool_type == "painter":
+            if step.tool_type in ("painter", "table_assign"):
                 fid_val = step.changes[0]["fid"] if step.changes else ""
                 layer_feat_str = f"{step.layer_name} · {fid_val}"
             else:
@@ -267,15 +270,21 @@ class HistoryDockWidget(QgsDockWidget):
 
             # 完整信息气泡提示 (Tooltip)
             display_val = "NULL" if AttributeEngine.is_null_value(step.target_value) else step.target_value
+            if step.tool_type == "painter":
+                action_text = tr("Format Painter")
+            elif step.tool_type == "table_assign":
+                action_text = tr("Table Fast Assign")
+            else:
+                action_text = tr("Batch Assignment")
             tt_lines = [
-                f"{tr('Action Type')}: {tr('Format Painter') if step.tool_type == 'painter' else tr('Batch Assignment')}",
+                f"{tr('Action Type')}: {action_text}",
                 f"{tr('Layer')}: {step.layer_name}",
                 f"{tr('Field')}: {step.field_name}",
                 f"{tr('Target Value')}: {display_val}",
                 f"{tr('Timestamp')}: {step.timestamp}",
                 f"{tr('Reverted')}: {tr('Yes') if step.is_reverted else tr('No')}"
             ]
-            if step.tool_type == "painter" and step.changes:
+            if step.tool_type in ("painter", "table_assign") and step.changes:
                 old_val = "NULL" if AttributeEngine.is_null_value(step.changes[0].get('old_val')) else step.changes[0].get('old_val', '')
                 tt_lines.append(f"{tr('Feature ID (FID)')}: {step.changes[0]['fid']}")
                 tt_lines.append(f"{tr('Old Value')}: {old_val}")

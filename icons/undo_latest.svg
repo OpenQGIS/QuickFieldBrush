@@ -10,7 +10,7 @@
    inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
    sodipodi:docname="0_icons_Component.svg"
    inkscape:export-batch-name=""
-   inkscape:export-batch-path="C:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
+   inkscape:export-batch-path="c:\Users\tesla\AppData\Roaming\QGIS\QGIS3\profiles\ForTest\python\plugins\QuickFieldBrush\icons"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -26,16 +26,15 @@
    inkscape:pagecheckerboard="true"
    inkscape:deskcolor="#d1d1d1"
    inkscape:document-units="px"
-   inkscape:zoom="1.0606602"
-   inkscape:cx="243.71614"
-   inkscape:cy="-158.86332"
+   inkscape:zoom="11.313708"
+   inkscape:cx="775.87292"
+   inkscape:cy="21.257398"
    inkscape:window-width="1920"
    inkscape:window-height="1001"
    inkscape:window-x="-9"
    inkscape:window-y="41"
    inkscape:window-maximized="1"
-   inkscape:current-layer="layer1">
-    
+   inkscape:current-layer="g64">
     
     
     
@@ -46,10 +45,13 @@
    y="0"
    width="32"
    height="32"
-   id="page7"
+   id="page_undo_latest"
    margin="0"
    bleed="0"
    inkscape:label="undo_latest" />
+    
+    
+    
     
     
     
@@ -67,22 +69,42 @@
   <g
    inkscape:label="Icons"
    inkscape:groupmode="layer"
-   id="layer1"
+   id="g64"
+   transform="translate(-210)">
+    <!-- Page: rank (x=0) -->
+    
+    <!-- Page: painter (x=42) -->
+    
+    <!-- Page: history (x=84) -->
+    
+    <!-- Page: absorb (x=126) -->
+    
+        <!-- Page: clear (x=168) -->
+    
+    <!-- Page: undo_latest (x=210) -->
+    <g
+   id="g_undo_latest"
+   inkscape:label="undo_latest"
+   transform="translate(210)">
+      <g
+   inkscape:label="Icons"
+   inkscape:groupmode="layer"
+   id="g8"
    style="display:inline"
    transform="translate(-252)">
-    <!-- Icon: icon (Page 1) -->
     
-    <!-- Icon: rank (Page 2) -->
     
-    <!-- Icon: painter (Page 3) -->
     
-    <!-- Icon: absorb (Page 4) -->
     
-    <!-- Icon: history (Page 5) -->
     
-    <!-- Icon: clear (Page 6) -->
     
-    <!-- Icon: undo_latest (Page 7) -->
+    
+    
+    
+    
+    
+    
+    
     <path
    d="m 277.68103,18.151667 c -0.44066,0 -0.78139,0.325146 -0.78139,0.755247 v 3.151657 h -2.27358 c -0.41683,0 -0.7866,0.341154 -0.7866,0.757859 0,0.435641 0.35651,0.776154 0.7866,0.776154 h 3.05497 c 0.43294,0 0.77877,-0.332656 0.77877,-0.776154 v -3.909516 c 0,-0.430101 -0.35653,-0.755247 -0.77877,-0.755247 z"
    style="opacity:0;stroke-width:1"
@@ -96,27 +118,58 @@
    d="M 254,4.3183594 V 27.681641 h 28 V 4.3183594 Z m 11.9707,3.0546875 c 0.65089,0 1.1211,0.5274026 1.1211,1.1542969 v 3.5546872 h 0.27343 c 3.65722,0 6.19834,1.270502 7.75196,3.546875 -2.45182,0.333866 -4.45546,2.162735 -5.04492,4.533203 -0.80887,-0.168954 -1.70756,-0.238281 -2.70704,-0.238281 h -0.27343 v 3.597656 c 0,0.626818 -0.47061,1.09375 -1.10157,1.09375 -0.46315,0 -0.8359,-0.194284 -1.29492,-0.611328 l -7.42187,-7.001953 c -0.35234,-0.336273 -0.47461,-0.696088 -0.47461,-1.007812 0,-0.32164 0.12024,-0.671294 0.47461,-1.017578 l 7.42187,-6.9355474 c 0.49888,-0.4648613 0.81426,-0.6679687 1.27539,-0.6679687 z"
    style="opacity:0"
    id="path73" />
-    <!-- Icon: export (Page 8) -->
     
-    <!-- Icon: pin_green (Page 9) -->
     
-    <!-- Icon: pin_grey (Page 10) -->
     
-    <!-- Icon: settings (Page 11) -->
     
-    <!-- Icon: search (Page 12) -->
     
-    <!-- Icon: add (Page 13) -->
     
-    <!-- Icon: chevron_down (Page 14) -->
     
-    <!-- Icon: sort-AZ (Page 15) -->
     
-    <!-- Icon: sort-reverse-ZA (Page 16) -->
     
-    <!-- Icon: sort-ascend (Page 17) -->
     
-    <!-- Icon: sort-dscend (Page 18) -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  </g>
+
+    </g>
+    <!-- Page: export (x=252) -->
+    
+    <!-- Page: pin_green (x=294) -->
+    
+    <!-- Page: pin_grey (x=336) -->
+    
+        <!-- Page: settings (x=378) -->
+    
+    <!-- Page: search (x=420) -->
+    
+        <!-- Page: add (x=462) -->
+    
+    <!-- Page: chevron_down (x=504) -->
+    
+    <!-- Page: sort-AZ (x=546) -->
+    
+    <!-- Page: sort-reverse-ZA (x=588) -->
+    
+    <!-- Page: sort-ascend (x=630) -->
+    
+    <!-- Page: sort-dscend (x=672) -->
+    
+    <!-- Page: deselect (x=714) -->
+    
+    <!-- Page: current_val (x=756) -->
+    
+    <!-- Page: table_assign (x=798) -->
     
   </g>
 </svg>
